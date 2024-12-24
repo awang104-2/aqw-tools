@@ -4,6 +4,7 @@ import ctypes
 from PIL import Image
 import cv2
 import numpy as np
+from pywinauto import Application
 
 
 class ImageNotFound(Exception):
@@ -12,9 +13,10 @@ class ImageNotFound(Exception):
         super().__init__(message)
 
 
-def get_screenshot_of_window(hwnd, save=False, save_path='screenshot.png'):
+def get_screenshot_of_window(hwnd, args=(0, 0, 1920, 1080), save=False, save_path='screenshot.png'):
     # Get the window size
     left, top, right, bot = win32gui.GetWindowRect(hwnd)
+    left, top, right, bot = args
     width = right - left
     height = bot - top
 
@@ -117,6 +119,25 @@ def find_best_match(main_image, template, convert_to_grayscale=True):
     return top_left, bottom_right, max_val
 
 
+def is_image_on_screen(main_image, template, confidence=1):
+    # Convert PIL images to OpenCV images
+    main_image = convert_PIL_to_cv2(main_image)
+    template = convert_PIL_to_cv2(template)
+
+    # Convert images to grayscale for better matching
+    main_gray = cv2.cvtColor(main_image, cv2.COLOR_BGR2GRAY)
+    template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+
+    # Perform template matching
+    result = cv2.matchTemplate(main_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+
+    # Find the best match position using minMaxLoc
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+    # Returns None if there aren't any matches with high enough confidence
+    return max_val >= confidence
+
+
 def draw_rectangle(image, top_left, bottom_right):
     image = convert_PIL_to_cv2(image)
     cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
@@ -144,6 +165,12 @@ def convert_PIL_to_cv2(image):
 
 def load_image(path):
     return Image.open(path)
+
+
+def get_aqw_hwnd():
+    app = Application(backend='win32').connect(title='GameLauncher on Artix Entertainment v.212', timeout=3)
+    client = app['Chrome_WidgetWin_1']
+    return client.handle
 
 
 

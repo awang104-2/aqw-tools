@@ -36,7 +36,7 @@ class Quest:
             self.autoclicker.press('l')
 
         def find_and_click_quest():
-            log_complete_path = 'C:/Users/awee2/PycharmProjects/autoclicker/assets/quest/general/log_complete.png'
+            log_complete_path = '/assets/quest/general/log_complete.png'
             coordinates = self.locate_on_screen(log_complete_path)
             if any(coordinates):
                 self.autoclicker.click(coordinates)
@@ -46,7 +46,7 @@ class Quest:
                 time.sleep(0.25)
 
         def find_and_click_reward():
-            log_complete_path = 'C:/Users/awee2/PycharmProjects/autoclicker/assets/quest/totem.png'
+            log_complete_path = '/assets/quest/totem.png'
             coordinates = self.locate_on_screen(log_complete_path)
             if any(coordinates):
                 self.autoclicker.click(coordinates)
@@ -54,14 +54,14 @@ class Quest:
             find_and_click_turn_in()
 
         def find_and_click_turn_in():
-            turn_in_path = 'C:/Users/awee2/PycharmProjects/autoclicker/assets/quest/general/turn_in.png'
+            turn_in_path = '/assets/quest/general/turn_in.png'
             coordinates = self.locate_on_screen(turn_in_path)
             self.autoclicker.click(coordinates)
             time.sleep(1)
             find_and_type_num_quests()
 
         def find_and_type_num_quests():
-            num_path = 'C:/Users/awee2/PycharmProjects/autoclicker/assets/quest/general/quest_number.png'
+            num_path = '/assets/quest/general/quest_number.png'
             coordinates = self.locate_on_screen(num_path)
             if any(coordinates):
                 self.autoclicker.click(coordinates)
@@ -75,7 +75,7 @@ class Quest:
                 find_and_click_yes()
 
         def find_and_click_yes():
-            yes_path = 'C:/Users/awee2/PycharmProjects/autoclicker/assets/quest/general/yes.png'
+            yes_path = '/assets/quest/general/yes.png'
             coordinates = self.locate_on_screen(yes_path)
             self.autoclicker.click(coordinates)
             time.sleep(0.25)
