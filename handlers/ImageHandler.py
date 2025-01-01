@@ -15,7 +15,7 @@ class ImageNotFound(Exception):
 
 def get_screenshot_of_window(hwnd, args=(0, 0, 1920, 1080), save=False, save_path='screenshot.png'):
     # Get the window size
-    left, top, right, bot = win32gui.GetWindowRect(hwnd)
+    # left, top, right, bot = win32gui.GetWindowRect(hwnd)
     left, top, right, bot = args
     width = right - left
     height = bot - top
@@ -116,7 +116,7 @@ def find_best_match(main_image, template, convert_to_grayscale=True):
     bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
 
     # Return the top left and bottom right coordinates
-    return top_left, bottom_right, max_val
+    return np.array(top_left), np.array(bottom_right), max_val
 
 
 def is_image_on_screen(main_image, template, confidence=1):

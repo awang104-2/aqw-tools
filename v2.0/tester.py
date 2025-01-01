@@ -1,28 +1,14 @@
-from tkinter import *
+from handlers.ImageHandler import *
+from autoclicker import AutoClicker
 
-Nx = 1
-Ny = 2
+relic = '../assets/quest/supplies/relic_of_chaos.png'
+complete = '../assets/quest/general/log_complete.png'
 
-root = Tk()
-root.geometry('500x100+50+50')
-frame = Frame(root)
-root.rowconfigure(0, weight=1)
-root.columnconfigure(0, weight=1)
-frame.grid(row=0, column=0, sticky="nsew")
-
-width = range(Nx)
-height = range(Ny)
-frame.columnconfigure(tuple(width), weight=1)
-frame.rowconfigure(tuple(height), weight=1)
-
-#example values
-for x in range(Nx):
-    for y in range(Ny):
-        if y == 0:
-            lbl = Label(frame, text='Label', font=('calibri', 40, 'bold'))
-            lbl.grid(column=x, row=y, sticky='nsew')
-        else:
-            btn = Button(frame, text='Button')
-            btn.grid(column=x, row=y, sticky="nsew", padx=10)
-
-root.mainloop()
+autoclicker = AutoClicker()
+hwnd = autoclicker.get_hwnd()
+img1 = get_screenshot_of_window(hwnd)
+img2 = load_image(complete)
+top_left, bottom_right, max_val = find_best_match(img1, img2)
+coordinates = ((top_left + bottom_right) / 2).astype(int)
+print(coordinates)
+autoclicker.click(coordinates)
