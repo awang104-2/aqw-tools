@@ -1,14 +1,18 @@
-from handlers.ImageHandler import *
-from autoclicker import AutoClicker
+import tkinter as tk
 
-relic = '../assets/quest/supplies/relic_of_chaos.png'
-complete = '../assets/quest/general/log_complete.png'
+root = tk.Tk()
+root.title('Tkinter Pack Layout')
+root.geometry('600x400')
 
-autoclicker = AutoClicker()
-hwnd = autoclicker.get_hwnd()
-img1 = get_screenshot_of_window(hwnd)
-img2 = load_image(complete)
-top_left, bottom_right, max_val = find_best_match(img1, img2)
-coordinates = ((top_left + bottom_right) / 2).astype(int)
-print(coordinates)
-autoclicker.click(coordinates)
+frame = tk.Frame(master=root, background='light blue')
+frame.pack(fill='both')
+
+label1 = tk.Label(master=frame, text='Tkinter', bg='red', fg='white')
+label2 = tk.Label(master=frame, text='Pack Layout', bg='green', fg='white')
+label3 = tk.Label(master=frame, text='Demo', bg='blue', fg='white')
+
+label1.grid(row=0, column=0, sticky='nsew')
+label2.grid(row=1, column=0, sticky='nsew')
+label3.grid(row=2, column=0, sticky='nsew')
+
+root.mainloop()
