@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/autoclicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/autoclicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/v2.0/autoclicker.py" beforeDir="false" afterPath="$PROJECT_DIR$/v2.0/autoclicker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/v2.0/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/v2.0/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/v2.0/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/v2.0/interface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/v2.0/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/v2.0/tester.py" afterDir="false" />
-    </list>
+    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,7 +38,7 @@
     "Python.bot.executor": "Run",
     "Python.tester.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "desktop",
     "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker"
   }
 }]]></component>
