@@ -4,44 +4,71 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="" />
+    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/testers/locate_on_screen_tester.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/screenshot_tester.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testers/tester_img.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/ImageHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/ImageHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/font_families.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v2.0/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/testers/tester.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "awang104-2"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;awang104-2&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/awang104-2/autoclicker.git",
-    "accountId": "97a6ef9e-a0d2-4aba-9c41-bb8fbc677791"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/awang104-2/autoclicker.git&quot;,
+    &quot;accountId&quot;: &quot;97a6ef9e-a0d2-4aba-9c41-bb8fbc677791&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2r3pXHwK6Rm5QujOV032OLcb89h" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "Python.bot.executor": "Run",
+    "Python.locate_on_screen_tester.executor": "Run",
+    "Python.screenshot_tester.executor": "Run",
     "Python.tester.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "desktop",
-    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker"
+    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\testers" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -59,5 +86,8 @@
       <updated>1735797650535</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>
