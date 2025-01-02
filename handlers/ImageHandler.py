@@ -89,10 +89,17 @@ def check_images(main_image, template, confidence=1):
     return top_left, bottom_right
 
 
-def find_best_match(main_image, template, convert_to_grayscale=True):
+def find_best_match(main_image, template, region=None, convert_to_grayscale=True):
     # Convert PIL images to OpenCV images
     main_image = convert_PIL_to_cv2(main_image)
     template = convert_PIL_to_cv2(template)
+
+    # If a region is provided, crop the main image to the region
+    if region:
+        x, y, w, h = region
+        main_image = main_image[y:y+h, x:x+w]
+    else:
+        x, y = (0, 0)
 
     # Convert images to grayscale for better matching
     if convert_to_grayscale:
@@ -112,11 +119,15 @@ def find_best_match(main_image, template, convert_to_grayscale=True):
     template_height, template_width = template_gray.shape[0:2]
 
     # Draw a rectangle around the matched region on the main image
-    top_left = max_loc
-    bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
+    top_left = np.array(max_loc)
+    bottom_right = np.array((top_left[0] + template_width, top_left[1] + template_height))
+
+    # Adjust for relative coordinates
+    top_left += (x, y)
+    bottom_right += (x, y)
 
     # Return the top left and bottom right coordinates
-    return np.array(top_left), np.array(bottom_right), max_val
+    return top_left, bottom_right, max_val
 
 
 def is_image_on_screen(main_image, template, confidence=1):
