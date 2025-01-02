@@ -26,4 +26,29 @@ class AutoClicker:
     def wait(self, t):
         time.sleep(t)
 
+    def clear(self):
+        """
+        Releases all commonly stuck keys to reset the keyboard state.
+        """
+        keys_to_release = [
+            "{VK_SHIFT up}",
+            "{VK_CONTROL up}",
+            "{VK_MENU up}",  # Alt key
+            "{VK_LWIN up}",  # Windows key
+            "{VK_TAB up}",
+            "{VK_CAPITAL up}",  # Caps Lock
+            "{VK_NUMLOCK up}",  # Num Lock
+            "{VK_SCROLL up}",  # Scroll Lock
+        ]
+
+        # Add alphanumeric keys
+        for char in "abcdefghijklmnopqrstuvwxyz0123456789":
+            keys_to_release.append(f"{{{char} up}}")
+
+        # Release all keys
+        for key in keys_to_release:
+            self.client.send_keystrokes(key)
+
+        print("All keys released.")
+
 
