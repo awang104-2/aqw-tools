@@ -89,10 +89,17 @@ def check_images(main_image, template, confidence=1):
     return top_left, bottom_right
 
 
-def find_best_match(main_image, template, convert_to_grayscale=True):
+def find_best_match(main_image, template, region=None, convert_to_grayscale=True):
     # Convert PIL images to OpenCV images
     main_image = convert_PIL_to_cv2(main_image)
     template = convert_PIL_to_cv2(template)
+
+    # If a region is provided, crop the main image to the region
+    if region:
+        x, y, w, h = region
+        main_image = main_image[y:y+h, x:x+w]
+    else:
+        x, y = (0, 0)
 
     # Convert images to grayscale for better matching
     if convert_to_grayscale:
