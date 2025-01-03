@@ -1,4 +1,5 @@
 from v2.autoclicker import AutoClicker
+from util.monitor import UtilMonitor
 from handlers.ImageHandler import *
 from tkinter import *
 from threading import Thread
@@ -150,6 +151,7 @@ class Bot:
     def __init__(self):
         self.player = Player(self)
         self.overlay = Overlay(self)
+        self.utility_monitor = UtilMonitor()
         self.running = False
 
     def launch_overlay(self):
@@ -158,7 +160,7 @@ class Bot:
     def launch_routine(self):
         i, j, k = (0, 0, 0)
         while self.running:
-            if i < 4 * 60 * 2.5:
+            if i < 4 * 60 * 3.3:
                 dt = self.player.fight()
                 sleep(dt)
                 i += 1
@@ -175,12 +177,14 @@ class Bot:
 
     def run(self):
         self.running = True
+        self.utility_monitor(dt=0.5)
         main = Thread(target=self.launch_overlay)
         side = Thread(target=self.launch_routine)
         side.start()
         main.run()
         side.join()
         print('Complete')
+        self.utility_monitor.stop()
 
 
 if __name__ == '__main__':
