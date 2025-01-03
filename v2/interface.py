@@ -1,5 +1,5 @@
 from tkinter import *
-from bot import Bot
+from v2.bot import Bot
 from threading import Thread
 
 
