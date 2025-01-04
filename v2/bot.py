@@ -21,7 +21,7 @@ class Player:
     def __init__(self, bot):
         self.bot = bot
         self.combat_params = {'routine': ['1', '2', '3', '4', '5'], 'step': 0, 'delay': 0.25}
-        self.quest_params = {'delays': [0.8, 0.5, 0.2, 0.5, 0.2],  'step': 0}
+        self.quest_params = {'delays': [0.8, 0.8, 0.5, 0.2, 0.5, 0.5, 0.2],  'step': 0}
         self.collector_params = {'confidence': 0.8, 'delay': 0.5}
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
@@ -32,39 +32,39 @@ class Player:
         return self.combat_params['delay']
 
     def do_quest(self):
-        match self.quest_params['step']:
+        step = self.quest_params['step']
+        match step:
             case 0:
-                self.autoclicker.click((604, 263))
-                self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
-                return self.quest_params['delays'][0]
+                self.autoclicker.press('l')
             case 1:
+                self.autoclicker.click((604, 263))
+            case 2:
                 img1 = get_screenshot_of_window(self.hwnd)
                 img2 = load_image(paths['turn in'])
                 top_left, bottom_right, _ = find_best_match(img1, img2, region=(0, 0, 900, 900))
                 coordinates = ((top_left + bottom_right) / 2).astype(int)
                 self.autoclicker.click(coordinates)
-                self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
-                return self.quest_params['delays'][1]
-            case 2:
+            case 3:
                 img1 = get_screenshot_of_window(self.hwnd)
                 img2 = load_image(paths['number'])
-                top_left, bottom_right, _ = find_best_match(img1, img2, region=(400, 300, 800, 800))
-                coordinates = ((top_left + bottom_right) / 2).astype(int)
-                self.autoclicker.click(coordinates)
-                self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
-                return self.quest_params['delays'][2]
-            case 3:
-                self.autoclicker.type('9999')
-                self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
-                return self.quest_params['delays'][3]
+                top_left, bottom_right, max_val = find_best_match(img1, img2, region=(400, 300, 800, 800))
+                if max_val > 0.8:
+                    coordinates = ((top_left + bottom_right) / 2).astype(int)
+                    self.autoclicker.click(coordinates)
+                else:
+                    self.quest_params['step'] += 1
             case 4:
+                self.autoclicker.type('9999')
+            case 5:
                 img1 = get_screenshot_of_window(self.hwnd)
                 img2 = load_image(paths['yes'])
                 top_left, bottom_right, _ = find_best_match(img1, img2)
                 coordinates = ((top_left + bottom_right) / 2).astype(int)
                 self.autoclicker.click(coordinates)
-                self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
-                return self.quest_params['delays'][4]
+            case 6:
+                self.autoclicker.press('l')
+        self.quest_params['step'] = (self.quest_params['step'] + 1) % 5
+        return self.quest_params['delays'][step]
 
     def collect_items(self):
         img1 = get_screenshot_of_window(self.hwnd)
