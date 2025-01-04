@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/data/cpu_data.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/handlers/DataHandler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/util/monitor.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/data_grapher.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/test_data.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/v2/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/v2/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/cpu_data.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/cpu_data.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/DataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/DataHandler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +55,7 @@
     "Python.DataHandler.executor": "Run",
     "Python.ImageHandler.executor": "Run",
     "Python.bot.executor": "Run",
+    "Python.data_grapher.executor": "Run",
     "Python.locate_on_screen_tester.executor": "Run",
     "Python.manager_tester.executor": "Run",
     "Python.monitor.executor": "Run",
