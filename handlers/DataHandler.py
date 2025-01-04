@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 
 def write_to_csv(data, name='data.csv', location='../data/'):
@@ -10,6 +11,18 @@ def write_to_csv(data, name='data.csv', location='../data/'):
         writer.writerows(data)
 
 
+def load_csv_as_dataframe(name, location='../data/'):
+    path = location + name
+    df = pd.read_csv(path)
+    return df
+
+
+def load_csv_as_records(name, location='../data/'):
+    path = location + name
+    df = pd.read_csv(path)
+    return df.to_dict(orient='records')
+
+
 if __name__ == '__main__':
     test_data = [
         {'time': 1, 'data': 3},
@@ -17,5 +30,7 @@ if __name__ == '__main__':
         {'time': 3, 'data': 6},
         {'time': 4, 'data': 2}
     ]
-
-    write_to_csv(test_data, path='../data/test_data.csv')
+    name = 'test_data.csv'
+    write_to_csv(test_data, name=name)
+    df = load_csv_as_records(name)
+    print(df)
