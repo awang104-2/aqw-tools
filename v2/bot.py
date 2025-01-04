@@ -101,11 +101,11 @@ class Overlay:
 
         # Widgets
         self.labels = {
-            'status label': Label(master=self.frame, text='Status:', font=('arial', 15, ''), background='white'),
-            'status': Label(master=self.frame, text='Offline', font=('arial', 15, ''), foreground='red', background='white')
+            'status label': Label(master=self.frame, text='Status:', font=('arial', 25, ''), background='white'),
+            'status': Label(master=self.frame, text='Offline', font=('arial', 25, ''), foreground='red', background='white')
         }
         self.buttons = {
-            'stop': Button(master=self.frame, command=self.stop, text='STOP', font=('arial', 15, 'bold'), background='white', borderwidth=10)
+            'stop': Button(master=self.frame, command=self.stop, text='STOP', font=('arial', 30, 'bold'), background='white', borderwidth=10)
         }
         self.labels['status label'].grid(row=0, column=198, sticky='ew')
         self.labels['status'].grid(row=0, column=199, sticky='ew')
