@@ -1,8 +1,6 @@
 import numpy as np
 
 
-test = np.array([300, 500])
-print(test)
-x, y = (100, 200)
-test += (x, y)
-print(test)
+l1 = [1, 2, 3]
+l2 = [1, 2, 3]
+print(l1 + l2)

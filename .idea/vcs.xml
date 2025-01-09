@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../aqw-utils" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../n-body-problem" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../n_body_problem_electrons" vcs="Git" />
   </component>
 </project>
