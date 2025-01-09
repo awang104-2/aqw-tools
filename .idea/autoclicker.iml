@@ -6,5 +6,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (autoclicker)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="orbiting_masses" />
+    <orderEntry type="module" module-name="n_body_problem_electrons" />
+    <orderEntry type="module" module-name="aqw-utils" />
   </component>
 </module>
