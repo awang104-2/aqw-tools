@@ -1,5 +1,5 @@
 from PIL import Image
-from handlers.Win32Handler import get_client_hwnd
+from src.handlers import get_client_hwnd
 import win32con
 import win32gui
 import win32ui
