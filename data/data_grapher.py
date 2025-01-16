@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from handlers.DataHandler import *
+from src.handlers.DataHandler import *
 
 
 def graph(datafile, x_name, y_name):
