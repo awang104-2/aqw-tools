@@ -6,6 +6,9 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.13 (autoclicker)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="orbiting_masses" />
+    <orderEntry type="module" module-name="n_body_problem_electrons" />
+    <orderEntry type="module" module-name="aqw-utils" />
   </component>
   <component name="PackageRequirementsSettings">
     <option name="modifyBaseFiles" value="true" />

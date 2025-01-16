@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../aqw-utils/.idea/aqw-utils.iml" filepath="$PROJECT_DIR$/../aqw-utils/.idea/aqw-utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/autoclicker.iml" filepath="$PROJECT_DIR$/.idea/autoclicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../n_body_problem_electrons/.idea/n_body_problem_electrons.iml" filepath="$PROJECT_DIR$/../n_body_problem_electrons/.idea/n_body_problem_electrons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../n-body-problem/.idea/orbiting_masses.iml" filepath="$PROJECT_DIR$/../n-body-problem/.idea/orbiting_masses.iml" />
     </modules>
   </component>
 </project>
