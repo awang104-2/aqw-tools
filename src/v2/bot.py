@@ -30,7 +30,7 @@ class Player:
         self.autoclicker.press(self.combat_params['routine'][self.combat_params['step']])
         self.combat_params['step'] = (self.combat_params['step'] + 1) % len(self.combat_params['routine'])
         return self.combat_params['delay']
-
+    
     def do_quest(self):
         step = self.quest_params['step']
         match step:
