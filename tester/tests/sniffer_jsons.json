@@ -1,0 +1,4 @@
+{"cmd": "turnIn", "sItems": "2024:3"}
+{"cmd": "addGoldExp", "intGold": 2600, "intExp": 0, "typ": "q", "bonusGold": 600}
+{"cmd": "ccqr", "rewardObj": {"iCP": 0, "intGold": 2000, "intExp": 2000, "typ": "q", "intCoins": 0}, "bSuccess": 1, "QuestID": 384, "sName": "Ninja Challenge"}
+{"cmd": "acceptQuest", "bSuccess": 1, "QuestID": 384, "msg": "success"}
