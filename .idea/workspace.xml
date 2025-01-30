@@ -4,33 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/packet_logger/__version__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/autoclicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/autoclicker.iml" afterDir="false" />
+    <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="foo">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/autoclicker.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/autoclicker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__version__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/DataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/DataHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/ImageHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/ImageHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/Win32Handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/Win32Handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/__version__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet_logger/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet_logger/aqw_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet_logger/interpreter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet_logger/sniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/sniffer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/bot_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/bot_tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/image_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/image_tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_jsons.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/win32auto_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/win32auto_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +58,6 @@
     "Python.__main__.executor": "Run",
     "Python.autoclicker.executor": "Run",
     "Python.bot.executor": "Run",
-    "Python.bot_tests.executor": "Run",
     "Python.css_assistant.executor": "Run",
     "Python.data_grapher.executor": "Run",
     "Python.image_tests.executor": "Run",
@@ -93,16 +67,14 @@
     "Python.monitor.executor": "Run",
     "Python.packet_capture.executor": "Run",
     "Python.screenshot_tester.executor": "Run",
-    "Python.setup.executor": "Run",
     "Python.sniffer_tests.executor": "Run",
     "Python.tester.executor": "Run",
     "Python.win32_tester.executor": "Run",
     "Python.win32auto_tests.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "short",
-    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker/src/packet_logger",
-    "settings.editor.selected.configurable": "preferences.keymap"
+    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker/assets/2256x1504/quest",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   },
   "keyToStringList": {
     "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
@@ -124,7 +96,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-495700d161d3-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.22562.220" />
+        <option value="bundled-python-sdk-babbdf50b680-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.15989.155" />
       </set>
     </attachedChunks>
   </component>
@@ -141,5 +113,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="foo" />
+    <option name="LAST_COMMIT_MESSAGE" value="foo" />
   </component>
 </project>
