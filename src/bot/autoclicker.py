@@ -1,6 +1,4 @@
-from pywinauto import Application, win32defines
-from pywinauto.findwindows import find_windows
-from pywinauto.findwindows import find_elements
+from pywinauto import Application
 import time
 
 

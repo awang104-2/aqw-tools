@@ -1,10 +1,9 @@
 from packet_logger.sniffer import AqwPacketLogger
 from tester.tests import current_dir
 from packet_logger.aqw_info import servers
-from bot.autoclicker import AutoClicker
-from pynput.keyboard import Listener
 from threading import Thread
 from time import sleep
+from time import time as get_time
 
 
 def sniff_test(server=None, time=None, include=None, exclude=None):
@@ -32,17 +31,20 @@ def sniff_test(server=None, time=None, include=None, exclude=None):
     packet_logger = AqwPacketLogger(server=server)
     packet_logger.set_concurrent_packet_summary_on(True)
     packet_logger.start(time=time)
-    results = packet_logger.parse_packets_to_data(save=current_dir + 'sniffer_jsons.json', include=include, exclude=exclude)
+    results = packet_logger.parse_packets_to_data(save=current_dir + '\\logs\\' + 'sniffer_jsons.json', include=include, exclude=exclude)
     print('')
     for dictionary in results:
         print(dictionary)
     return results
 
 
-def supplies_quest_test():
+def drop_test():
+    drops = {}
+
     while True:
         server = input('Server > ').lower()
         if server in servers.keys():
+            server = servers[server.lower()]
             break
         else:
             print('Invalid server name.')
@@ -53,24 +55,42 @@ def supplies_quest_test():
         else:
             print('Invalid time.')
 
-    server = servers[server.lower()]
     packet_logger = AqwPacketLogger(server=server)
-    autoclicker = AutoClicker()
-    logger_thread = Thread(target=packet_logger.start)
+    logger_thread = Thread(target=packet_logger.start, daemon=True)
     logger_thread.start()
-    drops = 0
-    for i in range(10 * time):
-        if drops >= 30:
+
+    start_time = get_time()
+    while True:
+        end_time = get_time()
+        if end_time - start_time >= time:
             break
-        results = packet_logger.parse_packets_to_data(include=['dropItem'])
-        for r in results:
-            if r['items'].get('67266', None):
-                drops += 1
-        autoclicker.press(str(i % 5 + 1))
+        results = packet_logger.parse_packets_to_data(include=['addItems', 'dropItem'])
+        for data in results:
+            interpret(drops, data)
         sleep(0.1)
+
     packet_logger.stop()
     logger_thread.join()
-    print(f'\nTotal drops: {drops}')
 
+    print('\nDrops:')
+    for key in drops.keys():
+        print(key + ':', drops[key])
+
+
+
+def interpret(drops, data):
+    match data.get('cmd'):
+        case 'dropItem' | 'addItems':
+            item_num = list(data.get('items').keys())[0]
+            if drops.get(item_num, None):
+                drops[item_num]['count'] += data.get('items').get(item_num).get('iQty')
+            else:
+                num = data.get('items').get(item_num).get('iQty')
+                name = data.get('items').get(item_num).get('sName', None)
+                drops[item_num] = {'name': name, 'count': num}
+    return drops
+
+
+drop_test()
 
 

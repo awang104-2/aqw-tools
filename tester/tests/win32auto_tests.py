@@ -1,7 +1,3 @@
-import pywinauto.findwindows
-
-from handlers.Win32Handler import *
-from pywinauto import win32defines
 from time import sleep
 from pywinauto.keyboard import send_keys
 

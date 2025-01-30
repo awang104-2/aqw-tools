@@ -6,15 +6,11 @@ from scapy.all import conf, get_if_addr
 
 
 def packet_to_str(packet):
-    try:
-        bytes_obj = packet[Raw].load
-        if len(bytes_obj) < 15000:
-            string = bytes_obj.decode('utf-8')
-        else:
-            string = ''
-    except Exception as e:
-        print(bytes_obj)
-        raise e
+    bytes_obj = packet[Raw].load
+    if len(bytes_obj) < 15000:
+        string = bytes_obj.decode('utf-8')
+    else:
+        string = ''
     return string
 
 
@@ -69,7 +65,7 @@ class Sniffer:
     def set_concurrent_packet_summary_on(self, status):
         self.summary = status
 
-    def log_packet(self, packet, has_raw=False):
+    def log_packet(self, packet, has_raw):
         if has_raw and not packet.haslayer(Raw):
             pass
         else:
@@ -88,7 +84,7 @@ class AqwPacketLogger(Sniffer):
         super().__init__(f'tcp and src host {server}', packet_summary=False)
 
     def log_packet(self, packet):
-        super().log_packet(packet, has_raw=True)
+        super().log_packet(packet=packet, has_raw=True)
 
     def parse_packets_to_data(self, include=None, exclude=None, save=None):
 

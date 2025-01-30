@@ -1,12 +1,12 @@
-from handlers.ImageHandler import load_image, get_screenshot_of_window, find_best_match
-from bot import parse_res_to_tuple
+from src.handlers.ImageHandler import load_image, get_screenshot_of_window, find_best_match
+from src.bot import parse_res_to_tuple
 import os
 
 
 def get_dir_from_res(resolution):
     match resolution:
         case '1920x1080':
-            return path
+            return
 
 
 class Quest:
