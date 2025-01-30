@@ -2,7 +2,7 @@ import csv
 import pandas as pd
 
 
-def write_to_csv(data, name='data.csv', location='../data/'):
+def write_to_csv(data, name='logs.csv', location='../logs/'):
     path = location + name
     with open(path, 'w', newline='') as csvfile:
         fieldnames = list(data[0].keys())
@@ -11,13 +11,13 @@ def write_to_csv(data, name='data.csv', location='../data/'):
         writer.writerows(data)
 
 
-def load_csv_as_dataframe(name, location='../data/'):
+def load_csv_as_dataframe(name, location='../logs/'):
     path = location + name
     df = pd.read_csv(path)
     return df
 
 
-def load_csv_as_records(name, location='../data/'):
+def load_csv_as_records(name, location='../logs/'):
     path = location + name
     df = pd.read_csv(path)
     return df.to_dict(orient='records')

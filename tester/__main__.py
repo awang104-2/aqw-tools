@@ -27,7 +27,7 @@ def run_test(choice):
         case 2:
             sniffer_tests.sniff_test(exclude=['ct'])
         case 3:
-            sniffer_tests.supplies_quest_test()
+            sniffer_tests.drop_test()
 
 
 if __name__ == '__main__':
