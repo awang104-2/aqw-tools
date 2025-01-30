@@ -1,3 +1,5 @@
-from bot.bot import Bot
+from src.bot.autoclicker import AutoClicker
 
+
+AutoClicker()
 

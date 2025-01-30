@@ -5,74 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/2256x1504/quest/swindle/uni16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packet_logger/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packet_logger/aqw_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packet_logger/interpreter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packet_logger/sniffer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/__main__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/tests/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/tests/bot_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/tests/image_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tester/tests/win32auto_tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/packet_logger/__version__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/autoclicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/autoclicker.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/autoclicker.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/autoclicker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/bot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__version__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/DataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/DataHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/ImageHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/ImageHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/Win32Handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/Win32Handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/__version__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet_logger/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet_logger/aqw_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet_logger/interpreter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet_logger/sniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/sniffer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/arrow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/banachswill.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/blinding_light_fragments.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/essence_of_nulgath.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/gem_of_nulgath.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/super_swag_token_D.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/token_shop.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/totem_of_nulgath.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/misc/yes.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/complete.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/complete.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/log_complete.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/log_complete.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/quest_number.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/quest_number.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/slider.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/slider.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/turn_in.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/turn_in.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/general/yes.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/general/yes.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/items/aeacus.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/items/dark.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/items/draco.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/items/soul.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/locs/revenant/to_r2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/locs/revenant/to_r3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/legion_revenant/fealty_1/req/draco_full.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/nul_roulette/nul_energy.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/nul_roulette/nul_energy.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/supplies/relic_of_chaos.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/relic_of_chaos.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/supplies/swindle/uni1.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/supplies/swindle/uni16.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni16.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/supplies/swindle/uni9.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni9.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/quest/totem.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/screenshot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/cpu_data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_grapher.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/test_data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/DataHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/DataHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/ImageHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/ImageHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/Win32Handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/Win32Handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/settings/bot_configurations" beforeDir="false" afterPath="$PROJECT_DIR$/bot/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/actions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/autoclicker.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/bot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/interface.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/main.spec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v1/tester.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v2/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v2/autoclicker.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/autoclicker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v2/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v2/interface.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/v2/monitor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/bot_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/bot_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/image_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/image_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_jsons.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/win32auto_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/win32auto_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +45,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -120,6 +83,7 @@
     "Python.__main__.executor": "Run",
     "Python.autoclicker.executor": "Run",
     "Python.bot.executor": "Run",
+    "Python.bot_tests.executor": "Run",
     "Python.css_assistant.executor": "Run",
     "Python.data_grapher.executor": "Run",
     "Python.image_tests.executor": "Run",
@@ -129,14 +93,16 @@
     "Python.monitor.executor": "Run",
     "Python.packet_capture.executor": "Run",
     "Python.screenshot_tester.executor": "Run",
+    "Python.setup.executor": "Run",
     "Python.sniffer_tests.executor": "Run",
     "Python.tester.executor": "Run",
     "Python.win32_tester.executor": "Run",
     "Python.win32auto_tests.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker/assets/2256x1504/quest",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "short",
+    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker/src/packet_logger",
+    "settings.editor.selected.configurable": "preferences.keymap"
   },
   "keyToStringList": {
     "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
@@ -144,20 +110,21 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\packet_logger" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker" />
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\packet_logger\config" />
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest\swindle" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\1920x1080" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\util" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\testers" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-babbdf50b680-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.15989.155" />
+        <option value="bundled-python-sdk-495700d161d3-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.22562.220" />
       </set>
     </attachedChunks>
   </component>
