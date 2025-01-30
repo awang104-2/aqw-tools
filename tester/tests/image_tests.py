@@ -1,4 +1,3 @@
-from handlers.ImageHandler import *
 from . import top_level
 
 
