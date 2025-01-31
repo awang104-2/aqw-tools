@@ -5,7 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="foo">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MANIFEST.in" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/bot/__main__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/packet_logger/__main__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/stats/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/stats/binomial_distribution.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/stats/geometric_distribution.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/autoclicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/autoclicker.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/complete.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/complete.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/log_complete.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/log_complete.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/quest_number.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/quest_number.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/slider.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/slider.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/turn_in.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/turn_in.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/general/yes.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/yes.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/nul_roulette/nul_energy.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/nul_roulette/nul_energy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/relic_of_chaos.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/relic_of_chaos.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni1.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni16.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/1920x1080/quest/supplies/swindle/uni9.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni9.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/2256x1504/quest/swindle/uni16.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/assets/2256x1504/quest/swindle/uni16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/bot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/components.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/packet_logger/sniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/sniffer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,10 +47,11 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="short" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -36,7 +62,17 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/awang104-2/autoclicker.git&quot;,
-    &quot;accountId&quot;: &quot;97a6ef9e-a0d2-4aba-9c41-bb8fbc677791&quot;
+    &quot;accountId&quot;: &quot;ceeaa00c-59db-40b4-8dfb-abb27d24b20c&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;awang104-2&quot;,
+    &quot;repository&quot;: &quot;autoclicker&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -50,53 +86,55 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.DataHandler.executor": "Run",
-    "Python.ImageHandler.executor": "Run",
-    "Python.__main__.executor": "Run",
-    "Python.autoclicker.executor": "Run",
-    "Python.bot.executor": "Run",
-    "Python.css_assistant.executor": "Run",
-    "Python.data_grapher.executor": "Run",
-    "Python.image_tests.executor": "Run",
-    "Python.locate_on_screen_tester.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.manager_tester.executor": "Run",
-    "Python.monitor.executor": "Run",
-    "Python.packet_capture.executor": "Run",
-    "Python.screenshot_tester.executor": "Run",
-    "Python.sniffer_tests.executor": "Run",
-    "Python.tester.executor": "Run",
-    "Python.win32_tester.executor": "Run",
-    "Python.win32auto_tests.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "short",
-    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/autoclicker/assets/2256x1504/quest",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.DataHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ImageHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Python.__main__.executor&quot;: &quot;Run&quot;,
+    &quot;Python.autoclicker.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.css_assistant.executor&quot;: &quot;Run&quot;,
+    &quot;Python.data_grapher.executor&quot;: &quot;Run&quot;,
+    &quot;Python.image_tests.executor&quot;: &quot;Run&quot;,
+    &quot;Python.locate_on_screen_tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.manager_tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.monitor.executor&quot;: &quot;Run&quot;,
+    &quot;Python.packet_capture.executor&quot;: &quot;Run&quot;,
+    &quot;Python.screenshot_tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.sniffer_tests.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.win32_tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.win32auto_tests.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/awee2/PycharmProjects/autoclicker/src&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   },
-  "keyToStringList": {
-    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
+  &quot;keyToStringList&quot;: {
+    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\packet_logger" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\bot" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\packet_logger\config" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest\swindle" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\1920x1080" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-babbdf50b680-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.15989.155" />
+        <option value="bundled-python-sdk-a5bc9544c897-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.23654.177" />
       </set>
     </attachedChunks>
   </component>
@@ -109,7 +147,27 @@
       <option name="presentableId" value="Default" />
       <updated>1735797650535</updated>
     </task>
+    <task id="LOCAL-00001" summary="foo">
+      <option name="closed" value="true" />
+      <created>1738234774990</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1738234774990</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
