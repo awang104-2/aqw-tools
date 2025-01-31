@@ -1,7 +1,6 @@
-from scapy.all import sniff, Raw
+from scapy.all import AsyncSniffer, Raw
 from json import loads, dumps
 from queue import Queue
-from threading import Event
 from scapy.all import conf, get_if_addr
 
 
@@ -34,26 +33,17 @@ def get_dst_ip():
     return get_if_addr(conf.iface)
 
 
-class Sniffer:
+class Sniffer(AsyncSniffer):
 
     def __init__(self, bpf_filter, packet_summary=False):
         self.filter = bpf_filter
         self.packets = Queue()
-        self.running = Event()
-        self.stop_filter = lambda packet: not self.running.is_set()
         self.summary = packet_summary
+        super().__init__(filter=self.filter, prn=self.log_packet, store=0)
 
-    def start(self, time=None, count=None):
-        self.running.set()
+    def start(self):
         print('Sniffing...')
-        if time and count:
-            sniff(filter=self.filter, prn=self.log_packet, store=0, timeout=time, count=count, stop_filter=self.stop_filter)
-        elif count:
-            sniff(filter=self.filter, prn=self.log_packet, store=0, count=count, stop_filter=self.stop_filter)
-        elif time:
-            sniff(filter=self.filter, prn=self.log_packet, store=0, timeout=time, stop_filter=self.stop_filter)
-        else:
-            sniff(filter=self.filter, prn=self.log_packet, store=0, stop_filter=self.stop_filter)
+        super().start()
 
     def __str__(self):
         buffer = ''
@@ -73,14 +63,28 @@ class Sniffer:
             if self.summary:
                 print(packet.summary())
 
-    def stop(self):
-        if self.running.is_set():
-            self.running.clear()
 
 
 class AqwPacketLogger(Sniffer):
 
+    aqw_servers = {
+        "artix": "172.65.160.131",
+        "swordhaven (EU)": "172.65.207.70",
+        "yokai (SEA)": "172.65.236.72",
+        "yorumi": "172.65.249.41",
+        "twilly": "172.65.210.123",
+        "safiria": "172.65.249.3",
+        "galanoth": "172.65.249.3",
+        "alteon": "172.65.235.85",
+        "gravelyn": "172.65.235.85",
+        "twig": "172.65.235.85",
+        "sir ver": "172.65.220.106",
+        "espada": "172.65.220.106",
+        "sepulchure": "172.65.220.106"
+    }
+
     def __init__(self, server):
+        server = self.aqw_servers.get(server, server)
         super().__init__(f'tcp and src host {server}', packet_summary=False)
 
     def log_packet(self, packet):
