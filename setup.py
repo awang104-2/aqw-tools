@@ -22,4 +22,7 @@ setup(
         'tzdata==2024.2'
     ],
     include_package_data=True,  # To include files like README, etc.
+    package_data={
+        'bot': ['assets/*.png']
+    }
 )
