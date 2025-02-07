@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="autoclicker",  # Replace with your project name
+    name="aqw-tools",  # Replace with your project name
     version="0.1",
     packages=find_packages(where="src"),  # Automatically finds all packages under src/
     package_dir={"": "src"},  # Tells setuptools that packages are under src

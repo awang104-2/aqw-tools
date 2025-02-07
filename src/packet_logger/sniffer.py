@@ -1,11 +1,15 @@
-from scapy.all import AsyncSniffer, Raw
+from scapy.all import sniff, Raw
 from json import loads, dumps
 from queue import Queue
 from scapy.all import conf, get_if_addr
+from threading import Event, Thread
 
 
 def packet_to_str(packet):
-    bytes_obj = packet[Raw].load
+    try:
+        bytes_obj = packet[Raw].load
+    except IndexError:
+        return '###'
     if len(bytes_obj) < 15000:
         string = bytes_obj.decode('utf-8')
     else:
@@ -26,42 +30,72 @@ def str_to_json(string):
             if bracket_count == 0:
                 end = i
                 return string[start:end + 1], string[end + 1:]
-    raise ValueError('Incomplete or incompatible string for JSON object parsing.')
+    raise ValueError('Incomplete or incompatible string for JSON object parsing: ' + string)
 
 
 def get_dst_ip():
     return get_if_addr(conf.iface)
 
 
-class Sniffer(AsyncSniffer):
+class Sniffer:
 
-    def __init__(self, bpf_filter, packet_summary=False):
+    def __init__(self, bpf_filter):
         self.filter = bpf_filter
         self.packets = Queue()
-        self.summary = packet_summary
-        super().__init__(filter=self.filter, prn=self.log_packet, store=0)
+        self.summary = Event()
+        self.summary.clear()
+        self.running = Event()
+        self.running.clear()
+        self.sniff_thread = None
+
+    def set_bpf_filter(self, bpf_filter):
+        self.filter = bpf_filter
 
     def start(self):
-        print('Sniffing...')
-        super().start()
+        self.sniff_thread = Thread(target=self.run, daemon=True)
+        self.sniff_thread.start()
 
-    def __str__(self):
+    def run(self):
+        self.sniff_thread = Thread(target=self.sniff)
+        self.sniff_thread.run()
+
+    def stop(self, join=False):
+        if self.running.is_set():
+            self.running.clear()
+            if join:
+                self.sniff_thread.join()
+
+    def sniff(self):
+        self.running.set()
+        print('Sniffing...')
+        sniff(filter=self.filter, prn=self.log_packet, store=0, stop_filter=lambda x: not self.running.is_set())
+
+    def __repr__(self):
         buffer = ''
         while not self.packets.empty():
             p = self.packets.get()
             buffer += packet_to_str(p)
         return buffer
 
-    def set_concurrent_packet_summary_on(self, status):
-        self.summary = status
+    def __str__(self):
+        buffer = ''
+        k = 0
+        while not self.packets.empty():
+            k += 1
+            p = self.packets.get()
+            buffer += str(k) + ' - ' + packet_to_str(p) + '\n'
+        return buffer
 
-    def log_packet(self, packet, has_raw):
-        if has_raw and not packet.haslayer(Raw):
-            pass
+    def set_concurrent_packet_summary_on(self, status):
+        if status:
+            self.summary.set()
         else:
-            self.packets.put(packet)
-            if self.summary:
-                print(packet.summary())
+            self.summary.clear()
+
+    def log_packet(self, packet):
+        self.packets.put(packet)
+        if self.summary.is_set():
+            print(packet.summary())
 
 
 
@@ -69,8 +103,8 @@ class AqwPacketLogger(Sniffer):
 
     aqw_servers = {
         "artix": "172.65.160.131",
-        "swordhaven (EU)": "172.65.207.70",
-        "yokai (SEA)": "172.65.236.72",
+        "swordhaven": "172.65.207.70",
+        "yokai": "172.65.236.72",
         "yorumi": "172.65.249.41",
         "twilly": "172.65.210.123",
         "safiria": "172.65.249.3",
@@ -83,31 +117,40 @@ class AqwPacketLogger(Sniffer):
         "sepulchure": "172.65.220.106"
     }
 
+    def get_servers(self):
+        return self.aqw_servers.copy()
+
     def __init__(self, server):
         server = self.aqw_servers.get(server, server)
-        super().__init__(f'tcp and src host {server}', packet_summary=False)
+        super().__init__(f'tcp and src host {server}')
 
     def log_packet(self, packet):
-        super().log_packet(packet=packet, has_raw=True)
+        if packet.haslayer(Raw):
+            super().log_packet(packet=packet)
+
+    def set_server(self, server):
+        server = self.aqw_servers.get(server, server)
+        bpf_filter = f'tcp and src host {server}'
+        super().set_bpf_filter(bpf_filter)
 
     def parse_packets_to_data(self, include=None, exclude=None, save=None):
 
         if include and exclude:
             raise ValueError("Cannot specify both 'include' and 'exclude'.")
 
-        buffer = str(self)
-        data = []
+        buffer = repr(self)
+        dataset = []
 
         while True:
             try:
                 json_string, buffer = str_to_json(buffer)
                 entry = loads(json_string)['b']['o']
                 if not (include or exclude) or (include and entry.get('cmd', '') in include) or (exclude and not entry.get('cmd', '') in exclude):
-                    data.append(entry)
+                    dataset.append(entry)
             except ValueError:
                 if save:
                     with open(save, "w") as outfile:
-                        for e in data:
+                        for e in dataset:
                             outfile.write(dumps(e) + '\n')
-                return data
+                return dataset
 
