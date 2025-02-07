@@ -1,63 +1,60 @@
-from packet_logger.sniffer import AqwPacketLogger
-from tester.tests import current_dir
-from packet_logger.aqw_info import servers
+from packet_logger.sniffer import AqwPacketLogger, Sniffer
 from threading import Thread
 from time import sleep
 from time import time as get_time
+from pynput.keyboard import Listener, Key
 
 
-def sniff_test(server=None, time=None, include=None, exclude=None):
-    if not server:
-        while True:
-            server = input('Server > ').lower()
-            if server in servers.keys():
-                break
-            else:
-                print('Invalid server name.')
-    elif server.lower() not in servers:
-        raise ValueError('Must be a valid server name.')
+def sniff_test(bpf_filter=None):
+    if not bpf_filter:
+        bpf_filter = input('BPF Filter > ').lower()
 
-    if not time:
-        while True:
-            time = float(input('Time (s) > '))
-            if isinstance(time, float) and time > 0:
-                break
-            else:
-                print('Invalid time.')
-    elif not isinstance(time, float) and time > 0:
-        raise ValueError('Time must be an int or float.')
+    sniffer = Sniffer(bpf_filter=bpf_filter)
+    sniffer.set_concurrent_packet_summary_on(True)
 
-    server = servers[server.lower()]
+    def on_release(key):
+        if key == Key.esc:
+            sniffer.stop()
+            return False
+
+    listener = Listener(on_release=on_release)
+    listener.start()
+    sniffer.run()
+
+    print(str(sniffer))
+
+
+def sniff_aqw_test(time=None, include=None, exclude=None):
+    server = input('Server > ').lower()
+    time = int(input('Time (s) > '))
+    print('')
+
     packet_logger = AqwPacketLogger(server=server)
     packet_logger.set_concurrent_packet_summary_on(True)
-    packet_logger.start(time=time)
-    results = packet_logger.parse_packets_to_data(save=current_dir + '\\logs\\' + 'sniffer_jsons.json', include=include, exclude=exclude)
-    print('')
-    for dictionary in results:
-        print(dictionary)
-    return results
+    packet_logger.start()
+
+    def timer():
+        sleep(time)
+        packet_logger.stop()
+
+    timer_thread = Thread(target=timer)
+    timer_thread.run()
+
+    results = packet_logger.parse_packets_to_data(include=include, exclude=exclude)
+    print('\nPrinting results:')
+    for i, dictionary in enumerate(results):
+        print(f'{i + 1} - {dictionary}')
 
 
 def drop_test():
     drops = {}
 
-    while True:
-        server = input('Server > ').lower()
-        if server in servers.keys():
-            server = servers[server.lower()]
-            break
-        else:
-            print('Invalid server name.')
-    while True:
-        time = int(input('Time (s) > '))
-        if isinstance(time, int) and time > 0:
-            break
-        else:
-            print('Invalid time.')
+    server = input('Server > ').lower()
+    time = int(input('Time (s) > '))
+    print('')
 
     packet_logger = AqwPacketLogger(server=server)
-    logger_thread = Thread(target=packet_logger.start, daemon=True)
-    logger_thread.start()
+    packet_logger.start()
 
     start_time = get_time()
     while True:
@@ -70,12 +67,10 @@ def drop_test():
         sleep(0.1)
 
     packet_logger.stop()
-    logger_thread.join()
 
     print('\nDrops:')
     for key in drops.keys():
         print(key + ':', drops[key])
-
 
 
 def interpret(drops, data):
@@ -89,8 +84,5 @@ def interpret(drops, data):
                 name = data.get('items').get(item_num).get('sName', None)
                 drops[item_num] = {'name': name, 'count': num}
     return drops
-
-
-drop_test()
 
 

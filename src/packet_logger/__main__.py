@@ -26,6 +26,7 @@ if __name__ == '__main__':
         for i, entry in enumerate(data):
             print(f'Entry {i}: {entry}')
         sleep(0.1)
-    sniffer.join()
+
+    sniffer.stop()
     listener.join()
     print('Ended.')

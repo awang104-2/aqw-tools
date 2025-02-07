@@ -1,1 +1,1 @@
-An autoclicker bot that completes quests for the player.
+A collection of various tools that can be used for AQW.
