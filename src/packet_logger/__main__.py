@@ -1,4 +1,4 @@
-from threading import Event
+from threads import Event
 from packet_logger.sniffer import AqwPacketLogger
 from pynput.keyboard import Listener, Key
 from time import sleep
