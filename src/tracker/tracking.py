@@ -1,5 +1,5 @@
 from packet_logger.sniffer import AqwPacketLogger
-from threading import Event, Thread
+from threads import Event, Thread
 from time import sleep
 
 

@@ -1,4 +1,5 @@
-from threading import Event, Timer
+from time import sleep
+from threads.custom_threads import *
 
 
 class Quest:
@@ -34,14 +35,23 @@ class Combat:
 
     classes = ['archmage', 'am', 'arcana invoker', 'ai']
 
-    def __init__(self, cls):
+    def __init__(self, cls, haste=0.5):
         if cls.lower() not in Combat.classes:
             raise ValueError('Find')
         self.cls = cls.lower()
-        self.info = {'1': {'cd': 1, 'status': Event()}, '2': {'cd': 1, 'status': Event()}, '3': {'cd': 1, 'status': Event()}, '4': {'cd': 1, 'status': Event()}, '5': {'cd': 1, 'status': Event()}}
-        self.combo = ['1', '2', '3', '4', '5']
-        self.rotation_type = 'rotation'
+        self.cd_reduction = 1 - haste
+        self.combo = ['4', '5', '2', '3', '1']
+        self.rotation_type = 'priority'
         self.kills = 0
+        self.gcd = 1.5
+        self.info = {
+            '1': {'cd': 1.5 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
+            '2': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
+            '3': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
+            '4': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
+            '5': {'cd': 12 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()}
+        }
+        self.__set_timers()
 
     def add_kills(self, data):
         if data.get('cmd') != 'addGoldExp':
@@ -51,19 +61,58 @@ class Combat:
     def get_kills(self):
         return self.kills
 
-    def get_move(self, move):
-        move = str(move)
-        return self.info.get(move, None)
+    def get_move(self, key):
+        key = str(key)
+        return self.info.get(key)
+
+    def increment_move(self):
+        key = self.combo[0]
+        if self.rotation_type == 'rotation':
+            self.combo = self.combo[1:] + [key]
+        return key
+
+    def check_moves(self):
+        for move in self.combo:
+            status = self.get_move(move).get('status')
+            if status.is_set():
+                return move
+        return None
+
+    def sleep_gcd(self):
+        sleep(self.gcd * self.cd_reduction)
+
+    def __set_timers(self):
+        for key in self.combo:
+            move = self.get_move(key)
+            status = move.get('status')
+            cooldown = move.get('cd')
+            timer = move.get('timer')
+            timer.set_parameters(cooldown, status.set, True, key)
 
     def fight(self):
-        move = self.combo[0]
-        status = self.info.get(move).get('status')
-        cooldown = self.info.get(move).get('cd')
-        status.wait()
-        self.combo = self.combo[1:] + [move]
-        Timer(cooldown, status.set).start()
-        status.clear()
-        return move
+        if self.rotation_type == 'rotation':
+            key = self.increment_move()
+            move = self.get_move(key)
+            status = move.get('status')
+            timer = move.get('timer')
+            timer.start()
+            status.wait()
+            status.clear()
+            return key
+        elif self.rotation_type == 'priority':
+            sleep(0.1)
+            key = self.check_moves()
+            if key:
+                move = self.get_move(key)
+                status = move.get('status')
+                timer = move.get('timer')
+                timer.start()
+                status.clear()
+                return key
+            else:
+                return None
+        else:
+            raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
 
 
 class Drops:
@@ -75,7 +124,7 @@ class Drops:
         if self.drops.get(item_id, None):
             self.drops[item_id]['count'] += iQty
         else:
-            self.drops[item_id] = {'name': name, 'count': num}
+            self.drops[item_id] = {'name': name, 'count': iQty}
 
     def get_drops(self):
         return self.drops.copy()
@@ -85,6 +134,8 @@ class Drops:
 
     def reset(self):
         self.drops = {}
+
+
 
 
 
