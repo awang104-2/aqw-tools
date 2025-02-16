@@ -5,6 +5,11 @@ from time import time as get_time
 from pynput.keyboard import Listener, Key
 
 
+def get_bpf_filter(server):
+    server = AqwPacketLogger.get_servers().get(server)
+    return f'tcp and src host {server}'
+
+
 def sniff_test(bpf_filter=None):
     if not bpf_filter:
         bpf_filter = input('BPF Filter > ').lower()
@@ -17,10 +22,11 @@ def sniff_test(bpf_filter=None):
             sniffer.stop()
             return False
 
+    print('\nPress \'esc\' to exit:')
+    sniffer.start()
     listener = Listener(on_release=on_release)
-    listener.start()
-    sniffer.run()
-
+    listener.run()
+    print('\nResults:')
     print(str(sniffer))
 
 

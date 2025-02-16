@@ -5,7 +5,7 @@ import time
 class AutoClicker:
 
     def __init__(self, title='GameLauncher on Artix Entertainment v.212'):
-        self.client = Application(backend='win32').connect(title=title, timeout=10)
+        self.client = Application(backend='win32').connect(title=title, timeout=5)
         self.ctrl = self.client.window(found_index=0)
 
     def click(self, coordinates):
@@ -49,7 +49,6 @@ class AutoClicker:
             self.ctrl.send_keystrokes(key)
 
         print("All keys released.")
-
 
 
 

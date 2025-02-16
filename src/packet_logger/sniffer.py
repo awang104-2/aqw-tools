@@ -61,9 +61,9 @@ class Sniffer:
 
     def stop(self, join=False):
         if self.running.is_set():
-            self.running.clear()
             if join:
                 self.sniff_thread.join()
+            self.running.clear()
 
     def sniff(self):
         self.running.set()
@@ -117,8 +117,9 @@ class AqwPacketLogger(Sniffer):
         "sepulchure": "172.65.220.106"
     }
 
-    def get_servers(self):
-        return self.aqw_servers.copy()
+    @staticmethod
+    def get_servers():
+        return AqwPacketLogger.aqw_servers.copy()
 
     def __init__(self, server):
         server = self.aqw_servers.get(server, server)
@@ -136,7 +137,7 @@ class AqwPacketLogger(Sniffer):
     def parse_packets_to_data(self, include=None, exclude=None, save=None):
 
         if include and exclude:
-            raise ValueError("Cannot specify both 'include' and 'exclude'.")
+            raise ValueError('Cannot specify both \'include\' and \'exclude\'.')
 
         buffer = repr(self)
         dataset = []
@@ -153,4 +154,10 @@ class AqwPacketLogger(Sniffer):
                         for e in dataset:
                             outfile.write(dumps(e) + '\n')
                 return dataset
+
+    def print_packets_as_data(self, include=None, exclude=None):
+        results = self.parse_packets_to_data(include=include, exclude=exclude)
+        print('\nPrinting results:')
+        for i, dictionary in enumerate(results):
+            print(f'{i + 1} - {dictionary}')
 
