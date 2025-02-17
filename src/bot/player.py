@@ -1,7 +1,7 @@
 from time import sleep
 from bot.autoclicker import AutoClicker
 from bot.game import Quest, Combat, Drops, CustomEvent
-from packet_logger.sniffer import AqwPacketLogger
+from packet_logger.sniffer import AqwPacketLogger, Interpreter
 
 
 class Player:
@@ -57,7 +57,7 @@ class AdvancedPlayer(Player):
         super().__init__(resolution, quest)
         self.fighting = CustomEvent(is_set=False)
 
-    def fight_continuously(self):
+    def start_fighting(self):
         if self.fighting.is_clear():
             self.__combat_loop()
 
@@ -66,7 +66,7 @@ class AdvancedPlayer(Player):
 
     def __combat_loop(self):
         self.fighting.set()
-        while self.fighting.is_set():
+        while self.is_fighting():
             self.fight()
 
     def turn_in_quests(self, n):
@@ -74,22 +74,55 @@ class AdvancedPlayer(Player):
         self.turn_in(n)
         self.toggle_log()
 
+    def is_fighting(self):
+        return self.fighting.is_set()
+
 
 class AutoPlayer(AdvancedPlayer):
 
     def __init__(self, resolution, quest, server):
         super().__init__(resolution, quest)
         self.logger = AqwPacketLogger(server)
-        self.running = CustomEvent(False)
+        self.interpreter = Interpreter(self, self.logger)
+        self.logger.set_concurrent_packet_summary_on(False)
+        self.__running = CustomEvent(False)
+
+    def live_print_on(self, status):
+        self.interpreter.set_printing(status)
+
+    def start_logger(self):
+        self.logger.start()
+
+    def start_interpreter(self):
+        self.interpreter.start()
+
+    def stop_logger(self):
+        self.logger.stop()
+
+    def stop_interpreter(self):
+        self.interpreter.stop()
 
     def run(self):
-        self.running.set()
-        self.logger.start()
-        self.fight_continuously()
-
-    def stop(self, print_logs=False):
+        self.__running.set()
+        self.start_logger()
+        self.start_interpreter()
+        self.start_fighting()
+        self.stop_logger()
+        self.stop_interpreter()
         self.stop_fighting()
-        self.logger.stop()
-        if print_logs:
-            self.logger.print_packets_as_data()
+        self.__running.clear()
+
+    def stop(self):
+        self.__running.clear()
+        if self.interpreter.is_running():
+            self.stop_interpreter()
+        if self.logger.is_running():
+            self.stop_logger()
+        if self.is_fighting():
+            self.stop_fighting()
+
+    def is_running(self):
+        return self.__running.is_set()
+
+
 

@@ -1,5 +1,5 @@
 from packet_logger.sniffer import AqwPacketLogger, Sniffer
-from threading import Thread
+from threading import Timer
 from time import sleep
 from time import time as get_time
 from pynput.keyboard import Listener, Key
@@ -30,21 +30,17 @@ def sniff_test(bpf_filter=None):
     print(str(sniffer))
 
 
-def sniff_aqw_test(time=None, include=None, exclude=None):
+def sniff_aqw_test(include=None, exclude=None):
     server = input('Server > ').lower()
     time = int(input('Time (s) > '))
     print('')
 
     packet_logger = AqwPacketLogger(server=server)
-    packet_logger.set_concurrent_packet_summary_on(True)
+    packet_logger.set_concurrent_packet_summary_on(False)
     packet_logger.start()
 
-    def timer():
-        sleep(time)
-        packet_logger.stop()
-
-    timer_thread = Thread(target=timer)
-    timer_thread.run()
+    timer = Timer(time, packet_logger.stop)
+    timer.run()
 
     results = packet_logger.parse_packets_to_data(include=include, exclude=exclude)
     print('\nPrinting results:')
@@ -91,4 +87,7 @@ def interpret(drops, data):
                 drops[item_num] = {'name': name, 'count': num}
     return drops
 
+
+if __name__ == '__main__':
+    sniff_aqw_test()
 
