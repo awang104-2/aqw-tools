@@ -99,7 +99,17 @@ class AqwPacketLogger(Sniffer):
     def get_servers():
         return AqwPacketLogger.aqw_servers.copy()
 
+    @staticmethod
+    def get_server_names():
+        return list(AqwPacketLogger.aqw_servers.keys())
+
+    @staticmethod
+    def get_server_ips():
+        return list(AqwPacketLogger.aqw_servers.values())
+
     def __init__(self, server):
+        if server not in self.get_server_names() and server not in self.get_server_ips():
+            raise ValueError('Not a valid server.')
         server = self.aqw_servers.get(server, server)
         super().__init__(f'tcp and src host {server}')
         self.buffer = ''
@@ -163,6 +173,9 @@ class AqwPacketLogger(Sniffer):
                         for e in dataset:
                             outfile.write(dumps(e) + '\n')
                 return dataset
+            except KeyError as e:
+                print('error -', json_string)
+                raise e
 
 
     def print_jsons(self, include=None, exclude=None):
@@ -179,7 +192,6 @@ class Interpreter:
         self.player = player
         self.__running = Event()
         self.interpret_thread = None
-        self.printing = Event()
         self.delay = delay
 
     def set_delay(self, delay):
@@ -190,30 +202,29 @@ class Interpreter:
         if not self.is_running():
             self.delay = None
 
-
-    def interpret(self, printing):
+    def interpret(self):
         dataset = self.logger.get_jsons()
         for data in dataset:
             cmd = data.get('cmd')
             match cmd:
                 case 'addItems' | 'dropItem':
-                    if printing:
-                        print(data)
+                    item_id = list(data.get('items').keys())[0]
+                    name = data.get('items').get(item_id).get('sName')
+                    iQty = data.get('items').get(item_id).get('iQty')
+                    self.player.add_drop(item_id, name, iQty)
+                    if cmd == 'addItems':
+                        iQtyNow = data.get('items').get(item_id).get('iQtyNow', None)
+                        if iQtyNow:
+                            self.player.set_inventory(item_id, iQtyNow)
 
     def __interpret_packets_loop(self):
         while self.logger.is_running() and self.is_running():
             if not self.delay:
                 self.logger.wait_for_packet()
-                self.interpret(self.printing.is_set())
+                self.interpret()
             else:
-                self.interpret(self.printing.is_set())
+                self.interpret()
                 sleep(self.delay)
-
-    def set_printing(self, status):
-        if status:
-            self.printing.set()
-        else:
-            self.printing.clear()
 
     def is_running(self):
         return self.__running.is_set()
@@ -229,3 +240,5 @@ class Interpreter:
 
     def stop(self):
         self.__running.clear()
+
+

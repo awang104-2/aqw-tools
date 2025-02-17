@@ -5,12 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="foo">
+      <change afterPath="$PROJECT_DIR$/src/app/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/__main__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/gui.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/bot/config/game.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/bot/gameconfig.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/complete.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/log_complete.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/quest_number.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/slider.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/turn_in.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/yes.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/nul_roulette/nul_energy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/relic_of_chaos.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/assets/2256x1504/quest/swindle/uni16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/packet_logger/__main__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/packet_logger/sniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/sniffer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,43 +88,45 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Python.DataHandler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ImageHandler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.__main__.executor&quot;: &quot;Run&quot;,
-    &quot;Python.autoclicker.executor&quot;: &quot;Run&quot;,
-    &quot;Python.bot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.bot_tests.executor&quot;: &quot;Run&quot;,
-    &quot;Python.css_assistant.executor&quot;: &quot;Run&quot;,
-    &quot;Python.custom_threads.executor&quot;: &quot;Run&quot;,
-    &quot;Python.data_grapher.executor&quot;: &quot;Run&quot;,
-    &quot;Python.game.executor&quot;: &quot;Run&quot;,
-    &quot;Python.image_tests.executor&quot;: &quot;Run&quot;,
-    &quot;Python.locate_on_screen_tester.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.manager_tester.executor&quot;: &quot;Run&quot;,
-    &quot;Python.monitor.executor&quot;: &quot;Run&quot;,
-    &quot;Python.packet_capture.executor&quot;: &quot;Run&quot;,
-    &quot;Python.player.executor&quot;: &quot;Run&quot;,
-    &quot;Python.screenshot_tester.executor&quot;: &quot;Run&quot;,
-    &quot;Python.sniffer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.sniffer_tests.executor&quot;: &quot;Run&quot;,
-    &quot;Python.tester.executor&quot;: &quot;Run&quot;,
-    &quot;Python.win32_tester.executor&quot;: &quot;Run&quot;,
-    &quot;Python.win32auto_tests.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;small-changes&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/awee2/PycharmProjects/n-body-simulation&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Python.DataHandler.executor": "Run",
+    "Python.ImageHandler.executor": "Run",
+    "Python.__main__.executor": "Run",
+    "Python.autoclicker.executor": "Run",
+    "Python.bot.executor": "Run",
+    "Python.bot_tests.executor": "Run",
+    "Python.css_assistant.executor": "Run",
+    "Python.custom_threads.executor": "Run",
+    "Python.data_grapher.executor": "Run",
+    "Python.game.executor": "Run",
+    "Python.gameconfig.executor": "Run",
+    "Python.gui.executor": "Run",
+    "Python.image_tests.executor": "Run",
+    "Python.locate_on_screen_tester.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.manager_tester.executor": "Run",
+    "Python.monitor.executor": "Run",
+    "Python.packet_capture.executor": "Run",
+    "Python.player.executor": "Run",
+    "Python.screenshot_tester.executor": "Run",
+    "Python.sniffer.executor": "Run",
+    "Python.sniffer_tests.executor": "Run",
+    "Python.tester.executor": "Run",
+    "Python.win32_tester.executor": "Run",
+    "Python.win32auto_tests.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "small-changes",
+    "last_opened_file_path": "C:/Users/awee2/PycharmProjects/n-body-simulation",
+    "settings.editor.selected.configurable": "configurable.group.tools"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;stardust.markdown.MarkdownSplitEditorSuppressor:keyList&quot;: []
+  "keyToStringList": {
+    "stardust.markdown.MarkdownSplitEditorSuppressor:keyList": []
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\awee2\PycharmProjects\aqw-tools" />
@@ -117,11 +136,11 @@
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\awee2\PycharmProjects\aqw-tools\src\bot" />
+      <recent name="C:\Users\awee2\PycharmProjects\aqw-tools\src\app" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\bot" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker" />
       <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src\packet_logger\config" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\src" />
-      <recent name="C:\Users\awee2\PycharmProjects\autoclicker\assets\2256x1504\quest\swindle" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -188,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739674722618</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="foo">
+      <option name="closed" value="true" />
+      <created>1739759746656</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1739759746656</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

@@ -1,35 +1,52 @@
 from time import sleep
 from threads.custom_threads import *
+from bot.gameconfig import QReqs
 
 
 class Quest:
 
-    def __init__(self, name=None, quest_id=None):
-        if not (quest_id or name):
-            raise ValueError('Must specify the quest ID or the name of the quest.')
-        self.requirements = {'6135': 1, '15385': 5}
+    def __init__(self, names=None, quest_ids=None):
+        self.requirements = {}
+        self.completed = {}
+        for name in names:
+            name = name.lower()
+            reqs = QReqs.requirements.get(name, 'unknown')
+            if reqs == 'unknown':
+                raise ValueError('Unknown quest.')
+            self.requirements[name] = reqs
+            self.completed[name] = 0
         self.quest_id = {'QuestID': 2566, 'sName': 'Nulgath\'s Roulette of Misfortune'}
 
-    def check_quest(self, drops):
-        for i, item_id in enumerate(list(self.requirements.keys())):
-            drop, requirement = drops.get_drop(item_id), self.requirements.get(item_id)
-            if drop and drop.get('count') >= requirement:
-                req_completed = int(drop.get('count') / requirement)
-                if i == 0:
-                    num_completed = req_completed
-                elif num_completed > req_completed:
-                    num_completed = req_completed
-                continue
-            else:
-                return False, 0
-        return True, num_completed
+    def get_quest_names(self):
+        return list(self.requirements.keys())
 
-    def turn_in(self, drops, num):
-        for i, item_id in enumerate(list(self.requirements.keys())):
-            requirement = drops.get_drop(item_id)
-            completed = requirement * num
-            drops[item_id] -= completed
-            
+    def check_quest(self, drops):
+        total_turn_ins = {}
+        for name in self.requirements.keys():
+            turn_ins = 0
+            item_ids = self.requirements.get(name).keys()
+            for i, item_id in enumerate(list(item_ids)):
+                drop, req, cap = drops.get_drop(item_id), self.requirements.get(item_id)[0], self.requirements.get(item_id)[1]
+                if not drop or drop - req * self.completed < cap:
+                    return turn_ins
+                else:
+                    req_done = int(drop.get('count') / req) - self.completed[name]
+                    if i == 0:
+                        turn_ins = int(drop.get('count') / req) - self.completed[name]
+                    elif turn_ins > req_done:
+                        turn_ins = req_done
+            total_turn_ins[name] = turn_ins
+            self.turn_in(name, turn_ins)
+        return total_turn_ins
+
+    def turn_in(self, name, num):
+        self.completed[name] += num
+
+    def get_req_ids(self):
+        item_ids = []
+        for name in self.get_quest_names():
+            item_ids += list(self.requirements.get(name).keys())
+        return item_ids
 
 class Combat:
 
@@ -115,16 +132,31 @@ class Combat:
             raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
 
 
-class Drops:
+class Inventory:
 
     def __init__(self):
+        self.inventory = {}
         self.drops = {}
 
-    def add(self, item_id, name, iQty):
-        if self.drops.get(item_id, None):
+    def set_inventory(self, item_id, iQtyNow):
+        self.inventory[item_id]['count'] = iQtyNow
+
+    def add(self, item_id, name, iQty, quest_reqs):
+        if self.drops.get(item_id, False):
             self.drops[item_id]['count'] += iQty
+            self.inventory[item_id]['count'] += iQty
         else:
             self.drops[item_id] = {'name': name, 'count': iQty}
+            self.inventory[item_id] = {'name': name, 'count': iQty}
+        if not self.drops.get(item_id).get('name'):
+            self.drops[item_id]['name'] = name
+            self.inventory[item_id]['name'] = name
+        return int(item_id) in quest_reqs
+
+
+
+    def subtract(self, item_id, iQty):
+        self.drops[item_id] -= iQty
 
     def get_drops(self):
         return self.drops.copy()
@@ -132,8 +164,15 @@ class Drops:
     def get_drop(self, item_id):
         return self.drops.get(item_id, None)
 
+    def get_inventory(self):
+        return self.inventory.copy()
+
     def reset(self):
-        self.drops = {}
+        for key in self.inventory.keys():
+            self.inventory[key]['count'] = 0
+        for key in self.drops.keys():
+            self.drops[key]['count'] = 0
+
 
 
 
