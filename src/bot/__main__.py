@@ -5,11 +5,12 @@ from pynput.keyboard import Key, Listener
 def on_press(key, player):
     if key == Key.esc:
         player.stop()
+        print(f'\nDrops: {player.get_drops()}')
         return False
 
 
 def run_listener(player):
-    listener = Listener(on_press=on_press, args=[player])
+    listener = Listener(on_press=lambda key: on_press(key, player))
     listener.start()
 
 

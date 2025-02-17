@@ -1,7 +1,8 @@
 from time import sleep
 from bot.autoclicker import AutoClicker
-from bot.game import Quest, Combat, Drops, CustomEvent
+from bot.game import Quest, Combat, Inventory, CustomEvent
 from packet_logger.sniffer import AqwPacketLogger, Interpreter
+from threading import Thread
 
 
 class Player:
@@ -12,17 +13,23 @@ class Player:
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1200, 750)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
-    def __init__(self, resolution, quest):
+    def __init__(self, resolution, quests):
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
-        self.quest = Quest(quest)
+        self.quest = Quest(quests)
         self.combat = Combat(cls='ai')
-        self.drops = Drops()
-        self.sniffer = AqwPacketLogger(server='twig')
+        self.drops = Inventory()
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(resolution)
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(resolution)
         self.log_on = False
+
+    def add_drop(self, item_id, name, iQty=1):
+        quest_reqs = self.quest.get_req_ids()
+        return self.drops.add(item_id, name, iQty, quest_reqs)
+
+    def set_inventory(self, item_id, iQtyNow):
+        self.drops.set_inventory(item_id, iQtyNow)
 
     def fight(self):
         move = self.combat.fight()
@@ -32,7 +39,11 @@ class Player:
 
     def acc_item(self):
         self.autoclicker.click(self.acc_item_loc)
-        sleep(0.2)
+        sleep(0.5)
+
+    def click_quest(self):
+        self.autoclicker.click(self.quest_loc)
+        sleep(0.75)
 
     def turn_in(self, n):
         self.quest.turn_in(self.drops, n)
@@ -50,12 +61,32 @@ class Player:
     def get_drops(self):
         return self.drops.get_drops()
 
+    def get_inventory(self):
+        return self.drops.get_inventory()
+
 
 class AdvancedPlayer(Player):
 
-    def __init__(self, resolution, quest):
-        super().__init__(resolution, quest)
+    def __init__(self, resolution, quests, server):
+        super().__init__(resolution, quests)
+        self.sniffer = AqwPacketLogger(server=server)
         self.fighting = CustomEvent(is_set=False)
+        self.pause_fight = CustomEvent(is_set=False)
+
+    def add_drop(self, item_id, name, iQty=1):
+        if super().add_drop(item_id, name, iQty):
+            self.acc_item()
+            turn_ins = self.quest.check_quest(self.drops)
+            if any(x > 0 for x in list(turn_ins.values())):
+                self.pause_fighting()
+                self.toggle_log()
+                for ti in list(turn_ins.values):
+                    if ti == 0:
+                        continue
+                    self.click_quest()
+                    self.turn_in(ti)
+                self.toggle_log()
+                self.pause_fighting()
 
     def start_fighting(self):
         if self.fighting.is_clear():
@@ -66,8 +97,21 @@ class AdvancedPlayer(Player):
 
     def __combat_loop(self):
         self.fighting.set()
+        self.pause_fight.clear()
         while self.is_fighting():
             self.fight()
+            self.pause_fight.wait_for_clear()
+
+    def pause_fighting(self):
+        if self.pause_fight.is_set():
+            self.pause_fight.clear()
+        else:
+            self.pause_fight.set()
+
+    def change_server(self, server):
+        if self.sniffer.is_running():
+            raise RuntimeError('Cannot switch servers while logging packets.')
+        self.sniffer = AqwPacketLogger(server=server)
 
     def turn_in_quests(self, n):
         self.toggle_log()
@@ -80,44 +124,45 @@ class AdvancedPlayer(Player):
 
 class AutoPlayer(AdvancedPlayer):
 
-    def __init__(self, resolution, quest, server):
-        super().__init__(resolution, quest)
-        self.logger = AqwPacketLogger(server)
-        self.interpreter = Interpreter(self, self.logger)
-        self.logger.set_concurrent_packet_summary_on(False)
+    def __init__(self, resolution, quests, server):
+        super().__init__(resolution, quests, server)
+        self.interpreter = Interpreter(self, self.sniffer)
+        self.sniffer.set_concurrent_packet_summary_on(False)
         self.__running = CustomEvent(False)
+        self.player_thread = None
 
-    def live_print_on(self, status):
-        self.interpreter.set_printing(status)
-
-    def start_logger(self):
-        self.logger.start()
+    def start_sniff(self):
+        self.sniffer.start()
 
     def start_interpreter(self):
         self.interpreter.start()
 
-    def stop_logger(self):
-        self.logger.stop()
+    def stop_sniff(self):
+        self.sniffer.stop()
 
     def stop_interpreter(self):
         self.interpreter.stop()
 
     def run(self):
         self.__running.set()
-        self.start_logger()
+        self.start_sniff()
         self.start_interpreter()
         self.start_fighting()
-        self.stop_logger()
+        self.stop_sniff()
         self.stop_interpreter()
         self.stop_fighting()
         self.__running.clear()
+
+    def start(self):
+        self.player_thread = Thread(target=self.run, daemon=True)
+        self.player_thread.start()
 
     def stop(self):
         self.__running.clear()
         if self.interpreter.is_running():
             self.stop_interpreter()
-        if self.logger.is_running():
-            self.stop_logger()
+        if self.sniffer.is_running():
+            self.stop_sniff()
         if self.is_fighting():
             self.stop_fighting()
 
