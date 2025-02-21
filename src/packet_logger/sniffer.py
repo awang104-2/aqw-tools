@@ -37,26 +37,26 @@ class Sniffer:
         self.packets = Queue()
         self.summary = Event()
         self.running = Event()
-        self.sniff_thread = None
+        self.__sniff_thread = None
         self.__receiving_packet = Event()
 
     def set_bpf_filter(self, bpf_filter):
         self.filter = bpf_filter
 
     def start(self):
-        self.sniff_thread = Thread(target=self.run, daemon=True)
-        self.sniff_thread.start()
+        self.__sniff_thread = Thread(target=self.run, daemon=True)
+        self.__sniff_thread.start()
 
     def run(self):
         self.running.set()
-        self.sniff_thread = Thread(target=self.sniff)
-        self.sniff_thread.run()
+        self.__sniff_thread = Thread(target=self.sniff)
+        self.__sniff_thread.run()
         self.running.clear()
 
     def stop(self, join=False):
         if self.running.is_set():
             if join:
-                self.sniff_thread.join()
+                self.__sniff_thread.join()
             self.running.clear()
 
     def sniff(self):
@@ -87,7 +87,7 @@ class Sniffer:
         self.summary = Event()
         self.running = Event()
         self.__receiving_packet = Event()
-        self.sniff_thread = None
+        self.__sniff_thread = None
 
 
 class AqwPacketLogger(Sniffer):
@@ -191,7 +191,7 @@ class Interpreter:
         self.logger = logger
         self.player = player
         self.__running = Event()
-        self.interpret_thread = None
+        self.__interpret_thread = None
         self.delay = delay
 
     def set_delay(self, delay):
@@ -216,6 +216,9 @@ class Interpreter:
                         iQtyNow = data.get('items').get(item_id).get('iQtyNow', None)
                         if iQtyNow:
                             self.player.set_inventory(item_id, iQtyNow)
+                case 'addGoldExp':
+                    if data.get('id'):
+                        self.player.kill()
 
     def __interpret_packets_loop(self):
         while self.logger.is_running() and self.is_running():
@@ -235,8 +238,8 @@ class Interpreter:
         self.__running.clear()
 
     def start(self):
-        self.interpret_thread = Thread(target=self.run)
-        self.interpret_thread.start()
+        self.__interpret_thread = Thread(target=self.run)
+        self.__interpret_thread.start()
 
     def stop(self):
         self.__running.clear()

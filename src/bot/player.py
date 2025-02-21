@@ -3,6 +3,7 @@ from bot.autoclicker import AutoClicker
 from bot.game import Quest, Combat, Inventory, CustomEvent
 from packet_logger.sniffer import AqwPacketLogger, Interpreter
 from threading import Thread
+from stats.binomial_distribution import p_estimate
 
 
 class Player:
@@ -13,15 +14,17 @@ class Player:
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1200, 750)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
-    def __init__(self, resolution, quests):
+    def __init__(self, resolution, quests, location='battleon'):
+        self.resolution = resolution
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
+        self.location = location
         self.quest = Quest(quests)
         self.combat = Combat(cls='ai')
         self.drops = Inventory()
-        self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
-        self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(resolution)
-        self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(resolution)
+        self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
+        self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)
+        self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
         self.log_on = False
 
     def add_drop(self, item_id, name, iQty=1):
@@ -64,14 +67,31 @@ class Player:
     def get_inventory(self):
         return self.drops.get_inventory()
 
+    def kill(self):
+        self.combat.add_kills(1)
+
+    def get_sample_probability(self, item_ids=None):
+        probabilities = {}
+        drops = self.drops.get_drops()
+        if not item_ids or item_ids == []:
+            item_ids = list(drops.keys())
+        for item_id in item_ids:
+            name = drops.get('name')
+            count = drops.get(item_id).get('count')
+            if name:
+                probabilities[name] = count
+            else:
+                probabilities[item_id] = count
+        return probabilities
+
 
 class AdvancedPlayer(Player):
 
     def __init__(self, resolution, quests, server):
         super().__init__(resolution, quests)
         self.sniffer = AqwPacketLogger(server=server)
-        self.fighting = CustomEvent(is_set=False)
-        self.pause_fight = CustomEvent(is_set=False)
+        self.__fighting = CustomEvent(is_set=False)
+        self.__pause_fight = CustomEvent(is_set=False)
 
     def add_drop(self, item_id, name, iQty=1):
         if super().add_drop(item_id, name, iQty):
@@ -89,24 +109,24 @@ class AdvancedPlayer(Player):
                 self.pause_fighting()
 
     def start_fighting(self):
-        if self.fighting.is_clear():
+        if self.__fighting.is_clear():
             self.__combat_loop()
 
     def stop_fighting(self):
-        self.fighting.clear()
+        self.__fighting.clear()
 
     def __combat_loop(self):
-        self.fighting.set()
-        self.pause_fight.clear()
+        self.__fighting.set()
+        self.__pause_fight.clear()
         while self.is_fighting():
             self.fight()
-            self.pause_fight.wait_for_clear()
+            self.__pause_fight.wait_for_clear()
 
     def pause_fighting(self):
-        if self.pause_fight.is_set():
-            self.pause_fight.clear()
+        if self.__pause_fight.is_set():
+            self.__pause_fight.clear()
         else:
-            self.pause_fight.set()
+            self.__pause_fight.set()
 
     def change_server(self, server):
         if self.sniffer.is_running():
@@ -119,7 +139,7 @@ class AdvancedPlayer(Player):
         self.toggle_log()
 
     def is_fighting(self):
-        return self.fighting.is_set()
+        return self.__fighting.is_set()
 
 
 class AutoPlayer(AdvancedPlayer):
@@ -128,8 +148,8 @@ class AutoPlayer(AdvancedPlayer):
         super().__init__(resolution, quests, server)
         self.interpreter = Interpreter(self, self.sniffer)
         self.sniffer.set_concurrent_packet_summary_on(False)
-        self.__running = CustomEvent(False)
-        self.player_thread = None
+        self.running = CustomEvent(False)
+        self.__player_thread = None
 
     def start_sniff(self):
         self.sniffer.start()
@@ -144,21 +164,21 @@ class AutoPlayer(AdvancedPlayer):
         self.interpreter.stop()
 
     def run(self):
-        self.__running.set()
+        self.running.set()
         self.start_sniff()
         self.start_interpreter()
         self.start_fighting()
         self.stop_sniff()
         self.stop_interpreter()
         self.stop_fighting()
-        self.__running.clear()
+        self.running.clear()
 
     def start(self):
-        self.player_thread = Thread(target=self.run, daemon=True)
-        self.player_thread.start()
+        self.__player_thread = Thread(target=self.run, daemon=True)
+        self.__player_thread.start()
 
     def stop(self):
-        self.__running.clear()
+        self.running.clear()
         if self.interpreter.is_running():
             self.stop_interpreter()
         if self.sniffer.is_running():
@@ -167,7 +187,7 @@ class AutoPlayer(AdvancedPlayer):
             self.stop_fighting()
 
     def is_running(self):
-        return self.__running.is_set()
+        return self.running.is_set()
 
 
 
