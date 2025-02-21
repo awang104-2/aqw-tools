@@ -5,29 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ffcc223-8062-4803-aed5-1ba2a40dc9d9" name="Changes" comment="foo">
-      <change afterPath="$PROJECT_DIR$/src/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/__main__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/gui.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/bot/config/game.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/bot/gameconfig.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/complete.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/log_complete.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/quest_number.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/slider.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/turn_in.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/general/yes.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/nul_roulette/nul_energy.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/relic_of_chaos.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/1920x1080/quest/supplies/swindle/uni9.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bot/assets/2256x1504/quest/swindle/uni16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bot/gameconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/gameconfig.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bot/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bot/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/config/aqw_info.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/packet_logger/sniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/packet_logger/sniffer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/tester/tests/sniffer_tests.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,6 +82,7 @@
     "Python.ImageHandler.executor": "Run",
     "Python.__main__.executor": "Run",
     "Python.autoclicker.executor": "Run",
+    "Python.binomial_distribution.executor": "Run",
     "Python.bot.executor": "Run",
     "Python.bot_tests.executor": "Run",
     "Python.css_assistant.executor": "Run",
@@ -215,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739759746656</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="foo">
+      <option name="closed" value="true" />
+      <created>1739790414422</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1739790414422</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

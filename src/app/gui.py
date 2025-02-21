@@ -78,6 +78,7 @@ class Menu:
             self.bot.stop()
             print('Drops -', self.bot.get_drops())
             print('Inventory -', self.bot.get_inventory())
+            print()
             self.bot = None
         self.button.config(text='Start', command=self.selection)
 

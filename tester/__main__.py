@@ -29,7 +29,7 @@ def run_test(choice):
             autoclicker_tests.click_test()
         case 5:
             server = input('Server > ')
-            bpf_filter = sniffer_tests.get_bpf_filter(server)
+            bpf_filter = sniffer_tests.get_bpf_filter('tcp and src host', server)
             sniffer_tests.sniff_test(bpf_filter)
         case 6:
             bot_tests.bot_test()
