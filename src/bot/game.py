@@ -24,15 +24,17 @@ class Quest:
         total_turn_ins = {}
         for name in self.requirements.keys():
             turn_ins = 0
-            item_ids = self.requirements.get(name).keys()
+            item_reqs = self.requirements.get(name)
+            item_ids = item_reqs.keys()
             for i, item_id in enumerate(list(item_ids)):
-                drop, req, cap = drops.get_drop(item_id), self.requirements.get(item_id)[0], self.requirements.get(item_id)[1]
-                if not drop or drop - req * self.completed < cap:
-                    return turn_ins
+                drop, req, cap = drops.get_drop(item_id), item_reqs.get(item_id)[0], item_reqs.get(item_id)[1]
+                if not drop or drop.get('count') - req * self.completed.get(name) < cap:
+                    turn_ins = 0
+                    break
                 else:
-                    req_done = int(drop.get('count') / req) - self.completed[name]
+                    req_done = int(drop.get('count') / req) - self.completed.get(name)
                     if i == 0:
-                        turn_ins = int(drop.get('count') / req) - self.completed[name]
+                        turn_ins = int(drop.get('count') / req) - self.completed.get(name)
                     elif turn_ins > req_done:
                         turn_ins = req_done
             total_turn_ins[name] = turn_ins
@@ -70,10 +72,8 @@ class Combat:
         }
         self.__set_timers()
 
-    def add_kills(self, data):
-        if data.get('cmd') != 'addGoldExp':
-            raise ValueError(f'Wrong JSON type: {data.get('cmd')}')
-        self.kills += 1
+    def add_kills(self, n):
+        self.kills += n
 
     def get_kills(self):
         return self.kills
@@ -151,7 +151,7 @@ class Inventory:
         if not self.drops.get(item_id).get('name'):
             self.drops[item_id]['name'] = name
             self.inventory[item_id]['name'] = name
-        return int(item_id) in quest_reqs
+        return item_id in quest_reqs
 
 
 
