@@ -1,1 +1,1 @@
-A collection of various tools that can be used for AQW.
+A collection of various tools that can be used for AQW. This project relies on packet sniffing; please visit https://npcap.com/#download and follow the instructions to download npcap separately. This project is for educational purposes and use only.
