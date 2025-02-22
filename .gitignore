@@ -6,6 +6,7 @@ __pycache__/
 
 # Virtual environment
 venv/
+.venv/
 .env/
 
 # Distribution / packaging
@@ -14,6 +15,6 @@ dist/
 build/
 
 # IDE/editor settings
+idea/
 .vscode/
 .idea/
-idea/
