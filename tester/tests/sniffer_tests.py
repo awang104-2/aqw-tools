@@ -4,7 +4,7 @@ from time import sleep
 from time import time as get_time
 from pynput.keyboard import Listener, Key
 from bot.autoclicker import AutoClicker
-from tkinter import Toplevel, Label, Button, Tk
+from tkinter import Label, Button, Tk
 
 
 def popup_window():
