@@ -1,5 +1,5 @@
 from packet_logger.sniffer import AqwPacketLogger
-from threads import Event, Thread
+from threading import Event, Thread
 from time import sleep
 
 
@@ -28,7 +28,7 @@ class Tracker:
     def track(self):
         self.running.set()
         while self.running.is_set():
-            dataset = self.logger.parse_packets_to_data(include=self.data_types)
+            dataset = self.logger.get_jsons(include=self.data_types)
             for data in dataset:
                 self.interpret(data)
             sleep(0.1)
