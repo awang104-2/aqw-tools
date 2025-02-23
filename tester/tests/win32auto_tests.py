@@ -1,5 +1,8 @@
 from time import sleep
+
+from pywinauto import Application
 from pywinauto.keyboard import send_keys
+from handlers.Win32Handler import list_windows
 
 
 def list_windows_test():

@@ -4,7 +4,8 @@ from time import sleep
 from time import time as get_time
 from pynput.keyboard import Listener, Key
 from bot.autoclicker import AutoClicker
-from tkinter import Toplevel, Label, Button, Tk
+from tkinter import Label, Button, Tk
+from handlers.DataHandler import add_to_csv_column, add_data_to_csv
 
 
 def popup_window():
@@ -14,6 +15,9 @@ def popup_window():
     label.pack(fill='x', padx=50, pady=5)
     button_close = Button(window, text="Ok", command=window.destroy)
     button_close.pack(fill='x')
+    geometry = '300x150+' + str(int(window.winfo_screenwidth() / 2) - 150) + '+' + str(int(window.winfo_screenheight() / 2)- 150)
+    print(geometry)
+    window.geometry(geometry)
     window.mainloop()
 
 
@@ -24,29 +28,34 @@ def combat_loop(packet_logger, combo=('1', '2', '3', '4', '5')):
             autoclicker.press(key)
             sleep(0.1)
 
-def combat_sample_test():
-    server = input('Server > ').lower()
-    time = int(input('Time (s) > '))
-    auto_combat = input('Yes or No > ').lower()
-    match auto_combat:
-        case 'yes':
-            auto_combat = True
-            combo = tuple(input('Combo, split with commas > ').split(','))
-        case 'no':
-            auto_combat = False
-    print('')
+def combat_sample_test(server=None, time=None, combo=None, count=None):
+    if not server:
+        server = input('Server > ').lower()
+    if not time:
+        time = int(input('Time (s) > '))
+    if not combo:
+        auto_combat = input('Yes or No > ').lower()
+        match auto_combat:
+            case 'yes':
+                auto_combat = True
+                combo = tuple(input('Combo, split with commas > ').split(','))
+            case 'no':
+                auto_combat = False
+    else:
+        auto_combat=True
 
     packet_logger = AqwPacketLogger(server=server)
     packet_logger.set_concurrent_packet_summary_on(False)
     packet_logger.start()
 
+    start = get_time()
     timer = Timer(time, packet_logger.stop)
     if auto_combat:
         timer.start()
         combat_loop(packet_logger, combo)
     else:
         timer.run()
-
+    end = get_time()
     player_total = 0
     player_hit = 0
     player_crit = 0
@@ -79,6 +88,9 @@ def combat_sample_test():
             elif hit_type == 'miss':
                 player_miss += 1
                 player_total += 1
+        if player_total == count:
+            break
+    '''
     for result in results:
         infos = result.get('sara')
         if not infos:
@@ -98,26 +110,34 @@ def combat_sample_test():
                 case 'miss':
                     monster_miss += 1
                     monster_total += 1
+        if monster_total == count:
+            break
+    '''
+    print(f'\nTime Passed: {round(end - start, 2)}s')
     print('\n-------Player-------')
     print('Total:', player_total)
     print('Hit:', player_hit)
     print('Crit:', player_crit)
     print('Dodge:', player_dodge)
     print('Miss:', player_miss)
-    print('\nProbability:')
+    print('**Probability**')
     print('Crit:', player_crit / player_total)
     print('Dodge:', player_dodge / player_total)
     print('Miss:', player_miss / player_total)
-    print('\n\n-------Monster-------')
+    '''
+    print('-------Monster-------')
     print('Total:', monster_total)
     print('Hit:', monster_hit)
     print('Crit:', monster_crit)
     print('Dodge:', monster_dodge)
     print('Miss:', monster_miss)
-    print('\nProbability:')
+    print('**Probability**')
     print('Crit:', monster_crit / monster_total)
     print('Dodge:', monster_dodge / monster_total)
     print('Miss:', monster_miss / monster_total)
+    print('')
+    '''
+    return {'p': {'hit': [player_hit], 'crit': [player_crit], 'dodge': [player_dodge], 'miss': [player_miss], 'total': [player_total], 'p': [player_crit / player_total]}}
 
 
 def get_bpf_filter(bpf, server):
@@ -205,5 +225,8 @@ def interpret(drops, data):
 
 if __name__ == '__main__':
     # sniff_aqw_test()
-    combat_sample_test()
+    sample_data = combat_sample_test(time=3000, server='twig', combo=('5', '3', '2', '1'), count=2000)
+    sample_data['p']['level'] = '34'
+    sample_data['p']['class'] = 'Enforcer'
+    add_data_to_csv('combat_sample_data.csv', './', sample_data.get('p'))
     popup_window()
