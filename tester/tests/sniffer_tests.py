@@ -12,9 +12,9 @@ def popup_window():
     window = Tk()
     window.attributes('-topmost', True)
     label = Label(window, text="Testing finished.")
-    label.pack(fill='x', padx=50, pady=5)
+    label.pack(fill='x')
     button_close = Button(window, text="Ok", command=window.destroy)
-    button_close.pack(fill='x')
+    button_close.pack(side='bottom', pady=10)
     geometry = '300x150+' + str(int(window.winfo_screenwidth() / 2) - 150) + '+' + str(int(window.winfo_screenheight() / 2)- 150)
     print(geometry)
     window.geometry(geometry)
@@ -225,8 +225,9 @@ def interpret(drops, data):
 
 if __name__ == '__main__':
     # sniff_aqw_test()
-    sample_data = combat_sample_test(time=3000, server='twig', combo=('5', '3', '2', '1'), count=2000)
-    sample_data['p']['level'] = '34'
-    sample_data['p']['class'] = 'Enforcer'
+    sample_data = combat_sample_test(time=1500, server='twig', combo=('3', '5', '4', '2'), count=2000)
+    sample_data['p']['level'] = '100'
+    sample_data['p']['class'] = 'Swordmaster'
+    sample_data['p']['pexp'] = 0.4164
     add_data_to_csv('combat_sample_data.csv', './', sample_data.get('p'))
     popup_window()
