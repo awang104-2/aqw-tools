@@ -3,7 +3,6 @@ from bot.autoclicker import AutoClicker
 from bot.game import Quest, Combat, Inventory, CustomEvent
 from packet_logger.sniffer import AqwPacketLogger, Interpreter
 from threading import Thread
-from stats.binomial_distribution import p_estimate
 
 
 class Player:
@@ -20,7 +19,7 @@ class Player:
         self.hwnd = self.autoclicker.get_hwnd()
         self.location = location
         self.quest = Quest(quests)
-        self.combat = Combat(cls='ai')
+        self.combat = Combat(cls='lr')
         self.drops = Inventory()
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)

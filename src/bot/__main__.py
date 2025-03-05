@@ -1,5 +1,6 @@
 from bot.player import AutoPlayer
 from pynput.keyboard import Key, Listener
+import threading
 
 
 def on_press(key, player):
@@ -16,8 +17,9 @@ def run_listener(player):
 
 if __name__ == '__main__':
     resolution = input('Resolution > ')
-    quest = input('Quest > ')
+    quest = input('Quest > ').split(',')
     server = input('Server > ')
     bot = AutoPlayer(resolution, quest, server)
     run_listener(bot)
     bot.run()
+
