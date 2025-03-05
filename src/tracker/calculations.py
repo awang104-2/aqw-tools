@@ -43,10 +43,11 @@ def run_fits():
 
 def run_test():
     df = load_csv_as_dataframe('combat_sample_data.csv', '../../tester/tests')
+    xdata, ydata = (df.get('pexp').values, df.get('level').values), df.get('p').values
+    a, b, c = get_fit_params(multivar, xdata, ydata)
+    print(f'{a:.5} * p + {b:.4} * levels + {c:.4}')
     for index in range(len(df)):
         ''''''
-        xdata, ydata = (df.get('pexp').values, df.get('level').values), df.get('p').values
-        a, b, c = get_fit_params(multivar, xdata, ydata)
         x = df.get('pexp').values[index], df.get('level').values[index]
         p = multivar(x, a, b, c)
         '''
@@ -57,7 +58,7 @@ def run_test():
         '''
         k, n = df.get('crit').values[index], df.get('total').values[index]
         pvalue = t_test(k, n, p).pvalue
-        print(pvalue > 0.05)
+        print(f'{p} - {ydata[index]} - {pvalue > 0.05}')
 
 
 run_test()
