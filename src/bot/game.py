@@ -1,6 +1,7 @@
 from time import sleep
 from threads.custom_threads import *
-from bot.gameconfig import QReqs
+import tomllib
+import os
 
 
 class Quest:
@@ -8,14 +9,13 @@ class Quest:
     def __init__(self, names=None, quest_ids=None):
         self.requirements = {}
         self.completed = {}
+        path = os.path.join(os.path.dirname(__file__), 'config', 'quests.toml')
+        with open(path, 'rb') as f:
+            config = tomllib.load(f)
         for name in names:
-            name = name.lower()
-            reqs = QReqs.requirements.get(name, 'unknown')
-            if reqs == 'unknown':
-                raise ValueError('Unknown quest.')
-            self.requirements[name] = reqs
+            name = name.upper()
+            self.requirements[name] = config[name]
             self.completed[name] = 0
-        self.quest_id = {'QuestID': 2566, 'sName': 'Nulgath\'s Roulette of Misfortune'}
 
     def get_quest_names(self):
         return list(self.requirements.keys())
@@ -52,12 +52,12 @@ class Quest:
 
 class Combat:
 
-    classes = ['archmage', 'am', 'arcana invoker', 'ai']
+    classes = ['archmage', 'am', 'arcana invoker', 'ai', 'legion revenant', 'lr']
 
     def __init__(self, cls, haste=0.5):
-        if cls.lower() not in Combat.classes:
-            raise ValueError('Find')
         self.cls = cls.lower()
+        if self.cls not in Combat.classes:
+            raise ValueError('Class not found.')
         self.cd_reduction = 1 - haste
         self.combo = ['4', '5', '2', '3', '1']
         self.rotation_type = 'priority'
