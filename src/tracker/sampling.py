@@ -108,11 +108,11 @@ def run_test(lvl, cls, pexp, server, time, combo, count, filename, location):
 
 if __name__ == '__main__':
     lvl = 100
-    cls = 'lightcaster'
-    pexp = 0.4933
+    cls = 'archmage'
+    pexp = 0.5933
     server = 'twig'
-    time = 300
-    combo = ['2', '5']
+    time = 1200
+    combo = ['2', '3', '4']
     count = 2000
     filename = 'combat_sample_data.csv'
     location = '../../tester/tests'
