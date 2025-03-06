@@ -3,8 +3,6 @@ from threading import Timer
 from time import sleep
 from time import time as get_time
 from pynput.keyboard import Listener, Key
-from bot.autoclicker import AutoClicker
-from handlers.DataHandler import add_to_csv_column, add_data_to_csv
 
 
 def get_bpf_filter(bpf, server):
