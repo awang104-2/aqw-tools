@@ -59,10 +59,10 @@ class Combat:
         if self.cls not in Combat.classes:
             raise ValueError('Class not found.')
         self.cd_reduction = 1 - haste
-        self.combo = ['4', '5', '2', '3', '1']
+        self.combo = ['4', '5', '2', '3']
         self.rotation_type = 'priority'
         self.kills = 0
-        self.gcd = 1.5
+        self.gcd = 1.6
         self.info = {
             '1': {'cd': 1.5 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
             '2': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},

@@ -1,6 +1,5 @@
 from bot.player import AutoPlayer
 from pynput.keyboard import Key, Listener
-import threading
 
 
 def on_press(key, player):
