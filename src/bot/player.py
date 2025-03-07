@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 from bot.autoclicker import AutoClicker
 from bot.game import Quest, Combat, Inventory, CustomEvent
 from packet_logger.sniffer import AqwPacketLogger, Interpreter
@@ -8,25 +8,27 @@ from threading import Thread
 class Player:
 
     ITEM_ACCEPT_LOCATIONS = {'2256x1504': (1300, 1150)}
-    QUEST_LOG_LOCATIONS = {'2256x1504': [(500, 400)]}
+    QUEST_LOG_LOCATIONS = {'2256x1504': (500, 400)}
     TURN_IN_LOCATIONS = {'2256x1504': (500, 1100)}
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1200, 750)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
-    def __init__(self, resolution, quests, location='battleon'):
+    def __init__(self, resolution, quests, location='battleon', haste=0.5):
         self.resolution = resolution
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
         self.location = location
         self.quest = Quest(quests)
-        self.combat = Combat(cls='lr')
+        self.combat = Combat(cls='lr', haste=haste)
         self.drops = Inventory()
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
         self.log_on = False
+        self.start_t = time()
+        self.end_t = time()
 
-    def add_drop(self, item_id, name, iQty=1):
+    def add_drop(self, item_id, name, iQty=1, is_drop=False):
         quest_reqs = self.quest.get_req_ids()
         return self.drops.add(item_id, name, iQty, quest_reqs)
 
@@ -36,7 +38,10 @@ class Player:
     def fight(self):
         move = self.combat.fight()
         if move:
+            self.end_t = time()
+            print(f'Move: {move} - CD: {self.end_t - self.start_t:.5f}')
             self.autoclicker.press(move)
+            self.start_t = time()
             self.combat.sleep_gcd()
 
     def acc_item(self):
@@ -48,7 +53,6 @@ class Player:
         sleep(0.75)
 
     def turn_in(self, n):
-        self.quest.turn_in(self.drops, n)
         self.autoclicker.click(self.turn_in_loc)
         sleep(0.75)
 
@@ -83,23 +87,27 @@ class Player:
                 probabilities[item_id] = count
         return probabilities
 
+    def print_inventory(self):
+        print(str(self.drops))
+
 
 class AdvancedPlayer(Player):
 
-    def __init__(self, resolution, quests, server):
-        super().__init__(resolution, quests)
+    def __init__(self, resolution, quests, server, haste=0.5):
+        super().__init__(resolution, quests, haste=haste)
         self.sniffer = AqwPacketLogger(server=server)
         self.__fighting = CustomEvent(is_set=False)
         self.__pause_fight = CustomEvent(is_set=False)
 
-    def add_drop(self, item_id, name, iQty=1):
+    def add_drop(self, item_id, name, iQty=1, is_drop=False):
         if super().add_drop(item_id, name, iQty):
-            self.acc_item()
+            if is_drop:
+                self.acc_item()
             turn_ins = self.quest.check_quest(self.drops)
             if any(x > 0 for x in list(turn_ins.values())):
                 self.pause_fighting()
                 self.toggle_log()
-                for ti in list(turn_ins.values):
+                for ti in list(turn_ins.values()):
                     if ti == 0:
                         continue
                     self.click_quest()
@@ -112,6 +120,7 @@ class AdvancedPlayer(Player):
             self.__combat_loop()
 
     def stop_fighting(self):
+        self.__pause_fight.clear()
         self.__fighting.clear()
 
     def __combat_loop(self):
@@ -136,6 +145,7 @@ class AdvancedPlayer(Player):
         self.toggle_log()
         self.turn_in(n)
         self.toggle_log()
+        self.print_inventory()
 
     def is_fighting(self):
         return self.__fighting.is_set()
@@ -143,8 +153,8 @@ class AdvancedPlayer(Player):
 
 class AutoPlayer(AdvancedPlayer):
 
-    def __init__(self, resolution, quests, server):
-        super().__init__(resolution, quests, server)
+    def __init__(self, resolution, quests, server, haste):
+        super().__init__(resolution, quests, server, haste=haste)
         self.interpreter = Interpreter(self, self.sniffer)
         self.sniffer.set_concurrent_packet_summary_on(False)
         self.running = CustomEvent(False)
@@ -174,6 +184,7 @@ class AutoPlayer(AdvancedPlayer):
 
     def start(self):
         self.__player_thread = Thread(target=self.run, daemon=True)
+        self.__player_thread.name = 'player thread'
         self.__player_thread.start()
 
     def stop(self):

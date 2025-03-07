@@ -64,11 +64,11 @@ class Combat:
         self.kills = 0
         self.gcd = 1.6
         self.info = {
-            '1': {'cd': 1.5 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
-            '2': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
-            '3': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
-            '4': {'cd': 6 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()},
-            '5': {'cd': 12 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer()}
+            '1': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 1 cd')},
+            '2': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 2 cd')},
+            '3': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 3 cd')},
+            '4': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 4 cd')},
+            '5': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 5 cd')}
         }
         self.__set_timers()
 
@@ -138,6 +138,9 @@ class Inventory:
         self.inventory = {}
         self.drops = {}
 
+    def __str__(self):
+        return f'Drops: {self.drops}\nInventory: {self.inventory}'
+
     def set_inventory(self, item_id, iQtyNow):
         self.inventory[item_id]['count'] = iQtyNow
 
@@ -152,8 +155,6 @@ class Inventory:
             self.drops[item_id]['name'] = name
             self.inventory[item_id]['name'] = name
         return item_id in quest_reqs
-
-
 
     def subtract(self, item_id, iQty):
         self.drops[item_id] -= iQty
