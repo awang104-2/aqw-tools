@@ -23,7 +23,7 @@ def monitor_process(process, flag, log_file=os.path.join(os.path.dirname(__file_
             log_entries = []
 
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-            cpu_usage = process.cpu_percent(interval=0.1)
+            cpu_usage = process.cpu_percent(interval=1)
             log_entries.append(f"{timestamp}, {process.pid}, {cpu_usage}")
 
             f.write("\n".join(log_entries) + "\n")

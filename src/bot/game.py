@@ -63,12 +63,11 @@ class Quest:
 
 class Combat:
 
-    classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT'}
+    classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT', 'AF': 'ARCHFIEND'}
 
     def __init__(self, cls, haste=0.5):
         self.cd_reduction = 1 - haste
         self.kills = 0
-        self.gcd = 1.6
         self.cls = cls.upper()
         if self.cls in list(Combat.classes.keys()):
             self.cls = Combat.classes.get(self.cls)
@@ -79,6 +78,7 @@ class Combat:
         config = class_config[self.cls]
         self.rotation = config.get('rotation')
         self.rotation_type = config.get('rotation_type')
+        self.gcd = config.get('gcd')
         self.info = {
             '1': {'cd': config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-1 cd')},
             '2': {'cd': config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-2 cd')},
@@ -133,7 +133,6 @@ class Combat:
             status.clear()
             return key
         elif self.rotation_type == 'priority':
-            sleep(0.1)
             key = self.check_moves()
             if key:
                 move = self.get_move(key)
@@ -143,6 +142,7 @@ class Combat:
                 status.clear()
                 return key
             else:
+                sleep(0.1)
                 return None
         else:
             raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
