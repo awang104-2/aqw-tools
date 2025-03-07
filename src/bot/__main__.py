@@ -28,9 +28,10 @@ if __name__ == '__main__':
     quest = input('Quest > ').split(',')
     server = input('Server > ')
     haste = float(input('Haste > '))
-    bot = AutoPlayer(resolution, quest, server, haste)
+    cls = input('Class > ')
+    bot = AutoPlayer(resolution, quest, server, haste, cls)
     run_listener(bot)
-    # monitor_parallel(flag)
+    monitor_parallel(flag)
     bot.run()
-    # flag.set()
+    flag.set()
 

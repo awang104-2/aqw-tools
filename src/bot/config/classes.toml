@@ -1,6 +1,7 @@
 ['LEGION REVENANT']
 rotation = ['4', '5', '2', '3']
 rotation_type = 'priority'
+gcd = 1.7
 
 ['LEGION REVENANT'.1]
 cd = 1.5
@@ -31,6 +32,7 @@ name = 'ability-5'
 ['ARCHFIEND']
 rotation = ['4', '2', '3']
 rotation_type = 'priority'
+gcd = 1.6
 
 ['ARCHFIEND'.1]
 cd = 2
