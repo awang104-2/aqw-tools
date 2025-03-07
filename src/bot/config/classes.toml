@@ -1,0 +1,58 @@
+['LEGION REVENANT']
+rotation = ['4', '5', '2', '3']
+rotation_type = 'priority'
+
+['LEGION REVENANT'.1]
+cd = 1.5
+status = true
+name = 'ability-1'
+
+['LEGION REVENANT'.2]
+cd = 6
+status = true
+name = 'ability-2'
+
+['LEGION REVENANT'.3]
+cd = 6
+status = true
+name = 'ability-3'
+
+['LEGION REVENANT'.4]
+cd = 6
+status = true
+name = 'ability-4'
+
+['LEGION REVENANT'.5]
+cd = 12
+status = true
+name = 'ability-5'
+
+
+['ARCHFIEND']
+rotation = ['4', '2', '3']
+rotation_type = 'priority'
+
+['ARCHFIEND'.1]
+cd = 2
+status = true
+name = 'ability-1'
+
+['ARCHFIEND'.2]
+cd = 3
+status = true
+name = 'ability-2'
+
+['ARCHFIEND'.3]
+cd = 3
+status = true
+name = 'ability-3'
+
+['ARCHFIEND'.4]
+cd = 26
+status = true
+name = 'ability-4'
+
+['ARCHFIEND'.5]
+cd = 26
+status = true
+name = 'ability-5'

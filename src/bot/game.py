@@ -4,17 +4,28 @@ import tomllib
 import os
 
 
+config_path = os.path.join(os.path.dirname(__file__), 'config')
+quests_config_path = os.path.join(config_path, 'quests.toml')
+drops_config_path = os.path.join(config_path, 'drops.toml')
+classes_config_path = os.path.join(config_path, 'classes.toml')
+
+with open(quests_config_path, 'rb') as f:
+    quest_config = tomllib.load(f)
+with open(drops_config_path, 'rb') as f:
+    drop_config = tomllib.load(f)
+with open(classes_config_path, 'rb') as f:
+    class_config = tomllib.load(f)
+
+
 class Quest:
 
     def __init__(self, names=None, quest_ids=None):
         self.requirements = {}
         self.completed = {}
-        path = os.path.join(os.path.dirname(__file__), 'config', 'quests.toml')
-        with open(path, 'rb') as f:
-            config = tomllib.load(f)
+        self.quest_ids = quest_ids
         for name in names:
             name = name.upper()
-            self.requirements[name] = config[name]
+            self.requirements[name] = quest_config[name]
             self.completed[name] = 0
 
     def get_quest_names(self):
@@ -52,23 +63,28 @@ class Quest:
 
 class Combat:
 
-    classes = ['archmage', 'am', 'arcana invoker', 'ai', 'legion revenant', 'lr']
+    classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT'}
 
     def __init__(self, cls, haste=0.5):
-        self.cls = cls.lower()
-        if self.cls not in Combat.classes:
-            raise ValueError('Class not found.')
         self.cd_reduction = 1 - haste
-        self.combo = ['4', '5', '2', '3']
-        self.rotation_type = 'priority'
         self.kills = 0
         self.gcd = 1.6
+        self.cls = cls.upper()
+        if self.cls in list(Combat.classes.keys()):
+            self.cls = Combat.classes.get(self.cls)
+        elif self.cls in list(Combat.classes.values()):
+            pass
+        else:
+            raise ValueError('Class not found.')
+        config = class_config[self.cls]
+        self.rotation = config.get('rotation')
+        self.rotation_type = config.get('rotation_type')
         self.info = {
-            '1': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 1 cd')},
-            '2': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 2 cd')},
-            '3': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 3 cd')},
-            '4': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 4 cd')},
-            '5': {'cd': 1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability 5 cd')}
+            '1': {'cd': config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-1 cd')},
+            '2': {'cd': config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-2 cd')},
+            '3': {'cd': config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-3 cd')},
+            '4': {'cd': config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-4 cd')},
+            '5': {'cd': config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-5 cd')}
         }
         self.__set_timers()
 
@@ -83,13 +99,13 @@ class Combat:
         return self.info.get(key)
 
     def increment_move(self):
-        key = self.combo[0]
+        key = self.rotation[0]
         if self.rotation_type == 'rotation':
-            self.combo = self.combo[1:] + [key]
+            self.rotation = self.rotation[1:] + [key]
         return key
 
     def check_moves(self):
-        for move in self.combo:
+        for move in self.rotation:
             status = self.get_move(move).get('status')
             if status.is_set():
                 return move
@@ -99,7 +115,7 @@ class Combat:
         sleep(self.gcd * self.cd_reduction)
 
     def __set_timers(self):
-        for key in self.combo:
+        for key in self.rotation:
             move = self.get_move(key)
             status = move.get('status')
             cooldown = move.get('cd')
