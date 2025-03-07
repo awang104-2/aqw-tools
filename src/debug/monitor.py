@@ -18,17 +18,17 @@ def monitor_process(process, flag, log_file=os.path.join(os.path.dirname(__file_
     """ Continuously logs CPU usage of each thread in the Python process. """
     with open(log_file, "w") as f:
         f.write("Timestamp, Thread ID, CPU Usage (%)\n")  # CSV Header
-
+        t = 1
         while True:
             log_entries = []
 
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-            cpu_usage = process.cpu_percent(interval=1)
+            cpu_usage = process.cpu_percent(interval=t)
             log_entries.append(f"{timestamp}, {process.pid}, {cpu_usage}")
 
             f.write("\n".join(log_entries) + "\n")
             f.flush()  # Ensure data is written to the file immediately
-            time.sleep(0.5)  # Adjust sampling rate as needed
+            time.sleep(0.01)  # Adjust sampling rate as needed
 
             if flag.is_set():
                 break
