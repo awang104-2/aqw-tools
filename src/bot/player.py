@@ -26,6 +26,7 @@ class Player:
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
         self.log_on = False
         self.timelapse = {'1': time(), '2': time(), '3': time(), '4': time(), '5': time(), 'gcd': time()}
+        self.delay_time = 0.1
 
     def add_drop(self, item_id, name, iQty=1, is_drop=False):
         quest_reqs = self.quest.get_req_ids()
@@ -33,6 +34,9 @@ class Player:
 
     def set_inventory(self, item_id, iQtyNow):
         self.drops.set_inventory(item_id, iQtyNow)
+
+    def delay(self):
+        sleep(self.delay_time)
 
     def fight(self):
         move = self.combat.fight()
@@ -45,6 +49,8 @@ class Player:
             self.timelapse['gcd'] = time()
             self.combat.sleep_gcd()
             print(f'GCD: {time() - self.timelapse.get('gcd'):.5f}s')
+        else:
+            self.delay()
 
     def acc_item(self):
         self.autoclicker.click(self.acc_item_loc)
