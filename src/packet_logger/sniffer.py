@@ -45,11 +45,13 @@ class Sniffer:
 
     def start(self):
         self.__sniff_thread = Thread(target=self.run, daemon=True)
+        self.__sniff_thread.name = 'sniff thread'
         self.__sniff_thread.start()
 
     def run(self):
         self.running.set()
         self.__sniff_thread = Thread(target=self.sniff)
+        self.__sniff_thread.name = 'sniff thread'
         self.__sniff_thread.run()
         self.running.clear()
 
@@ -211,7 +213,7 @@ class Interpreter:
                     item_id = list(data.get('items').keys())[0]
                     name = data.get('items').get(item_id).get('sName')
                     iQty = data.get('items').get(item_id).get('iQty')
-                    self.player.add_drop(item_id, name, iQty)
+                    self.player.add_drop(item_id, name, iQty, cmd == 'dropItem')
                     if cmd == 'addItems':
                         iQtyNow = data.get('items').get(item_id).get('iQtyNow', None)
                         if iQtyNow:
@@ -238,7 +240,8 @@ class Interpreter:
         self.__running.clear()
 
     def start(self):
-        self.__interpret_thread = Thread(target=self.run)
+        self.__interpret_thread = Thread(target=self.run, daemon=True)
+        self.__interpret_thread.name = 'interpreter thread'
         self.__interpret_thread.start()
 
     def stop(self):

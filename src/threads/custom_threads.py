@@ -15,11 +15,14 @@ class EditableTimer(Timer):
 
 class CustomTimer:
 
-    def __init__(self, interval=None, function=None, daemon=False, move=None):
+    def __init__(self, interval=None, function=None, daemon=False, move=None, name=None):
         self.interval = interval
         self.function = function
         self.daemon = daemon
         self.timer = EditableTimer(self.interval, self.__function)
+        self.name = name
+        if self.name:
+            self.timer.name = name
         self.timer.daemon = self.daemon
         self.move = move
 
@@ -27,7 +30,7 @@ class CustomTimer:
         if not condition:
             self.timer.add_time(time)
 
-    def set_parameters(self, interval=None, function=None, daemon=None, move=None):
+    def set_parameters(self, interval=None, function=None, daemon=None, move=None, name=None):
         if interval:
             self.interval = interval
         if function:
@@ -36,6 +39,8 @@ class CustomTimer:
             self.daemon = daemon
         if move:
             self.move = move
+        if name:
+            self.name = name
         self.reset()
 
     def __function(self, *args):
@@ -53,6 +58,8 @@ class CustomTimer:
 
     def reset(self):
         self.timer = EditableTimer(self.interval, self.__function)
+        if self.name:
+            self.timer.name = self.name
         self.timer.daemon = self.daemon
 
 
