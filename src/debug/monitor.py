@@ -4,22 +4,27 @@ import os
 import threading
 
 
-def monitor_threads(flag, log_file=os.path.join(os.path.dirname(__file__), 'logs', 'cpu_usage_log.txt')):
-    """ Continuously logs CPU usage of each thread in the Python process. """
-    pid = os.getpid()
-    process = psutil.Process(pid)
+def get_process(pid=None):
+    if not pid:
+        pid = os.getpid()
+    return psutil.Process(pid)
 
+
+def print_pids():
+    print(psutil.pids())
+
+
+def monitor_process(process, flag, log_file=os.path.join(os.path.dirname(__file__), 'logs', 'cpu_usage_log.txt')):
+    """ Continuously logs CPU usage of each thread in the Python process. """
     with open(log_file, "w") as f:
         f.write("Timestamp, Thread ID, CPU Usage (%)\n")  # CSV Header
 
         while True:
             log_entries = []
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
 
-            for thread in process.threads():
-                thread_info = psutil.Process(thread.id)
-                cpu_usage = thread_info.cpu_percent(interval=0.1)
-                log_entries.append(f"{timestamp}, {thread.id}, {cpu_usage}")
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            cpu_usage = process.cpu_percent(interval=0.1)
+            log_entries.append(f"{timestamp}, {process.pid}, {cpu_usage}")
 
             f.write("\n".join(log_entries) + "\n")
             f.flush()  # Ensure data is written to the file immediately
@@ -30,5 +35,7 @@ def monitor_threads(flag, log_file=os.path.join(os.path.dirname(__file__), 'logs
 
 
 def monitor_parallel(flag):
-    t = threading.Thread(target=monitor_parallel, args=[flag], daemon=True)
+    process = get_process()
+    t = threading.Thread(target=monitor_process, args=[process, flag], daemon=True)
+    t.name = 'monitor thread'
     t.start()
