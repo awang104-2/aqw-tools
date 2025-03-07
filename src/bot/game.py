@@ -142,7 +142,6 @@ class Combat:
                 status.clear()
                 return key
             else:
-                sleep(0.1)
                 return None
         else:
             raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
