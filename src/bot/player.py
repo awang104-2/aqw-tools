@@ -24,6 +24,8 @@ class Player:
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
+        self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(self.resolution)
+        self.yes_loc = Player.YES_LOCATIONS.get(self.resolution)
         self.log_on = False
         self.timelapse = {'1': time(), '2': time(), '3': time(), '4': time(), '5': time(), 'gcd': time()}
         self.delay_time = 0.1
@@ -59,6 +61,13 @@ class Player:
     def turn_in(self, n):
         self.autoclicker.click(self.turn_in_loc)
         sleep(0.75)
+        if n > 1:
+            self.autoclicker.click(self.num_loc)
+            sleep(0.2)
+            self.autoclicker.type('9999')
+            sleep(0.2)
+            self.autoclicker.click(self.yes_loc)
+            sleep(0.1)
 
     def toggle_log(self):
         self.log_on = not self.log_on
