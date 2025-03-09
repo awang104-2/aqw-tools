@@ -27,12 +27,77 @@ gid = 5
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
-[XANCAVE.4]
+[XANCAVE.2]
 gid = 6
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.3]
+gid = 7
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.4]
+gid = 8
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
 [XANCAVE.5]
-gid = 7
+gid = 9
 name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.6]
+gid = 10
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.7]
+gid = 11
+name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.8]
+gid = 12
+name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.9]
+gid = 13
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.10]
+gid = 14
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.11]
+gid = 15
+name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.12]
+gid = 16
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.13]
+gid = 17
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.14]
+gid = 18
+name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.15]
+gid = 19
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.16]
+gid = 20
+name = 'SHURPU RING GUARDIAN'
 type = 'MONSTER'
