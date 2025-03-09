@@ -11,8 +11,10 @@ def on_press(key, player):
     if key == Key.esc:
         flag.set()
         player.stop()
-        print(f'\nDrops: {player.get_drops()}')
-        print(f'Active Thread Count: {threading.active_count()}')
+        print('\nDrops:')
+        for item_id, item_info in player.get_drops().items():
+            print(f'{item_id} - {item_info}')
+        print(f'\nActive Thread Count: {threading.active_count()}')
         for i, x in enumerate(threading.enumerate()):
             print(f'{i + 1} - {x.name}')
 

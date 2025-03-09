@@ -8,6 +8,7 @@ from threading import Thread
 class Player:
 
     ITEM_ACCEPT_LOCATIONS = {'2256x1504': (1300, 1150)}
+    ITEM_REJECT_LOCATIONS = {'2256x1504': (1350, 1150)}
     QUEST_LOG_LOCATIONS = {'2256x1504': (500, 400)}
     TURN_IN_LOCATIONS = {'2256x1504': (500, 1100)}
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1200, 750)}
@@ -22,6 +23,7 @@ class Player:
         self.combat = Combat(cls=cls, haste=haste)
         self.drops = Inventory()
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
+        self.rej_item_loc= Player.ITEM_REJECT_LOCATIONS.get(self.resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
         self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(self.resolution)
@@ -52,7 +54,11 @@ class Player:
 
     def acc_item(self):
         self.autoclicker.click(self.acc_item_loc)
-        sleep(0.5)
+        sleep(0.25)
+
+    def rej_item(self):
+        self.autoclicker.click(self.rej_item_loc)
+        sleep(0.25)
 
     def click_quest(self):
         self.autoclicker.click(self.quest_loc)
@@ -116,6 +122,8 @@ class AdvancedPlayer(Player):
         if super().add_drop(item_id, name, iQty):
             if is_drop:
                 self.acc_item()
+            else:
+                self.rej_item()
             turn_ins = self.quest.check_quest(self.drops)
             if any(x > 0 for x in list(turn_ins.values())):
                 self.pause_fighting()

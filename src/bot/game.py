@@ -6,7 +6,7 @@ import os
 
 config_path = os.path.join(os.path.dirname(__file__), 'config')
 quests_config_path = os.path.join(config_path, 'quests.toml')
-drops_config_path = os.path.join(config_path, 'drops.toml')
+drops_config_path = os.path.join(config_path, 'items.toml')
 classes_config_path = os.path.join(config_path, 'classes.toml')
 
 with open(quests_config_path, 'rb') as f:
