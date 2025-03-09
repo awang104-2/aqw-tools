@@ -25,14 +25,14 @@ type = 'HUMAN'
 [XANCAVE.1]
 gid = 5
 name = 'LAVA GOBLIN'
-type = none
+type = 'MONSTER'
 
 [XANCAVE.4]
 gid = 6
 name = 'LAVA GOBLIN'
-type = none
+type = 'MONSTER'
 
 [XANCAVE.5]
 gid = 7
 name = 'LAVA GOBLIN'
-type = none
+type = 'MONSTER'
