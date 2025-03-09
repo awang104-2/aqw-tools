@@ -41,14 +41,10 @@ class Player:
     def fight(self):
         move = self.combat.fight()
         if move:
-            cd_t = self.timelapse.get(move)
-            current_time = time()
             self.autoclicker.press(move)
-            print(f'Move: {move} - CD: {current_time - cd_t:.5f}')
             self.timelapse[move] = time()
             self.timelapse['gcd'] = time()
             self.combat.sleep_gcd()
-            print(f'GCD: {time() - self.timelapse.get('gcd'):.5f}s')
         else:
             self.delay()
 

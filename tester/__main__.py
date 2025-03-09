@@ -22,7 +22,10 @@ def run_test(choice):
         case 1:
             string_tests.string_split_test()
         case 2:
-            sniffer_tests.sniff_aqw_test()
+            exclusions = input('Exclude > ').split(',')
+            if exclusions == '':
+                exclusions = None
+            sniffer_tests.sniff_aqw_test(exclude=exclusions)
         case 3:
             sniffer_tests.drop_test()
         case 4:

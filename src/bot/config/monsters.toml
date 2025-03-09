@@ -1,0 +1,38 @@
+[DREADROCK]
+
+[DREADROCK.1]
+gid = 1
+name = 'LEGION SENTINEL'
+type = 'HUMAN'
+
+[DREADROCK.2]
+gid = 2
+name = 'SHADOWKNIGHT'
+type = 'HUMAN'
+
+[DREADROCK.14]
+gid = 3
+name = 'VOID MERCENARY'
+type = 'HUMAN'
+
+[DREADROCK.15]
+gid = 4
+name = 'SHADOWKNIGHT'
+type = 'HUMAN'
+
+[XANCAVE]
+
+[XANCAVE.1]
+gid = 5
+name = 'LAVA GOBLIN'
+type = none
+
+[XANCAVE.4]
+gid = 6
+name = 'LAVA GOBLIN'
+type = none
+
+[XANCAVE.5]
+gid = 7
+name = 'LAVA GOBLIN'
+type = none
