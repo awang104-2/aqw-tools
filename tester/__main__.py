@@ -51,7 +51,7 @@ def run_test(choice):
             bpf_filter = sniffer_tests.get_bpf_filter('tcp and src host', server)
             sniffer_tests.sniff_test(bpf_filter)
         case 6:
-            bot_tests.bot_test()
+            bot_tests.bot_test_2()
         case 7:
             pynput_test()
 

@@ -1,5 +1,6 @@
 from bot.player import AutoPlayer
 from pynput.keyboard import Listener, Key
+from bot.__main__ import main
 
 
 def run_listener(player):
@@ -25,6 +26,10 @@ def bot_test():
     test_player = AutoPlayer(resolution=resolution, quest=quest, server=server)
     run_listener(test_player)
     test_player.run()
+
+
+def bot_test_2():
+    main()
 
 if __name__ == '__main__':
     bot_test()

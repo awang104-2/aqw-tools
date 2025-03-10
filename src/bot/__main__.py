@@ -41,7 +41,7 @@ def print_inventory_thread(player):
     thread.start()
 
 
-if __name__ == '__main__':
+def main():
     while True:
         custom_settings = input('Yes or No or "exit" > ').lower()
         match custom_settings:
@@ -72,5 +72,8 @@ if __name__ == '__main__':
             case 'exit':
                 break
 
+
+if __name__ == '__main__':
+    main()
 
 

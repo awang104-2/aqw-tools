@@ -1,8 +1,8 @@
 from time import sleep, time
 from bot.autoclicker import AutoClicker
 from bot.game import Quest, Combat, Inventory, CustomEvent
+from bot.interpreter import Interpreter
 from packet_logger.sniffer import AqwPacketLogger
-from interpreter import Interpreter
 from threading import Thread
 
 
