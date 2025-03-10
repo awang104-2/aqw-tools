@@ -30,12 +30,14 @@ def run_listener(player):
 
 def print_inventory(player):
     while player.is_running():
-        player.print_inventory()
         time.sleep(1)
+        print('Inventory:')
+        player.print_inventory()
 
 
 def print_inventory_thread(player):
-    thread = threading.Thread(target=print_inventory, args=[player])
+    thread = threading.Thread(target=print_inventory, args=[player], daemon=True)
+    thread.name = 'Inventory Thread'
     thread.start()
 
 
@@ -52,8 +54,8 @@ if __name__ == '__main__':
                 bot = AutoPlayer(resolution, quest, server, haste, cls)
                 run_listener(bot)
                 monitor_parallel(flag)
-                print_inventory_thread(bot)
-                bot.run()
+                bot.start()
+                print_inventory(bot)
                 flag.set()
                 break
             case 'no':
@@ -63,8 +65,8 @@ if __name__ == '__main__':
                 bot = AutoPlayer(resolution, quest, server)
                 run_listener(bot)
                 monitor_parallel(flag)
-                print_inventory_thread(bot)
-                bot.run()
+                bot.start()
+                print_inventory(bot)
                 flag.set()
                 break
             case 'exit':

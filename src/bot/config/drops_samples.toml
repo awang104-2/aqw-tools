@@ -1,26 +1,10 @@
-[16408]
-name = "Obsidian Deposit"
-count = 51
-
-[12552]
-name = "Head of the Lava Warrior"
-count = 1
-
-[12577]
-name = "Lavarissa"
-count = 1
-
-[12565]
-name = "Lava Tail"
-count = 1
-
 [12556]
 name = "Lava Wings And Tail"
-count = 2
-
-[12562]
-name = "Fire Flower Mace"
 count = 1
+
+[16408]
+name = "None"
+count = 3
 
 [12564]
 name = "Ice Flower Mace"
