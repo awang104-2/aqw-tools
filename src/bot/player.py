@@ -37,6 +37,10 @@ class Player:
         quest_reqs = self.quest.get_req_ids()
         return self.drops.add(item_id, name, iQty, quest_reqs)
 
+    def print_inventory(self):
+        inventory = self.drops.get_inventory()
+        print(inventory)
+
     def set_inventory(self, item_id, iQtyNow):
         self.drops.set_inventory(item_id, iQtyNow)
 

@@ -2,6 +2,7 @@ from bot.player import AutoPlayer
 from pynput.keyboard import Key, Listener
 from debug.monitor import *
 import threading
+import time
 
 
 flag = threading.Event()
@@ -27,6 +28,17 @@ def run_listener(player):
     listener.start()
 
 
+def print_inventory(player):
+    while player.is_running():
+        player.print_inventory()
+        time.sleep(1)
+
+
+def print_inventory_thread(player):
+    thread = threading.Thread(target=print_inventory, args=[player])
+    thread.start()
+
+
 if __name__ == '__main__':
     while True:
         custom_settings = input('Yes or No or "exit" > ').lower()
@@ -40,6 +52,7 @@ if __name__ == '__main__':
                 bot = AutoPlayer(resolution, quest, server, haste, cls)
                 run_listener(bot)
                 monitor_parallel(flag)
+                print_inventory_thread(bot)
                 bot.run()
                 flag.set()
                 break
@@ -50,6 +63,7 @@ if __name__ == '__main__':
                 bot = AutoPlayer(resolution, quest, server)
                 run_listener(bot)
                 monitor_parallel(flag)
+                print_inventory_thread(bot)
                 bot.run()
                 flag.set()
                 break
