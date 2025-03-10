@@ -234,8 +234,8 @@ class AutoPlayer(AdvancedPlayer):
     def is_running(self):
         return self.running.is_set()
 
-    def __print_sniffer_results(self):
-        self.sniffer.print_jsons(exclude=['ct', 'uotls', 'mtls'])
+    def __print_sniffer_results(self, include):
+        self.sniffer.print_jsons(include=include)
 
 
 
