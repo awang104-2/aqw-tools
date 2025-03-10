@@ -1,7 +1,7 @@
 ['LEGION REVENANT']
 rotation = ['4', '5', '2', '3']
 rotation_type = 'priority'
-gcd = 1.7
+gcd = 1.8
 
 ['LEGION REVENANT'.1]
 cd = 1.5

@@ -112,6 +112,11 @@ class Player:
             print(f'{item_id} - {item_info}')
 
     def save_drops(self):
+        self.drops.save()
+
+    def add_to_db(self):
+        self.drops.merge_db()
+
 
 class AdvancedPlayer(Player):
 
@@ -203,6 +208,8 @@ class AutoPlayer(AdvancedPlayer):
         self.stop_sniff()
         self.stop_interpreter()
         self.stop_fighting()
+        self.save_drops()
+        self.add_to_db()
         self.running.clear()
 
     def start(self):
@@ -221,6 +228,9 @@ class AutoPlayer(AdvancedPlayer):
 
     def is_running(self):
         return self.running.is_set()
+
+    def __print_sniffer_results(self):
+        self.sniffer.print_jsons(exclude=['ct', 'uotls', 'mtls'])
 
 
 

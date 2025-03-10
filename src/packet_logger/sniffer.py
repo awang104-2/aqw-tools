@@ -177,7 +177,6 @@ class AqwPacketLogger(Sniffer):
                 return dataset
             except KeyError as e:
                 print('error -', json_string)
-                raise e
 
 
     def print_jsons(self, include=None, exclude=None):

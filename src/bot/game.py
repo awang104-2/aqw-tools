@@ -218,16 +218,15 @@ class Inventory:
         with open(path, 'w') as file:
             toml.dump(drops, file)
 
-    def merge_db(self, path=None):
+    def merge_db(self, filepath=None):
         db = self.get_db()
-        if not path:
-            path = os.path.join(config_path, 'drops_samples.toml')
-        with open(path, 'r') as file:
+        if not filepath:
+            filepath = os.path.join(config_path, 'drops_samples.toml')
+        with open(filepath, 'r') as file:
             data = toml.load(file)
         for key, value in data.items():
             if not db.get(key):
                 db[key] = value
-        with open(path, 'w') as file:
-            toml.dump(db, file)
+        self.write_db(db)
 
 

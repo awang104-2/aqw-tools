@@ -1,28 +1,37 @@
 [33883]
-name = 'Dreadrock Enemy Recruited'
-type = 'Temporary Item'
-monsters = ['']
+name = "Dreadrock Enemy Recruited"
+type = "Temporary Item"
+monsters = [ "",]
 
 [8940]
-name = 'Treasure Chest'
-type = 'Misc. Item'
+name = "Treasure Chest"
+type = "Misc. Item"
 
 [69879]
-name = "FA'S GAMER FUEL"
-type = 'Misc. Item'
+name = "Fa's Gamer Fuel"
+type = "Misc. Item"
 
 [69842]
 name = "Fa's Bean Bag"
-type = 'House Item'
+type = "House Item"
 
 [69844]
 name = "Mi's Bean Bag"
-type = 'House Item'
+type = "House Item"
 
 [69845]
 name = "Re's Bean Bags"
-type = 'House Item'
+type = "House Item"
 
+[15974]
+name = "Mystic Parchment"
+type = 'Misc. Item'
 
+[13032]
+name = "None"
+type = 'Unknown'
 
-
+[13126]
+name = "Facebasher Mace +13"
+type = 'Weapon'
+subtype = 'Mace'
