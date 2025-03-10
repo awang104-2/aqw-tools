@@ -18,8 +18,9 @@ class AutoClicker:
         return self.ctrl.handle
 
     def type(self, string):
-        self.ctrl.send_keystrokes(string)
-        self.wait(0.5)
+        for char in string:
+            self.ctrl.send_keystrokes(char)
+            self.wait(0.1)
         self.ctrl.send_keystrokes('{ENTER}')
 
     def wait(self, t):
@@ -49,6 +50,7 @@ class AutoClicker:
             self.ctrl.send_keystrokes(key)
 
         print("All keys released.")
+
 
 
 

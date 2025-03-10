@@ -28,14 +28,25 @@ def run_listener(player):
 
 
 if __name__ == '__main__':
-    resolution = input('Resolution > ')
-    quest = input('Quest > ').split(',')
-    server = input('Server > ')
-    haste = float(input('Haste > '))
-    cls = input('Class > ')
-    bot = AutoPlayer(resolution, quest, server, haste, cls)
-    run_listener(bot)
-    monitor_parallel(flag)
-    bot.run()
-    flag.set()
+    custom_settings = input('Yes or No > ').lower()
+    match custom_settings:
+        case 'yes':
+            resolution = input('Resolution > ')
+            quest = input('Quest > ').split(',')
+            server = input('Server > ')
+            haste = float(input('Haste > '))
+            cls = input('Class > ')
+            bot = AutoPlayer(resolution, quest, server, haste, cls)
+        case 'no':
+            resolution = '2256x1504'
+            quest = ['test']
+            server = 'twig'
+            bot = AutoPlayer(resolution, quest, server)
+    import time
+    time.sleep(2)
+    bot.turn_in_quests(3)
+    # run_listener(bot)
+    # monitor_parallel(flag)
+    # bot.run()
+   #  flag.set()
 

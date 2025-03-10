@@ -11,7 +11,7 @@ class Player:
     ITEM_REJECT_LOCATIONS = {'2256x1504': (1350, 1150)}
     QUEST_LOG_LOCATIONS = {'2256x1504': (500, 400)}
     TURN_IN_LOCATIONS = {'2256x1504': (500, 1100)}
-    NUM_COMPLETE_LOCATIONS = {'2256x1504': (1200, 750)}
+    NUM_COMPLETE_LOCATIONS = {'2256x1504': (1140, 680)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
     def __init__(self, resolution, quests, location='battleon', haste=0.5, cls='lr'):
@@ -62,18 +62,21 @@ class Player:
 
     def click_quest(self):
         self.autoclicker.click(self.quest_loc)
-        sleep(0.75)
+        sleep(0.5)
 
     def turn_in(self, n):
         self.autoclicker.click(self.turn_in_loc)
-        sleep(0.75)
         if n > 1:
-            self.autoclicker.click(self.num_loc)
-            sleep(0.2)
-            self.autoclicker.type('9999')
-            sleep(0.2)
-            self.autoclicker.click(self.yes_loc)
-            sleep(0.1)
+            self.input_quest_num()
+        sleep(0.75)
+
+    def input_quest_num(self, num='9999'):
+        self.autoclicker.click(self.num_loc)
+        sleep(0.1)
+        self.autoclicker.type(num)
+        sleep(0.1)
+        self.autoclicker.click(self.yes_loc)
+        sleep(0.1)
 
     def toggle_log(self):
         self.log_on = not self.log_on
@@ -172,6 +175,7 @@ class AdvancedPlayer(Player):
 
     def turn_in_quests(self, n):
         self.toggle_log()
+        self.click_quest()
         self.turn_in(n)
         self.toggle_log()
 
@@ -181,7 +185,7 @@ class AdvancedPlayer(Player):
 
 class AutoPlayer(AdvancedPlayer):
 
-    def __init__(self, resolution, quests, server, haste, cls):
+    def __init__(self, resolution, quests, server, haste=0.5, cls='lr'):
         super().__init__(resolution, quests, server, haste=haste, cls=cls)
         self.interpreter = Interpreter(self, self.sniffer)
         self.sniffer.set_concurrent_packet_summary_on(False)

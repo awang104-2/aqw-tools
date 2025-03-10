@@ -2,6 +2,21 @@ from tester.tests import string_tests
 from tester.tests import sniffer_tests
 from tester.tests import autoclicker_tests
 from tester.tests import bot_tests
+import pynput
+import time
+
+
+def pynput_test():
+    mouse = pynput.mouse.Controller()
+    while True:
+        coordinates = input('Input or \'exit\' > ')
+        if coordinates.lower() == 'exit':
+            break
+        else:
+            time.sleep(1)
+            x, y = coordinates.split(',')
+            mouse.position = (int(x), int(y))
+            time.sleep(0.5)
 
 
 def prompt():
@@ -11,6 +26,7 @@ def prompt():
     print('4 - Click test')
     print('5 - Sniff all packets')
     print('6 - Bot Test')
+    print('7 - Pynput Test')
     choice = input('Pick a test or type \'exit\' to quit > ')
     return int(choice)
 
@@ -36,6 +52,8 @@ def run_test(choice):
             sniffer_tests.sniff_test(bpf_filter)
         case 6:
             bot_tests.bot_test()
+        case 7:
+            pynput_test()
 
 
 if __name__ == '__main__':

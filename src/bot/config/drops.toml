@@ -13,7 +13,6 @@ type = "Cape"
 [33883]
 name = "Dreadrock Enemy Recruited"
 type = "Temporary Item"
-monsters = [ "",]
 
 [8940]
 name = "Treasure Chest"
@@ -101,3 +100,18 @@ name = "Underworld Scourge's Armet"
 
 [59910]
 name = "Underworld Scourge's Scarf"
+
+[16408]
+name = "Obsidian Deposit"
+
+[12577]
+name = "Lavarissa"
+
+[12565]
+name = "Lava Tail"
+
+[12562]
+name = "Fire Flower Mace"
+
+[12564]
+name = "Ice Flower Mace"
