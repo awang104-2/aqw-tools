@@ -1,3 +1,15 @@
+[12581]
+name = "Magma Spire"
+type = "Weapon"
+
+[12552]
+name = "Head of the Lava Warrior"
+type = "Helm"
+
+[12556]
+name = "Lava Wings And Tail"
+type = "Cape"
+
 [33883]
 name = "Dreadrock Enemy Recruited"
 type = "Temporary Item"
@@ -25,13 +37,67 @@ type = "House Item"
 
 [15974]
 name = "Mystic Parchment"
-type = 'Misc. Item'
+type = "Misc. Item"
 
 [13032]
 name = "None"
-type = 'Unknown'
+type = "Unknown"
 
 [13126]
 name = "Facebasher Mace +13"
-type = 'Weapon'
-subtype = 'Mace'
+type = "Weapon"
+subtype = "Mace"
+
+[11285]
+name = "Undead Energy"
+
+[6697]
+name = "None"
+
+[598]
+name = "Bone Dust"
+
+[47390]
+name = "Mysterious Vanta Hood"
+
+[59907]
+name = "Underworld Scourge's Hair"
+
+[59904]
+name = "Underworld Scourge's Hood"
+
+[59906]
+name = "Underworld Scourge's Mask + Locks"
+
+[59908]
+name = "Underworld Scourge's Mask"
+
+[47392]
+name = "Torn Vanta Scarf"
+
+[59726]
+name = "Legion Operative Skull"
+
+[59912]
+name = "Underworld Scourge's Rune Cloak"
+
+[47391]
+name = "Torn Vanta Hood"
+
+[59905]
+name = "Underworld Scourge's Locks"
+
+[59909]
+name = "Underworld Souls Rune"
+
+[59913]
+name = "Underworld Scourge's Cloak"
+
+[59911]
+name = "Underworld Scourge's Crescent"
+
+[59903]
+name = "Underworld Scourge's Armet"
+
+[59910]
+name = "Underworld Scourge's Scarf"

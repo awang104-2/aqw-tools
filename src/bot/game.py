@@ -225,8 +225,10 @@ class Inventory:
         with open(filepath, 'r') as file:
             data = toml.load(file)
         for key, value in data.items():
-            if not db.get(key):
-                db[key] = value
+            if value.get('name') != 'None' and db.get(key) and db.get(key).get('name') == 'None':
+                db[key]['name'] = value.get('name')
+            elif not db.get(key):
+                db[key] = {'name': value.get('name')}
         self.write_db(db)
 
 
