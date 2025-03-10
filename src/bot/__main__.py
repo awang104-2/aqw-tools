@@ -7,16 +7,18 @@ import threading
 flag = threading.Event()
 
 
+def print_threads():
+    print(f'\nActive Thread Count: {threading.active_count()}')
+    for i, x in enumerate(threading.enumerate()):
+        print(f'{i + 1} - {x.name}')
+
+
 def on_press(key, player):
     if key == Key.esc:
         flag.set()
         player.stop()
-        print('\nDrops:')
-        for item_id, item_info in player.get_drops().items():
-            print(f'{item_id} - {item_info}')
-        print(f'\nActive Thread Count: {threading.active_count()}')
-        for i, x in enumerate(threading.enumerate()):
-            print(f'{i + 1} - {x.name}')
+        player.print_drops()
+        print_threads()
 
 
 def run_listener(player):

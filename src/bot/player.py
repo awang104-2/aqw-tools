@@ -106,9 +106,12 @@ class Player:
                 probabilities[item_id] = count
         return probabilities
 
-    def print_inventory(self):
-        print(str(self.drops))
+    def print_drops(self):
+        print('\nDrops:')
+        for item_id, item_info in self.get_drops().items():
+            print(f'{item_id} - {item_info}')
 
+    def save_drops(self):
 
 class AdvancedPlayer(Player):
 
@@ -166,7 +169,6 @@ class AdvancedPlayer(Player):
         self.toggle_log()
         self.turn_in(n)
         self.toggle_log()
-        self.print_inventory()
 
     def is_fighting(self):
         return self.__fighting.is_set()

@@ -1,32 +1,28 @@
 from time import sleep
 from threads.custom_threads import *
-import tomllib
+import toml
 import os
 
 
 config_path = os.path.join(os.path.dirname(__file__), 'config')
-quests_config_path = os.path.join(config_path, 'quests.toml')
-drops_config_path = os.path.join(config_path, 'items.toml')
-classes_config_path = os.path.join(config_path, 'classes.toml')
-
-with open(quests_config_path, 'rb') as f:
-    quest_config = tomllib.load(f)
-with open(drops_config_path, 'rb') as f:
-    drop_config = tomllib.load(f)
-with open(classes_config_path, 'rb') as f:
-    class_config = tomllib.load(f)
 
 
 class Quest:
+
+    def __configure(self, names):
+        quests_config_path = os.path.join(config_path, 'quests.toml')
+        with open(quests_config_path, 'r') as file:
+            quest_config = toml.load(file)
+        for name in names:
+            name = name.upper()
+            self.requirements[name] = quest_config[name]
+            self.completed[name] = 0
 
     def __init__(self, names=None, quest_ids=None):
         self.requirements = {}
         self.completed = {}
         self.quest_ids = quest_ids
-        for name in names:
-            name = name.upper()
-            self.requirements[name] = quest_config[name]
-            self.completed[name] = 0
+        self.__configure(names)
 
     def get_quest_names(self):
         return list(self.requirements.keys())
@@ -65,6 +61,26 @@ class Combat:
 
     classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT', 'AF': 'ARCHFIEND'}
 
+    def __configure(self):
+        classes_config_path = os.path.join(config_path, 'classes.toml')
+        with open(classes_config_path, 'r') as file:
+            class_config = toml.load(file).get(self.cls)
+        self.rotation = class_config.get('rotation')
+        self.rotation_type = class_config.get('rotation_type')
+        self.gcd = class_config.get('gcd')
+        self.info = {
+            '1': {'cd': class_config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
+                  'timer': CustomTimer(name='ability-1 cd')},
+            '2': {'cd': class_config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
+                  'timer': CustomTimer(name='ability-2 cd')},
+            '3': {'cd': class_config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
+                  'timer': CustomTimer(name='ability-3 cd')},
+            '4': {'cd': class_config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
+                  'timer': CustomTimer(name='ability-4 cd')},
+            '5': {'cd': class_config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
+                  'timer': CustomTimer(name='ability-5 cd')}
+        }
+
     def __init__(self, cls, haste=0.5):
         self.cd_reduction = 1 - haste
         self.kills = 0
@@ -75,17 +91,7 @@ class Combat:
             pass
         else:
             raise ValueError('Class not found.')
-        config = class_config[self.cls]
-        self.rotation = config.get('rotation')
-        self.rotation_type = config.get('rotation_type')
-        self.gcd = config.get('gcd')
-        self.info = {
-            '1': {'cd': config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-1 cd')},
-            '2': {'cd': config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-2 cd')},
-            '3': {'cd': config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-3 cd')},
-            '4': {'cd': config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-4 cd')},
-            '5': {'cd': config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': CustomTimer(name='ability-5 cd')}
-        }
+        self.__configure()
         self.__set_timers()
 
     def add_kills(self, n):
@@ -149,6 +155,19 @@ class Combat:
 
 class Inventory:
 
+    __drops_config_path = os.path.join(config_path, 'drops.toml')
+
+    @staticmethod
+    def get_db():
+        with open(Inventory.__drops_config_path, 'r') as file:
+            drop_config = toml.load(file)
+        return drop_config
+
+    @staticmethod
+    def write_db(db):
+        with open(Inventory.__drops_config_path, 'w') as file:
+            toml.dump(db, file)
+
     def __init__(self):
         self.inventory = {}
         self.drops = {}
@@ -189,8 +208,26 @@ class Inventory:
         for key in self.drops.keys():
             self.drops[key]['count'] = 0
 
+    def save(self, path=None):
+        if not path:
+            path = os.path.join(config_path, 'drops_samples.toml')
+        drops = self.get_drops()
+        for item_id in drops.keys():
+            if not drops.get(item_id).get('name'):
+                drops[item_id]['name'] = 'None'
+        with open(path, 'w') as file:
+            toml.dump(drops, file)
 
-
-
+    def merge_db(self, path=None):
+        db = self.get_db()
+        if not path:
+            path = os.path.join(config_path, 'drops_samples.toml')
+        with open(path, 'r') as file:
+            data = toml.load(file)
+        for key, value in data.items():
+            if not db.get(key):
+                db[key] = value
+        with open(path, 'w') as file:
+            toml.dump(db, file)
 
 
