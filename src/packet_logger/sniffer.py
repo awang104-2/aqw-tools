@@ -2,8 +2,11 @@ from scapy.all import sniff, Raw
 from json import loads, dumps
 from queue import Queue
 from threading import Event, Thread
-from packet_logger.config.aqw_info import *
-from time import sleep
+import toml
+import os
+
+
+backend_path = os.path.join(os.path.dirname(__file__), 'config', 'backend.toml')
 
 
 def get_raw(packet):
@@ -37,33 +40,27 @@ class Sniffer:
         self.packets = Queue()
         self.summary = Event()
         self.running = Event()
-        self.__sniff_thread = None
         self.__receiving_packet = Event()
+        self.__sniff_thread = Thread(target=self.sniff, name='sniff thread')
 
     def set_bpf_filter(self, bpf_filter):
         self.filter = bpf_filter
 
     def start(self):
-        self.__sniff_thread = Thread(target=self.run, daemon=True)
-        self.__sniff_thread.name = 'sniff thread'
+        self.__sniff_thread.daemon = True
         self.__sniff_thread.start()
 
     def run(self):
-        self.running.set()
-        self.__sniff_thread = Thread(target=self.sniff)
-        self.__sniff_thread.name = 'sniff thread'
         self.__sniff_thread.run()
+
+    def stop(self):
         self.running.clear()
 
-    def stop(self, join=False):
-        if self.running.is_set():
-            if join:
-                self.__sniff_thread.join()
-            self.running.clear()
-
     def sniff(self):
+        self.running.set()
         print('Sniffing...')
         sniff(filter=self.filter, prn=self.log_packet, store=0, stop_filter=lambda x: not self.running.is_set())
+        self.running.clear()
 
     def set_concurrent_packet_summary_on(self, status):
         if status:
@@ -89,13 +86,15 @@ class Sniffer:
         self.summary = Event()
         self.running = Event()
         self.__receiving_packet = Event()
-        self.__sniff_thread = None
+        self.__sniff_thread = Thread(target=self.sniff, name='sniff thread')
 
 
 class AqwPacketLogger(Sniffer):
 
-    aqw_servers = servers
-    packet_types = packet_types
+    with open(backend_path, 'r') as file:
+        backend = toml.load(file)
+    aqw_servers = backend['AQW']['SERVERS']
+    packet_types = backend['AQW']['PACKETS']
 
     @staticmethod
     def get_servers():
@@ -156,33 +155,43 @@ class AqwPacketLogger(Sniffer):
         super().set_bpf_filter(bpf_filter)
 
     def get_jsons(self, include=None, exclude=None, save=None):
-
         if include and exclude:
             raise ValueError('Cannot specify both \'include\' and \'exclude\'.')
 
         self.__update_buffer()
-        dataset = []
+        jsons = []
 
         while True:
             try:
                 json_string = self.__parse_buffer()
                 entry = loads(json_string)['b']['o']
                 if not (include or exclude) or (include and entry.get('cmd', '') in include) or (exclude and not entry.get('cmd', '') in exclude):
-                    dataset.append(entry)
+                    jsons.append(entry)
             except ValueError:
                 if save:
                     with open(save, "w") as outfile:
-                        for e in dataset:
+                        for e in jsons:
                             outfile.write(dumps(e) + '\n')
-                return dataset
-            except KeyError as e:
+                return jsons
+            except KeyError:
                 print('error -', json_string)
 
+    def get_sorted_jsons(self, *args, **kwargs):
+        sorted_jsons = {}
+        jsons = self.get_jsons(*args, **kwargs)
+        for json in jsons:
+            cmd = json.get('cmd')
+            if sorted_jsons.get(cmd):
+                sorted_jsons[cmd].append(jsons)
+            else:
+                sorted_jsons[cmd] = [json]
+        return sorted_jsons
 
     def print_jsons(self, include=None, exclude=None):
         results = self.get_jsons(include=include, exclude=exclude)
         print('\nPrinting results:')
         for i, dictionary in enumerate(results):
             print(f'{i + 1} - {dictionary}')
+
 
 

@@ -1,9 +1,17 @@
 from time import sleep, time
 from bot.autoclicker import AutoClicker
-from bot.game import Quest, Combat, Inventory, CustomEvent
+from bot.game import Quest, Combat, Inventory
+from threads.custom_threading import CustomEvent, CustomThread
 from bot.interpreter import Interpreter
 from packet_logger.sniffer import AqwPacketLogger
-from threading import Thread
+
+
+def __connection_required(method):
+    def wrapper(self, *args, **kwargs):
+        if self.__connected.is_clear():
+            raise RuntimeError("Call 'connect' before running this method.")
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Player:
@@ -15,55 +23,59 @@ class Player:
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1140, 680)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
-    def __init__(self, resolution, quests, location='battleon', haste=0.5, cls='lr'):
+    def __init__(self, resolution, quests, server, location='battleon', haste=0.5, cls='lr'):
+        self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
+        self.rej_item_loc = Player.ITEM_REJECT_LOCATIONS.get(resolution)
+        self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(resolution)
+        self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(resolution)
+        self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(resolution)
+        self.yes_loc = Player.YES_LOCATIONS.get(resolution)
         self.resolution = resolution
+        self.location = location
+        self.server = server
+        self.log_on = False
+        self.delay_time = 0.1
+        self.combat = Combat(cls=cls, haste=haste)
+        self.quest = Quest(quests)
+        self.drops = Inventory()
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
-        self.location = location
-        self.quest = Quest(quests)
-        self.combat = Combat(cls=cls, haste=haste)
-        self.drops = Inventory()
-        self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(self.resolution)
-        self.rej_item_loc= Player.ITEM_REJECT_LOCATIONS.get(self.resolution)
-        self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(self.resolution)
-        self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(self.resolution)
-        self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(self.resolution)
-        self.yes_loc = Player.YES_LOCATIONS.get(self.resolution)
-        self.log_on = False
-        self.timelapse = {'1': time(), '2': time(), '3': time(), '4': time(), '5': time(), 'gcd': time()}
-        self.delay_time = 0.1
+        self.sniffer = AqwPacketLogger(server=self.server)
+        self.sniffer.set_concurrent_packet_summary_on(False)
+        self.interpreter = Interpreter(self, self.sniffer)
+        self.__connected = CustomEvent(False)
+        self.__autofight = CustomThread(target=self.fight, daemon=True, loop=True)
 
-    def add_drop(self, item_id, name, iQty=1, is_drop=False):
-        quest_reqs = self.quest.get_req_ids()
-        return self.drops.add(item_id, name, iQty, quest_reqs)
+    @property
+    def autofight(self):
+        return self.__autofight.is_running()
 
-    def print_inventory(self):
-        inventory = self.drops.get_inventory()
-        print(inventory)
+    @autofight.setter
+    def autofight(self, fighting):
+        if fighting and not self.__autofight.is_running():
+            self.__autofight.start()
+        elif not fighting and self.__autofight.is_running():
+            self.__autofight.stop()
+        else:
+            raise RuntimeError('Cannot start or stop fighting if Player instance has already started or stopped fighting, respectively.')
 
-    def set_inventory(self, item_id, iQtyNow):
-        self.drops.set_inventory(item_id, iQtyNow)
+    def toggle_autofight(self):
+        current = self.autofight
+        self.autofight = not self.autofight
 
     def delay(self):
         sleep(self.delay_time)
+
+    def set_inventory(self, item_id, iQtyNow):
+        self.drops.set_inventory(item_id, iQtyNow)
 
     def fight(self):
         move = self.combat.fight()
         if move:
             self.autoclicker.press(move)
-            self.timelapse[move] = time()
-            self.timelapse['gcd'] = time()
             self.combat.sleep_gcd()
         else:
             self.delay()
-
-    def acc_item(self):
-        self.autoclicker.click(self.acc_item_loc)
-        sleep(0.25)
-
-    def rej_item(self):
-        self.autoclicker.click(self.rej_item_loc)
-        sleep(0.25)
 
     def click_quest(self):
         self.autoclicker.click(self.quest_loc)
@@ -74,6 +86,31 @@ class Player:
         if n > 1:
             self.input_quest_num()
         sleep(0.75)
+
+    def acc_item(self):
+        self.autoclicker.click(self.acc_item_loc)
+        sleep(0.25)
+
+    def rej_item(self):
+        self.autoclicker.click(self.rej_item_loc)
+        sleep(0.25)
+
+    def check_drop(self, accept):
+        if accept:
+            self.acc_item()
+        else:
+            self.rej_item()
+
+    def add_item(self, item_id, name, iQty=1):
+        self.add_drop(item_id, name, iQty)
+
+
+    def add_drop(self, item_id, name, iQty=1):
+        quest_reqs = self.quest.get_req_ids()
+        is_required = self.drops.add(item_id, name, iQty, quest_reqs)
+        self.check_drop(accept=is_required)
+
+        return is_required
 
     def input_quest_num(self, num='9999'):
         self.autoclicker.click(self.num_loc)
@@ -125,58 +162,17 @@ class Player:
     def add_to_db(self):
         self.drops.merge_db()
 
+    def check_quests(self):
+        turn_in_list = self.quest.check_quest(self.drops)
+        return turn_in_list
 
-class AdvancedPlayer(Player):
-
-    def __init__(self, resolution, quests, server, haste=0.5, cls='lr'):
-        super().__init__(resolution, quests, haste=haste, cls=cls)
-        self.sniffer = AqwPacketLogger(server=server)
-        self.__fighting = CustomEvent(is_set=False)
-        self.__pause_fight = CustomEvent(is_set=False)
-
-    def add_drop(self, item_id, name, iQty=1, is_drop=False):
-        if super().add_drop(item_id, name, iQty):
-            if is_drop:
-                self.acc_item()
-            else:
-                self.rej_item()
-            turn_ins = self.quest.check_quest(self.drops)
-            if any(x > 0 for x in list(turn_ins.values())):
-                self.pause_fighting()
-                self.toggle_log()
-                for ti in list(turn_ins.values()):
-                    if ti == 0:
-                        continue
-                    self.click_quest()
-                    self.turn_in(ti)
-                self.toggle_log()
-                self.pause_fighting()
-
-    def start_fighting(self):
-        if self.__fighting.is_clear():
-            self.__combat_loop()
-
-    def stop_fighting(self):
-        self.__pause_fight.clear()
-        self.__fighting.clear()
-
-    def __combat_loop(self):
-        self.__fighting.set()
-        self.__pause_fight.clear()
-        while self.is_fighting():
-            self.fight()
-            self.__pause_fight.wait_for_clear()
-
-    def pause_fighting(self):
-        if self.__pause_fight.is_set():
-            self.__pause_fight.clear()
-        else:
-            self.__pause_fight.set()
-
-    def change_server(self, server):
-        if self.sniffer.is_running():
-            raise RuntimeError('Cannot switch servers while logging packets.')
-        self.sniffer = AqwPacketLogger(server=server)
+    def turn_in_all(self, turn_in_list):
+        self.autofight = False
+        if any(x > 0 for x in list(turn_in_list.values())):
+            for ti in list(turn_in_list.values()):
+                if ti > 0:
+                    self.turn_in_quests(ti)
+        self.autofight = True
 
     def turn_in_quests(self, n):
         self.toggle_log()
@@ -184,62 +180,14 @@ class AdvancedPlayer(Player):
         self.turn_in(n)
         self.toggle_log()
 
-    def is_fighting(self):
-        return self.__fighting.is_set()
-
-
-class AutoPlayer(AdvancedPlayer):
-
-    def __init__(self, resolution, quests, server, haste=0.5, cls='lr'):
-        super().__init__(resolution, quests, server, haste=haste, cls=cls)
-        self.interpreter = Interpreter(self, self.sniffer)
-        self.sniffer.set_concurrent_packet_summary_on(False)
-        self.running = CustomEvent(False)
-        self.__player_thread = None
-
-    def start_sniff(self):
+    def connect(self):
         self.sniffer.start()
-
-    def start_interpreter(self):
         self.interpreter.start()
 
-    def stop_sniff(self):
+    def disconnect(self):
         self.sniffer.stop()
-
-    def stop_interpreter(self):
         self.interpreter.stop()
-
-    def run(self):
-        self.running.set()
-        self.start_sniff()
-        self.start_interpreter()
-        self.start_fighting()
-        self.stop_sniff()
-        self.stop_interpreter()
-        self.stop_fighting()
-        self.save_drops()
-        self.add_to_db()
-        self.running.clear()
-
-    def start(self):
-        self.__player_thread = Thread(target=self.run, daemon=True)
-        self.__player_thread.name = 'player thread'
-        self.__player_thread.start()
-
-    def stop(self):
-        self.running.clear()
-        if self.interpreter.is_running():
-            self.stop_interpreter()
-        if self.sniffer.is_running():
-            self.stop_sniff()
-        if self.is_fighting():
-            self.stop_fighting()
-
-    def is_running(self):
-        return self.running.is_set()
 
     def __print_sniffer_results(self, include):
         self.sniffer.print_jsons(include=include)
-
-
 

@@ -1,5 +1,5 @@
 from time import sleep
-from threads.custom_threads import *
+from threads.custom_threading import *
 import toml
 import os
 
@@ -28,7 +28,7 @@ class Quest:
         return list(self.requirements.keys())
 
     def check_quest(self, drops):
-        total_turn_ins = {}
+        turn_in_list = {}
         for name in self.requirements.keys():
             turn_ins = 0
             item_reqs = self.requirements.get(name)
@@ -44,9 +44,9 @@ class Quest:
                         turn_ins = int(drop.get('count') / req) - self.completed.get(name)
                     elif turn_ins > req_done:
                         turn_ins = req_done
-            total_turn_ins[name] = turn_ins
+            turn_in_list[name] = turn_ins
             self.turn_in(name, turn_ins)
-        return total_turn_ins
+        return turn_in_list
 
     def turn_in(self, name, num):
         self.completed[name] += num
@@ -61,27 +61,8 @@ class Combat:
 
     classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT', 'AF': 'ARCHFIEND'}
 
-    def __configure(self):
-        classes_config_path = os.path.join(config_path, 'classes.toml')
-        with open(classes_config_path, 'r') as file:
-            class_config = toml.load(file).get(self.cls)
-        self.rotation = class_config.get('rotation')
-        self.rotation_type = class_config.get('rotation_type')
-        self.gcd = class_config.get('gcd')
-        self.info = {
-            '1': {'cd': class_config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
-                  'timer': CustomTimer(name='ability-1 cd')},
-            '2': {'cd': class_config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
-                  'timer': CustomTimer(name='ability-2 cd')},
-            '3': {'cd': class_config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
-                  'timer': CustomTimer(name='ability-3 cd')},
-            '4': {'cd': class_config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
-                  'timer': CustomTimer(name='ability-4 cd')},
-            '5': {'cd': class_config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True),
-                  'timer': CustomTimer(name='ability-5 cd')}
-        }
-
     def __init__(self, cls, haste=0.5):
+        classes_config_path = os.path.join(config_path, 'classes.toml')
         self.cd_reduction = 1 - haste
         self.kills = 0
         self.cls = cls.upper()
@@ -91,7 +72,18 @@ class Combat:
             pass
         else:
             raise ValueError('Class not found.')
-        self.__configure()
+        with open(classes_config_path, 'r') as file:
+            class_config = toml.load(file).get(self.cls)
+        self.rotation = class_config.get('rotation')
+        self.rotation_type = class_config.get('rotation_type')
+        self.gcd = class_config.get('gcd')
+        self.info = {
+            '1': {'cd': class_config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '2': {'cd': class_config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '3': {'cd': class_config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '4': {'cd': class_config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '5': {'cd': class_config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None}
+        }
         self.__set_timers()
 
     def add_kills(self, n):
@@ -121,12 +113,12 @@ class Combat:
         sleep(self.gcd * self.cd_reduction)
 
     def __set_timers(self):
-        for key in self.rotation:
-            move = self.get_move(key)
-            status = move.get('status')
-            cooldown = move.get('cd')
-            timer = move.get('timer')
-            timer.set_parameters(cooldown, status.set, True, key)
+        for ability, ability_info in self.info.items():
+            interval = ability_info.get('cd')
+            function = ability_info.get('status').set
+            name = f'ability-{ability} cd'
+            daemon = True
+            ability_info['timer'] = CustomTimer(interval=interval, function=function, name=name, daemon=daemon)
 
     def fight(self):
         if self.rotation_type == 'rotation':

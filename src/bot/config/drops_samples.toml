@@ -1,7 +1,39 @@
+[12562]
+name = "Fire Flower Mace"
+count = 3
+
 [16408]
-name = "None"
-count = 19
+name = "Obsidian Deposit"
+count = 100
+
+[12582]
+name = "Generals of the Ignited Ones"
+count = 1
+
+[8940]
+name = "Treasure Chest"
+count = 1
+
+[12564]
+name = "Ice Flower Mace"
+count = 2
+
+[12552]
+name = "Head of the Lava Warrior"
+count = 2
 
 [12565]
 name = "Lava Tail"
+count = 2
+
+[12577]
+name = "Lavarissa"
+count = 3
+
+[12549]
+name = "Ash of the Embers"
 count = 1
+
+[12556]
+name = "Lava Wings And Tail"
+count = 3
