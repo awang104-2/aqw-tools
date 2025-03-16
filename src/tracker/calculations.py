@@ -33,7 +33,7 @@ def t_test(k, n, p):
 
 
 def run_fits():
-    df = load_csv_as_dataframe('combat_sample_data.csv', '../../tester/tests')
+    df = load_csv_as_dataframe('combat_sample_data.csv', '../../tests/tests')
     x = (df.get('pexp').values, df.get('level').values)
     y = df.get('p').values
     print(get_fit_params(multivar, x, y))
@@ -42,7 +42,7 @@ def run_fits():
 
 
 def run_test():
-    df = load_csv_as_dataframe('combat_sample_data.csv', '../../tester/tests')
+    df = load_csv_as_dataframe('combat_sample_data.csv', '../../tests/tests')
     xdata, ydata = (df.get('pexp').values, df.get('level').values), df.get('p').values
     a, b, c = get_fit_params(multivar, xdata, ydata)
     print(f'{a:.5} * p + {b:.4} * levels + {c:.4}')

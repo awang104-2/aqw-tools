@@ -181,6 +181,8 @@ class AqwPacketLogger(Sniffer):
         jsons = self.get_jsons(*args, **kwargs)
         for json in jsons:
             cmd = json.get('cmd')
+            if cmd == 'addGoldExp' and json.get('typ') == 'm':
+                cmd = 'addGoldExpM'
             if sorted_jsons.get(cmd):
                 sorted_jsons[cmd].append(jsons)
             else:

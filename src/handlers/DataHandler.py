@@ -59,4 +59,4 @@ def add_data_to_csv(filename: str, location: str, data: dict):
 
 
 if __name__ == '__main__':
-    add_to_csv_column('combat_sample_data.csv', 'SC-52', tuple([1, 2]), '../../tester/tests/')
+    add_to_csv_column('combat_sample_data.csv', 'SC-52', tuple([1, 2]), '../../tests/tests/')

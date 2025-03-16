@@ -86,3 +86,7 @@ def interpret(drops, data):
                 name = data.get('items').get(item_num).get('sName', None)
                 drops[item_num] = {'name': name, 'count': num}
     return drops
+
+
+if __name__ == '__main__':
+    sniff_aqw_test(include=['addGoldExp'])

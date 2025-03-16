@@ -115,7 +115,7 @@ if __name__ == '__main__':
     combo = ['2', '3', '4']
     count = 2000
     filename = 'combat_sample_data.csv'
-    location = '../../tester/tests'
+    location = '../../tests/tests'
     run_test(lvl, cls, pexp, server, time, combo, count, filename, location)
     popup_window()
 

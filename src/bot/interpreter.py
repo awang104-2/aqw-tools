@@ -32,37 +32,29 @@ class Interpreter:
             item_id = list(item.get('items').keys())[0]
             name = item.get('items').get(item_id).get('sName')
             iQty = item.get('items').get(item_id).get('iQty')
+            self.player.add_item(item_id=item_id, name=name, iQty=iQty)
+            iQtyNow = item.get('items').get(item_id).get('iQtyNow', None)
+            if iQtyNow:
+                self.player.set_inventory(item_id, iQtyNow)
 
     def __add_drops(self, drops):
         for drop in drops:
             item_id = list(drop.get('items').keys())[0]
             name = drop.get('items').get(item_id).get('sName')
             iQty = drop.get('items').get(item_id).get('iQty')
+            self.player.add_drop(item_id=item_id, name=name, iQty=iQty)
+
+    def __add_kills(self, kills):
+        for kill in kills:
+            kill.get('id')
+            self.player.kill()
 
     def interpret(self):
         sorted_jsons = self.logger.get_sorted_jsons()
-        added_items, drops, kills = sorted_jsons.get('addItems', []), sorted_jsons.get('dropItem',[]), sorted_jsons.get('addGoldExp',[])
-
-
-
-        if not any(cmd in list(sorted_jsons.keys()) for cmd in commands):
-            return
-        for data in dataset:
-            cmd = data.get('cmd')
-            match cmd:
-                case 'addItems' | 'dropItem':
-                    item_id = list(data.get('items').keys())[0]
-                    name = data.get('items').get(item_id).get('sName')
-                    iQty = data.get('items').get(item_id).get('iQty')
-                    is_drop = cmd == 'dropItem'
-                    turn_in_list = self.player.add_drop(item_id, name, iQty, is_drop)
-                    if not is_drop:
-                        iQtyNow = data.get('items').get(item_id).get('iQtyNow', None)
-                        if iQtyNow:
-                            self.player.set_inventory(item_id, iQtyNow)
-                case 'addGoldExp':
-                    if data.get('id'):
-                        self.player.kill()
+        added_items, drops, kills = sorted_jsons.get('addItems', []), sorted_jsons.get('dropItem',[]), sorted_jsons.get('addGoldExpM',[])
+        self.__add_item(added_items)
+        self.__add_drops(drops)
+        self.__add_kills(kills)
 
     def __interpret_packets_loop(self):
         while self.logger.is_running() and self.is_running():
