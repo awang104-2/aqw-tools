@@ -1,11 +1,11 @@
-import threading
+from threads.custom_threading import CustomEvent, CustomThread
 import time
 
 
 def check_running(method):
     def wrapper(self, *args, **kwargs):
         if self.is_running():
-            raise RuntimeError('Cannot use while Interpreter instance is running.')
+            raise RuntimeError(f'Cannot call \'{method.__name__}\' while Interpreter instance is running.')
         return method(self, *args, **kwargs)
     return wrapper
 
@@ -15,8 +15,7 @@ class Interpreter:
     def __init__(self, player, logger, delay=None):
         self.logger = logger
         self.player = player
-        self.__running = threading.Event()
-        self.__interpret_thread = None
+        self.__interpret_thread = CustomThread(target=self.__interpret_packets_loop, daemon=True, name='interpreter thread')
         self.delay = delay
 
     @check_running
@@ -66,16 +65,15 @@ class Interpreter:
                 time.sleep(self.delay)
 
     def is_running(self):
-        return self.__running.is_set()
+        return self.__interpret_thread.is_running()
 
+    @check_running
     def run(self):
-        self.__running.set()
-        self.__interpret_packets_loop()
-        self.__running.clear()
+        self.__interpret_thread.run()
 
+    @check_running
     def start(self):
-        self.__interpret_thread = threading.Thread(target=self.run, daemon=True, name='interpreter thread')
         self.__interpret_thread.start()
 
     def stop(self):
-        self.__running.clear()
+        self.__interpret_thread.stop()

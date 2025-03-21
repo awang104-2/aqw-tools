@@ -1,4 +1,4 @@
-from packet_logger.sniffer import AqwPacketLogger
+from packets.sniffing import AqwPacketLogger
 from threading import Event, Thread
 from time import sleep
 

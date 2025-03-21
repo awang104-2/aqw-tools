@@ -1,4 +1,4 @@
-from packet_logger.sniffer import AqwPacketLogger, Sniffer
+from packets.sniffing import AqwPacketLogger, Sniffer
 from threading import Timer
 from time import sleep
 from time import time as get_time

@@ -1,9 +1,9 @@
-from time import sleep, time
+from time import sleep
 from bot.autoclicker import AutoClicker
-from bot.game import Quest, Combat, Inventory
+from game.mechanics import Quest, Combat, Inventory
 from threads.custom_threading import CustomEvent, CustomThread
-from bot.interpreter import Interpreter
-from packet_logger.sniffer import AqwPacketLogger
+from game.interpreter import Interpreter
+from game.listener import GameListener
 
 
 def __connection_required(method):
@@ -40,7 +40,7 @@ class Player:
         self.drops = Inventory()
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
-        self.sniffer = AqwPacketLogger(server=self.server)
+        self.sniffer = GameListener(server=self.server)
         self.sniffer.set_concurrent_packet_summary_on(False)
         self.interpreter = Interpreter(self, self.sniffer)
         self.__connected = CustomEvent(False)
@@ -190,4 +190,3 @@ class Player:
 
     def __print_sniffer_results(self, include):
         self.sniffer.print_jsons(include=include)
-

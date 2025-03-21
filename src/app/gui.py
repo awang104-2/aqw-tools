@@ -1,5 +1,5 @@
 from tkinter import Tk, Frame, Label, Button, OptionMenu, StringVar
-from packet_logger.sniffer import AqwPacketLogger
+from packets.sniffing import AqwPacketLogger
 from bot.player import AutoPlayer
 
 

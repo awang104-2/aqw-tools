@@ -1,9 +1,10 @@
 from bot.autoclicker import AutoClicker
-from packet_logger.sniffer import AqwPacketLogger
+from packets.sniffing import AqwPacketLogger
 from time import time as get_time, sleep
 from threading import Timer
 from handlers.DataHandler import add_data_to_csv
 from tkinter import Label, Button, Tk
+import os
 
 
 def popup_window():
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     combo = ['2', '3', '4']
     count = 2000
     filename = 'combat_sample_data.csv'
-    location = '../../tests/tests'
+    location = os.path.dirname(__file__)
     run_test(lvl, cls, pexp, server, time, combo, count, filename, location)
     popup_window()
 

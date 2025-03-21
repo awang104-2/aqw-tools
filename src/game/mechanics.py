@@ -1,4 +1,3 @@
-from time import sleep
 from threads.custom_threading import *
 import toml
 import os
@@ -202,7 +201,7 @@ class Inventory:
 
     def save(self, path=None):
         if not path:
-            path = os.path.join(config_path, 'drops_samples.toml')
+            path = os.path.join(config_path, 'sampling.toml')
         drops = self.get_drops()
         for item_id in drops.keys():
             if not drops.get(item_id).get('name'):
@@ -213,7 +212,7 @@ class Inventory:
     def merge_db(self, filepath=None):
         db = self.get_db()
         if not filepath:
-            filepath = os.path.join(config_path, 'drops_samples.toml')
+            filepath = os.path.join(config_path, 'sampling.toml')
         with open(filepath, 'r') as file:
             data = toml.load(file)
         for key, value in data.items():
