@@ -1,5 +1,5 @@
 from threading import Event, Timer, Thread
-from time import sleep
+from time import sleep, time
 from functools import wraps
 
 
@@ -98,7 +98,10 @@ class CustomThread:
 
 class CustomTimer:
 
-    def __init__(self, interval=None, function=None, args=None, kwargs=None, *, name=None, daemon=None):
+    def __init__(self, interval=None, function=None, args=None, kwargs=None, *, name=None, daemon=None, speed=1):
+        self._parallel = CustomEvent(False)
+        self._start_time = None
+        self._speed = speed
         self.running = CustomEvent(False)
         self.interval = interval
         self.function = function
@@ -106,23 +109,50 @@ class CustomTimer:
         self.name = name
         self.args = args
         self.kwargs = kwargs
-        self.timer = Timer(interval=self.interval, function=self.__function, args=self.args, kwargs=self.kwargs)
+        self.timer = Timer(interval=self.interval / self._speed, function=self.__function, args=self.args, kwargs=self.kwargs)
+
+    @property
+    def time_remaining(self):
+        return self.interval - min(round(time() - self._start_time, 1), self.interval)
+
+    @property
+    def speed(self):
+        return self._speed
+
+    @speed.setter
+    def speed(self, new_speed):
+        self._speed = new_speed
+        if self.is_running():
+            if self._parallel.is_clear():
+                raise RuntimeError('Cannot adjust speed while running in blocking mode (.run()).')
+            self.interval = self.time_remaining
+            self.cancel()
+            self.reset()
+            self.start()
+
+    def join(self):
+        self.timer.join()
 
     def is_running(self):
         return self.running.is_set()
 
     def __function(self, *args, **kwargs):
-        self.running.set()
         self.function(*args, **kwargs)
         self.reset()
         self.running.clear()
 
     @check_running
     def start(self):
+        self._parallel.set()
+        self._start_time = time()
+        self.running.set()
         self.timer.start()
 
     @check_running
     def run(self):
+        self._parallel.clear()
+        self._start_time = time()
+        self.running.set()
         self.timer.run()
 
     @check_not_running
@@ -131,7 +161,7 @@ class CustomTimer:
         self.running.clear()
 
     def reset(self):
-        self.timer = Timer(self.interval, self.__function)
+        self.timer = Timer(self.interval / self._speed, self.__function)
         if self.name:
             self.timer.name = self.name
         self.timer.daemon = self.daemon
@@ -160,3 +190,14 @@ class CustomEvent(Event):
 
     def wait_for_clear(self, timeout=None):
         self.opp_event.wait(timeout)
+
+
+start_time = time()
+print('start:')
+timer = CustomTimer(interval=10, function=print, args=['hello'], daemon=False)
+timer.start()
+sleep(2)
+print(f'time: {time() - start_time}')
+timer.speed = 4
+timer.join()
+print(f'time: {time() - start_time}')

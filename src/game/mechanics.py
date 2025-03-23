@@ -1,89 +1,143 @@
 from threads.custom_threading import *
+from handlers.DictHandler import *
 import toml
 import os
 
 
-config_path = os.path.join(os.path.dirname(__file__), 'config')
-
-
 class Quest:
 
-    def __configure(self, names):
-        quests_config_path = os.path.join(config_path, 'quests.toml')
-        with open(quests_config_path, 'r') as file:
-            quest_config = toml.load(file)
-        for name in names:
-            name = name.upper()
-            self.requirements[name] = quest_config[name]
-            self.completed[name] = 0
+    _config_path = os.path.join(os.path.dirname(__file__), 'config', 'quests.toml')
+    _quest_config = toml.load(_config_path)
 
-    def __init__(self, names=None, quest_ids=None):
-        self.requirements = {}
-        self.completed = {}
-        self.quest_ids = quest_ids
-        self.__configure(names)
+    def __init__(self, name, requirements, cap):
+        self.name = name.upper()
+        self.requirements = deepcopy(requirements)
+        self.cap = deepcopy(cap)
+        self.progress = dict.fromkeys(self.requirements, 0)
+        self.num_completed = 0
 
-    def get_quest_names(self):
+    @classmethod
+    def load(cls, name):
+        quest_details = Quest._quest_config.get(name)
+        name = name.upper()
+        requirements = quest_details.get('REQUIREMENTS')
+        cap = quest_details.get('CAP')
+        return cls(name=name, requirements=requirements, cap=cap)
+
+    def get_item_ids(self):
         return list(self.requirements.keys())
 
-    def check_quest(self, drops):
-        turn_in_list = {}
-        for name in self.requirements.keys():
-            turn_ins = 0
-            item_reqs = self.requirements.get(name)
-            item_ids = item_reqs.keys()
-            for i, item_id in enumerate(list(item_ids)):
-                drop, req, cap = drops.get_drop(item_id), item_reqs.get(item_id)[0], item_reqs.get(item_id)[1]
-                if not drop or drop.get('count') - req * self.completed.get(name) < cap:
-                    turn_ins = 0
-                    break
-                else:
-                    req_done = int(drop.get('count') / req) - self.completed.get(name)
-                    if i == 0:
-                        turn_ins = int(drop.get('count') / req) - self.completed.get(name)
-                    elif turn_ins > req_done:
-                        turn_ins = req_done
-            turn_in_list[name] = turn_ins
-            self.turn_in(name, turn_ins)
-        return turn_in_list
+    def is_required_item(self, item_id):
+        return item_id in self.get_item_ids()
 
-    def turn_in(self, name, num):
-        self.completed[name] += num
+    def add(self, item_id, number):
+        self.progress[item_id] += number
 
-    def get_req_ids(self):
-        item_ids = []
-        for name in self.get_quest_names():
-            item_ids += list(self.requirements.get(name).keys())
-        return item_ids
+    def print(self):
+        print(f'{self.name}')
+        for item_id, num in self.progress.items():
+            print(f'{item_id}: {num}')
+
+    def check_quest(self):
+        quests_satisfied = 0
+        for item_id, condition in self.requirements.items():
+            condition_satisfied = int(self.progress.get(item_id) / condition)
+            if condition_satisfied < quests_satisfied:
+                quests_satisfied = condition_satisfied
+        return quests_satisfied
+
+    def complete(self, n):
+        for item_id in self.progress.keys():
+            self.progress[item_id] -= n * self.requirements.get(item_id)
+            if self.progress.get(item_id) < 0:
+                raise ValueError('Argument \'n\' is too large, not enough quests completed.')
+        self.num_completed += n
+
+    def copy(self):
+        return Quest(name=self.name, requirements=self.requirements, cap=self.cap)
+
+
+class Quests:
+
+    @classmethod
+    def from_names(cls, names):
+        if not all(isinstance(name, str) for name in names):
+            raise TypeError('Arguments must be strings.')
+        quests = [Quest.load(name) for name in names]
+        return cls(quests)
+
+    def __init__(self, quests):
+        if not all(isinstance(quest, Quest) for quest in quests):
+            raise TypeError('Arguments must be strings.')
+        self.quests = quests
+
+    def get_quest(self, name: str):
+        for quest in self.quests:
+            if name == quest.name:
+                return quest
+
+    def get_quests(self, names: list | tuple):
+        quests = []
+        for quest in self.quests:
+            if quest.name in names:
+                quests.append(quest)
+        return quests
+
+    def get_quest_names(self):
+        return [quest.name for quest in self.quests]
+
+    def check_quests(self):
+        quests_satisfied = {}
+        for quest in self.quests:
+            quests_satisfied[quest.name] = quest.check_quest()
+        return quests_satisfied
+
+    def complete(self, names: str | list | tuple, n: int):
+        if isinstance(names, str):
+            names = [names]
+        for quest in self.get_quests(names):
+            quest.complete(n)
+
 
 class Combat:
 
-    classes = {'AM': 'ARCHMAGE', 'AI': 'ARCANA INVOKER', 'LR': 'LEGION REVENANT', 'AF': 'ARCHFIEND'}
+    _config_path = os.path.join(os.path.dirname(__file__), 'config', 'classes.toml')
+    _class_config = toml.load(_config_path)
 
-    def __init__(self, cls, haste=0.5):
-        classes_config_path = os.path.join(config_path, 'classes.toml')
+    @staticmethod
+    def _get_ability_info(cd: float, name: str, mana: int, key: str):
+        status = CustomEvent(True)
+        timer = CustomTimer(interval=cd, function=status.set, name=f'ability-{key} cd', daemon=True)
+        return {'cd': cd, 'status': status, 'timer': timer, 'name': name, 'key': key, 'mana': mana}
+
+    def __init__(self, cls: str, haste: int, rotation: tuple | list, rotation_type: str, cd1: int, cd2: int, cd3: int, cd4: int, cd5: int, gcd: int):
+        self.cls = cls
         self.cd_reduction = 1 - haste
         self.kills = 0
-        self.cls = cls.upper()
-        if self.cls in list(Combat.classes.keys()):
-            self.cls = Combat.classes.get(self.cls)
-        elif self.cls in list(Combat.classes.values()):
-            pass
-        else:
-            raise ValueError('Class not found.')
-        with open(classes_config_path, 'r') as file:
-            class_config = toml.load(file).get(self.cls)
-        self.rotation = class_config.get('rotation')
-        self.rotation_type = class_config.get('rotation_type')
-        self.gcd = class_config.get('gcd')
+        self.rotation = deepcopy(rotation)
+        self.rotation_type = rotation_type
+        self.gcd = gcd
         self.info = {
-            '1': {'cd': class_config['1']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '2': {'cd': class_config['2']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '3': {'cd': class_config['3']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '4': {'cd': class_config['4']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '5': {'cd': class_config['5']['cd'] * self.cd_reduction, 'status': CustomEvent(True), 'timer': None}
+            '1': {'cd': cd1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '2': {'cd': cd2 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '3': {'cd': cd3 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '4': {'cd': cd4 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
+            '5': {'cd': cd5 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None}
         }
-        self.__set_timers()
+        self._set_timers()
+
+    def load(self, cls, haste):
+        class_name = Combat._class_config.get('ACRONYMS').get(cls, cls)
+        class_details = Combat._class_config.get(cls)
+
+
+    def _set_timers(self):
+        for ability, ability_info in self.info.items():
+            interval = ability_info.get('cd')
+            function = ability_info.get('status').set
+            name = f'ability-{ability} cd'
+            daemon = True
+            ability_info['timer'] = CustomTimer(interval=interval, function=function, name=name, daemon=daemon)
 
     def add_kills(self, n):
         self.kills += n
@@ -111,13 +165,6 @@ class Combat:
     def sleep_gcd(self):
         sleep(self.gcd * self.cd_reduction)
 
-    def __set_timers(self):
-        for ability, ability_info in self.info.items():
-            interval = ability_info.get('cd')
-            function = ability_info.get('status').set
-            name = f'ability-{ability} cd'
-            daemon = True
-            ability_info['timer'] = CustomTimer(interval=interval, function=function, name=name, daemon=daemon)
 
     def fight(self):
         if self.rotation_type == 'rotation':
@@ -144,19 +191,27 @@ class Combat:
             raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
 
 
+class Item:
+
+    __config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
+
+
+
+
 class Inventory:
 
-    __drops_config_path = os.path.join(config_path, 'drops.toml')
+    __config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
+    __sampling_path = os.path.join(os.path.dirname(__file__), 'config', 'sampling.toml')
 
     @staticmethod
     def get_db():
-        with open(Inventory.__drops_config_path, 'r') as file:
+        with open(Inventory.__config_path, 'r') as file:
             drop_config = toml.load(file)
         return drop_config
 
     @staticmethod
     def write_db(db):
-        with open(Inventory.__drops_config_path, 'w') as file:
+        with open(Inventory.__config_path, 'w') as file:
             toml.dump(db, file)
 
     def __init__(self):
@@ -199,20 +254,20 @@ class Inventory:
         for key in self.drops.keys():
             self.drops[key]['count'] = 0
 
-    def save(self, path=None):
-        if not path:
-            path = os.path.join(config_path, 'sampling.toml')
+    def save(self, filepath=None):
+        if not filepath:
+            filepath = Inventory.__sampling_path
         drops = self.get_drops()
         for item_id in drops.keys():
             if not drops.get(item_id).get('name'):
                 drops[item_id]['name'] = 'None'
-        with open(path, 'w') as file:
+        with open(filepath, 'w') as file:
             toml.dump(drops, file)
 
     def merge_db(self, filepath=None):
         db = self.get_db()
         if not filepath:
-            filepath = os.path.join(config_path, 'sampling.toml')
+            filepath = Inventory.__sampling_path
         with open(filepath, 'r') as file:
             data = toml.load(file)
         for key, value in data.items():

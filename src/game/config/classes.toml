@@ -1,60 +1,27 @@
-['LEGION REVENANT']
+[ACRONYMS]
+AM = 'ARCHMAGE'
+AI = 'ARCANA INVOKER'
+LR = 'LEGION REVENANT'
+AF = 'ARCHFIEND'
+
+['CLASS INFO']
+
+['CLASS INFO'.'LEGION REVENANT']
 rotation = ['4', '5', '2', '3']
 rotation_type = 'priority'
+ability.1 = {cd = 1.5, name = 'Malevolent Burst', mana = 0, key = '1'}
+ability.2 = {cd = 6, name = 'Atramentous Shade', mana = 10, key = '2'}
+ability.3 = {cd = 6, name = 'Wicked Purgatory', mana = 15, key = '3'}
+ability.4 = {cd = 6, name = 'Depraved Empowerment', mana = 15, key = '4'}
+ability.5 = {cd = 12, name = 'Anathema', mana = 20, key = '5'}
 gcd = 1.8
 
-['LEGION REVENANT'.1]
-cd = 1.5
-status = true
-name = 'ability-1'
-
-['LEGION REVENANT'.2]
-cd = 6
-status = true
-name = 'ability-2'
-
-['LEGION REVENANT'.3]
-cd = 6
-status = true
-name = 'ability-3'
-
-['LEGION REVENANT'.4]
-cd = 6
-status = true
-name = 'ability-4'
-
-['LEGION REVENANT'.5]
-cd = 12
-status = true
-name = 'ability-5'
-
-
-['ARCHFIEND']
+['CLASS INFO'.'ARCHFIEND']
 rotation = ['4', '2', '3']
 rotation_type = 'priority'
+ability.1 = {cd = 2, name = 'Mark of Death', mana = 0, key = '1'}
+ability.2 = {cd = 3, name = 'Fiendish Strike', mana = 15, key = '2'}
+ability.3 = {cd = 3, name = 'Consumed by the Abyss', mana = 15, key = '3'}
+ability.4 = {cd = 26, name = 'Fiend Frenzy', mana = 25, key = '4'}
+ability.5 = {cd = 26, name = 'Abyssal Contract', mana = 25, key = '5'}
 gcd = 1.6
-
-['ARCHFIEND'.1]
-cd = 2
-status = true
-name = 'ability-1'
-
-['ARCHFIEND'.2]
-cd = 3
-status = true
-name = 'ability-2'
-
-['ARCHFIEND'.3]
-cd = 3
-status = true
-name = 'ability-3'
-
-['ARCHFIEND'.4]
-cd = 26
-status = true
-name = 'ability-4'
-
-['ARCHFIEND'.5]
-cd = 26
-status = true
-name = 'ability-5'

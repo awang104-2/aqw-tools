@@ -1,6 +1,6 @@
 from time import sleep
 from bot.autoclicker import AutoClicker
-from game.mechanics import Quest, Combat, Inventory
+from game.mechanics import Quests, Combat, Inventory
 from threads.custom_threading import CustomEvent, CustomThread
 from game.interpreter import Interpreter
 from game.listener import GameListener
@@ -23,7 +23,7 @@ class Player:
     NUM_COMPLETE_LOCATIONS = {'2256x1504': (1140, 680)}
     YES_LOCATIONS = {'2256x1504': (1050, 800)}
 
-    def __init__(self, resolution, quests, server, location='battleon', haste=0.5, cls='lr'):
+    def __init__(self, resolution, quests, server):
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
         self.rej_item_loc = Player.ITEM_REJECT_LOCATIONS.get(resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(resolution)
@@ -35,9 +35,7 @@ class Player:
         self.server = server
         self.log_on = False
         self.delay_time = 0.1
-        self.combat = Combat(cls=cls, haste=haste)
-        self.quest = Quest(quests)
-        self.drops = Inventory()
+
         self.autoclicker = AutoClicker()
         self.hwnd = self.autoclicker.get_hwnd()
         self.sniffer = GameListener(server=self.server)
