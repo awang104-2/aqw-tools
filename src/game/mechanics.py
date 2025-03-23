@@ -130,7 +130,6 @@ class Combat:
         class_name = Combat._class_config.get('ACRONYMS').get(cls, cls)
         class_details = Combat._class_config.get(cls)
 
-
     def _set_timers(self):
         for ability, ability_info in self.info.items():
             interval = ability_info.get('cd')
