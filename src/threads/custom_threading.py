@@ -1,13 +1,13 @@
-from threading import Event, Timer, Thread, Lock, RLock
+from threading import Event, Timer, Thread, RLock
 from time import sleep, time
 from functools import wraps
 
 
-def do_nothing():
+def _do_nothing():
     pass
 
 
-def with_lock(method):
+def _with_lock(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         with self._lock:
@@ -15,24 +15,20 @@ def with_lock(method):
     return wrapper
 
 
-def check_running(method):
+def _check_running(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        if self.running.is_set():
-            class_name = self.__class__.__name__
-            method_name = method.__name__
-            raise RuntimeError(f'Cannot run \'{class_name}.{method_name}\' while thread is running.')
+        if self._running.is_set():
+            raise RuntimeError(f'Cannot call \'{method.__name__}\' while {self.__class__.__name__} instance is running.')
         return method(self, *args, **kwargs)
     return wrapper
 
 
-def check_not_running(method):
+def _check_not_running(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        if self.running.is_clear():
-            class_name = self.__class__.__name__
-            method_name = method.__name__
-            raise RuntimeError(f'Cannot run \'{class_name}.{method_name}\' while thread is not running.')
+        if self._running.is_clear():
+            raise RuntimeError(f'Cannot call \'{method.__name__}\' while {self.__class__.__name__} instance is not running.')
         return method(self, *args, **kwargs)
     return wrapper
 
@@ -40,11 +36,11 @@ def check_not_running(method):
 class CustomThread:
 
     @staticmethod
-    def check_loop(method):
+    def _check_loop(method):
         @wraps(method)
         def wrapper(self, *args, **kwargs):
             if self.loop.is_set() and self.running.is_set() != self.__loop_flag.is_set():
-                return do_nothing()
+                return _do_nothing()
             else:
                 return method(self, *args, **kwargs)
         return wrapper
@@ -81,139 +77,162 @@ class CustomThread:
             if self.delay:
                 sleep(self.delay)
 
-    @check_running
-    @check_loop
-    def start(self):
-        self.thread.start()
-
-    @check_running
-    @check_loop
-    def run(self):
-        self.thread.run()
-
-    @check_not_running
-    @check_loop
-    def stop(self):
-        self.__loop_flag.clear()
-
     def wait(self, timeout=None, *, for_clear=True):
         if for_clear:
             self.running.wait_for_clear(timeout)
         else:
             self.running.wait(timeout)
 
+    @_check_loop
+    @_check_running
+    def start(self):
+        self.thread.start()
+
+    @_check_loop
+    @_check_running
+    def run(self):
+        self.thread.run()
+
+    @_check_loop
+    @_check_not_running
+    def stop(self):
+        self.__loop_flag.clear()
+
+    @_check_running
     def reset(self):
         self.thread = Thread(group=self.group, target=self._target, name=self.name, args=self.args, kwargs=self.kwargs, daemon=self.daemon)
 
 
 class CustomTimer:
 
-    def __init__(self, interval=None, function=None, args=None, kwargs=None, *, name=None, daemon=None, speed=1):
+    def __init__(self, interval=None, function=None, args=None, kwargs=None, *, name=None, daemon=False, speed=1):
         self._lock = RLock()
         self._parallel = CustomEvent(False)
+        self._running = CustomEvent(False)
         self._start_time = None
         self._speed = speed
-        self.running = CustomEvent(False)
         self._interval = interval
-        self.function = function
-        self.daemon = daemon
-        self.name = name
-        self.args = args
-        self.kwargs = kwargs
-        self.timer = Timer(interval=self._interval / self._speed, function=self._function, args=self.args, kwargs=self.kwargs)
-
-    @property
-    def elapsed(self):
-        with self._lock:
-            if self._start_time is None:
-                return 0
-            return min(time() - self._start_time, self._interval)
+        self.__function = function
+        self._timer = Timer(interval=self._interval / self._speed, function=self._function, args=args, kwargs=kwargs)
+        if name:
+            self._timer.name = name
+        self._timer.daemon = daemon
 
     @property
     def interval(self):
-        with self._lock:
-            if self._start_time is None:
-                return self._interval
-            print(min(time() - self._start_time, self._interval))
-            print(self._interval)
-            return self._interval - min(time() - self._start_time, self._interval)
+        return self._interval
 
     @interval.setter
-    def interval(self, new_time):
-        with self._lock:
-            if new_time < 0:
-                raise ValueError('Interval must be non-negative.')
-            self._interval = new_time
-            print(self.is_running())
-            if self.is_running():
-                print(self._parallel.is_clear())
-                if self._parallel.is_clear():
-                    raise RuntimeError('Cannot adjust speed while running in blocking mode (.run()).')
-                self.cancel()
-                self.reset()
-                self.start()
+    def interval(self, interval):
+        self._interval = interval
+
+    @property
+    def function(self):
+        return self.__function
+
+    @function.setter
+    def function(self, function):
+        self.__function = function
+
+    @property
+    def args(self):
+        return self._timer.args
+
+    @args.setter
+    def args(self, args):
+        self._timer.args = args
+
+    @property
+    def kwargs(self):
+        return self._timer.kwargs
+
+    @kwargs.setter
+    def kwargs(self, kwargs):
+        self._timer.kwargs = kwargs
+
+    @property
+    def name(self):
+        return self._timer.name
+
+    @name.setter
+    def name(self, name):
+        self._timer.name = name
+
+    @property
+    def daemon(self):
+        return self._timer.daemon
+
+    @daemon.setter
+    def daemon(self, daemon):
+        self._timer.daemon = daemon
 
     @property
     def speed(self):
-        with self._lock:
-            return self._speed
+        return self._speed
 
     @speed.setter
-    def speed(self, new_speed):
-        with self._lock:
-            self._speed = new_speed
-            if self.is_running():
-                if self._parallel.is_clear():
-                    raise RuntimeError('Cannot adjust speed while running in blocking mode (.run()).')
-                self._interval = self.interval
-                self.cancel()
-                self.reset()
-                self.start()
+    def speed(self, speed):
+        self._speed = speed
 
-    @with_lock
+    @property
+    def elapsed(self):
+        if self._start_time is None:
+            return 0
+        return min(time() - self._start_time, self._interval)
+
+    @property
+    def remaining(self):
+        return self._interval - self.elapsed
+
+    def adjust(self, speed):
+        self._speed = speed
+        if self.is_running():
+            self._timer.cancel()
+            name, daemon = self.name, self.daemon
+            interval = max(self._interval / self._speed - self.elapsed, 0)
+            self._timer = Timer(interval=interval, function=self._function, args=self.args, kwargs=self.kwargs)
+            self._timer.name = name
+            self._timer.daemon = daemon
+            self._timer.start()
+
     def join(self):
-        self.timer.join()
+        self._timer.join()
         self._parallel.clear()
 
     def is_running(self):
-        return self.running.is_set()
+        return self._running.is_set()
 
     def _function(self, *args, **kwargs):
-        self.function(*args, **kwargs)
-        self.running.clear()
-        self._reset()
+        self.__function(*args, **kwargs)
+        self._running.clear()
+        self.reset()
 
-    @check_running
+    @_check_running
     def start(self):
         self._parallel.set()
         self._start_time = time()
-        self.running.set()
-        self.timer.start()
+        self._running.set()
+        self._timer.start()
 
-    @check_running
+    @_check_running
     def run(self):
         self._parallel.clear()
         self._start_time = time()
-        self.running.set()
-        self.timer.run()
+        self._running.set()
+        self._timer.run()
 
-    @with_lock
-    @check_not_running
+    @_check_not_running
     def cancel(self):
-        self.timer.cancel()
-        self.running.clear()
+        self._timer.cancel()
+        self._running.clear()
 
-    @with_lock
-    @check_running
+    @_check_running
     def reset(self):
-        self._reset()
-
-    def _reset(self):
         self._start_time = None
-        self.timer = Timer(self._interval / self._speed, self._function, self.args, self.kwargs)
-        if self.name:
-            self.timer.name = self.name
-        self.timer.daemon = self.daemon
+        name, daemon = self.name, self.daemon
+        self._timer = Timer(interval=self._interval / self._speed, function=self._function, args=self.args, kwargs=self.kwargs)
+        self._timer.name = name
+        self._timer.daemon = daemon
 
 
 class CustomEvent(Event):
