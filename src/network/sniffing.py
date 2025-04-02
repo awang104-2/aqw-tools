@@ -1,88 +1,78 @@
-from scapy.all import sniff, Raw
-from queue import Queue
-from threading import Event, Thread
-
-
-def get_raw(packet):
-    try:
-        return packet[Raw].load
-    except IndexError:
-        return ''
-
-def parse_bytes(bytes_obj, limit=200):
-    if bytes_obj == '':
-        return []
-    if len(bytes_obj) < limit:
-        return [bytes_obj]
-    else:
-        first_half = [bytes_obj[:limit]]
-        second_half = bytes_obj[limit:]
-        return first_half + parse_bytes(second_half)
-
-
-def decode(bytes_list, code='utf-8'):
-    str_list = []
-    for b in bytes_list:
-        str_list.append(b.decode(code))
-    return str_list
+from scapy.all import AsyncSniffer, Scapy_Exception
+from queue import Queue, Empty
+from decorators import *
 
 
 class Sniffer:
 
-    def __init__(self, bpf_filter):
-        self.filter = bpf_filter
-        self.packets = Queue()
-        self.summary = Event()
-        self.running = Event()
-        self.__receiving_packet = Event()
-        self.__sniff_thread = Thread(target=self.sniff, name='sniff thread')
+    def __init__(self, bpf_filter, layers=None, summary_on=False):
+        self._filter = bpf_filter
+        self._layers = layers
+        self._packets = Queue()
+        self._sniffer = AsyncSniffer(filter=bpf_filter, prn=self.log_packet, store=0)
+        self._summary_on = summary_on
 
-    def set_bpf_filter(self, bpf_filter):
-        self.filter = bpf_filter
+    @property
+    def summary_on(self):
+        return self._summary_on
 
+    @summary_on.setter
+    @check_not_running
+    def summary_on(self, boolean):
+        self._summary_on = boolean
+
+    @property
+    def filter(self):
+        return self._filter
+
+    @property
+    def layers(self):
+        return self._layers
+
+    @property
+    def running(self):
+        return self._sniffer.running
+
+    @check_not_running
     def start(self):
-        self.__sniff_thread.daemon = True
-        self.__sniff_thread.start()
+        try:
+            self._sniffer.start()
+        except Scapy_Exception:
+            raise RuntimeError(f'Call reset before starting {self.__name__} instance again.')
 
-    def run(self):
-        self.__sniff_thread.run()
-
+    @check_running
     def stop(self):
-        self.running.clear()
+        self._sniffer.join(timeout=0.01)
+        self._sniffer.stop()
 
-    def sniff(self):
-        self.running.set()
-        print('Sniffing...')
-        sniff(filter=self.filter, prn=self.log_packet, store=0, stop_filter=lambda x: not self.running.is_set())
-        self.running.clear()
-
-    def set_concurrent_packet_summary_on(self, status):
-        if status:
-            self.summary.set()
-        else:
-            self.summary.clear()
+    def put(self, packet):
+        self._packets.put(packet)
 
     def log_packet(self, packet):
-        self.__receiving_packet.set()
-        self.packets.put(packet)
-        if self.summary.is_set():
-            print(packet.summary())
-        self.__receiving_packet.clear()
+        if self._layers:
+            if len(self._layers) == 1 and packet.haslayer(self._layers[0]):
+                self._packets.put(packet)
+                if self._summary_on:
+                    return packet
+            elif any([packet.haslayer(layer) for layer in self._layers]):
+                self._packets.put(packet)
+                if self._summary_on:
+                    return packet
+        else:
+            self._packets.put(packet)
+            if self._summary_on:
+                return packet
 
-    def wait_for_packet(self, timeout=None):
-        self.__receiving_packet.wait(timeout)
-
-    def is_running(self):
-        return self.running.is_set()
-
+    @check_not_running
     def reset(self):
-        self.packets = Queue()
-        self.summary = Event()
-        self.running = Event()
-        self.__receiving_packet = Event()
-        self.__sniff_thread = Thread(target=self.sniff, name='sniff thread')
+        self._packets = Queue()
+        self._sniffer = AsyncSniffer(filter=self.filter, prn=self.log_packet, store=None)
+
+    def get(self, timeout=None):
+        try:
+            return self._packets.get(timeout=timeout)
+        except Empty:
+            return None
 
 
-
-
-
+__all__ = [name for name in globals() if not name.startswith('-')]

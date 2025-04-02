@@ -1,48 +1,48 @@
-from bot.autoclicker import AutoClicker
-from packets.sniffing import AqwPacketLogger
-from time import time as get_time, sleep
-from threading import Timer
 from handlers.DataHandler import add_data_to_csv
-from tkinter import Label, Button, Tk
-import os
+from pynput.keyboard import Listener, Key
+from network.sniffing import GameSniffer
+from bot.autoclicker import AutoClicker
+from threading import Thread
+from time import sleep
+
+def auto_combat(packet_logger, combo=('1', '2', '3', '4', '5')):
+    def combat_loop():
+        while packet_logger.running:
+            autoclicker = AutoClicker()
+            for key in combo:
+                autoclicker.press(key)
+                sleep(0.1)
+    return Thread(target=combat_loop)
 
 
-def popup_window():
-    window = Tk()
-    window.attributes('-topmost', True)
-    label = Label(window, text="Testing finished.")
-    label.pack(fill='x')
-    button_close = Button(window, text="Ok", command=window.destroy)
-    button_close.pack(side='bottom', pady=10)
-    geometry = '150x80+' + str(int(window.winfo_screenwidth() / 2) - 75) + '+' + str(int(window.winfo_screenheight() / 2) - 80)
-    print(geometry)
-    window.geometry(geometry)
-    window.mainloop()
+def get_player_data(packet):
 
 
-def combat_loop(packet_logger, combo=('1', '2', '3', '4', '5')):
-    while packet_logger.is_running():
-        autoclicker = AutoClicker()
-        for key in combo:
-            autoclicker.press(key)
-            sleep(0.1)
+
+def on_release(key, packet_logger):
+    if key == Key.esc:
+        packet_logger.stop()
+        return False
 
 
-def sample(server, time, combo):
-    packet_logger = AqwPacketLogger(server=server)
-    packet_logger.set_concurrent_packet_summary_on(False)
-    packet_logger.start()
-    start = get_time()
-    timer = Timer(time, packet_logger.stop)
-    timer.start()
-    combat_loop(packet_logger, combo)
-    end = get_time()
-    return packet_logger, (end - start)
+def keyboard_listener(packet_logger):
+    return Listener(on_release=lambda key: on_release(key, packet_logger))
+
+
+def sample(server, count=2000, combo=(4, 3, 5)):
+    game_sniffer = GameSniffer(server=server)
+    autocombat = auto_combat(game_sniffer, combo=combo)
+    listener = keyboard_listener(game_sniffer)
+    game_sniffer.start()
+    autocombat.start()
+
+
+
 
 
 def get_player_data(packet_logger, count):
     player_total, player_hit, player_crit, player_dodge, player_miss = (0, 0, 0, 0, 0)
-    results = packet_logger.get_jsons(include=['ct'])
+    results = packet_logger.get(include=['ct'])
     for result in results:
         infos = result.get('sarsa', None)
         if not infos:
@@ -107,42 +107,12 @@ def run_test(lvl, cls, pexp, server, time, combo, count, filename, location):
     add_data_to_csv(filename, location, data)
 
 
-if __name__ == '__main__':
-    lvl = 100
-    cls = 'archmage'
-    pexp = 0.5933
-    server = 'twig'
-    time = 1200
-    combo = ['2', '3', '4']
-    count = 2000
-    filename = 'combat_sample_data.csv'
-    location = os.path.dirname(__file__)
-    run_test(lvl, cls, pexp, server, time, combo, count, filename, location)
-    popup_window()
 
 
-
-'''
-print(f'\nTime Passed: {round(end - start, 2)}s')
-print('\n-------Player-------')
-print('Total:', player_total)
-print('Hit:', player_hit)
-print('Crit:', player_crit)
-print('Dodge:', player_dodge)
-print('Miss:', player_miss)
-print('**Probability**')
-print('Crit:', player_crit / player_total)
-print('Dodge:', player_dodge / player_total)
-print('Miss:', player_miss / player_total)
-print('-------Monster-------')
-print('Total:', monster_total)
-print('Hit:', monster_hit)
-print('Crit:', monster_crit)
-print('Dodge:', monster_dodge)
-print('Miss:', monster_miss)
-print('**Probability**')
-print('Crit:', monster_crit / monster_total)
-print('Dodge:', monster_dodge / monster_total)
-print('Miss:', monster_miss / monster_total)
-print('')
-'''
+def main():
+    game_sniffer = GameSniffer('twig')
+    thread = Thread(target=processing_thread, args=[game_sniffer])
+    game_sniffer.start()
+    thread.start()
+    listener = Listener(on_release=lambda key: on_release(key, game_sniffer))
+    listener.run()

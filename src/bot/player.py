@@ -1,12 +1,14 @@
 from time import sleep
 from bot.autoclicker import AutoClicker
 from game.mechanics import Quests, Combat, Inventory
-from threads.custom_threading import CustomEvent, CustomThread
+from threads.custom_threading import CustomEvent, LoopingThread
+from network.sniffing import GameSniffer
 from game.interpreter import Interpreter
-from game.listener import GameListener
+import toml
+import os
 
 
-def __connection_required(method):
+def _connection_required(method):
     def wrapper(self, *args, **kwargs):
         if self.__connected.is_clear():
             raise RuntimeError("Call 'connect' before running this method.")
@@ -16,12 +18,16 @@ def __connection_required(method):
 
 class Player:
 
-    ITEM_ACCEPT_LOCATIONS = {'2256x1504': (1300, 1150)}
-    ITEM_REJECT_LOCATIONS = {'2256x1504': (1350, 1150)}
-    QUEST_LOG_LOCATIONS = {'2256x1504': (500, 400)}
-    TURN_IN_LOCATIONS = {'2256x1504': (500, 1100)}
-    NUM_COMPLETE_LOCATIONS = {'2256x1504': (1140, 680)}
-    YES_LOCATIONS = {'2256x1504': (1050, 800)}
+    _config_path = os.path.join(os.path.dirname(__file__), 'config', 'locations.toml')
+    _locations = toml.load(_config_path)
+    _clicking = _locations.get('CLICKING')
+
+    ITEM_ACCEPT_LOCATIONS = _clicking.get('ITEM ACCEPT')
+    ITEM_REJECT_LOCATIONS = _clicking.get('ITEM REJECT')
+    QUEST_LOG_LOCATIONS = _clicking.get('QUEST LOG')
+    TURN_IN_LOCATIONS = _clicking.get('TURN IN')
+    NUM_COMPLETE_LOCATIONS = _clicking.get('NUM COMPLETE')
+    YES_LOCATIONS = _clicking.get('YES')
 
     def __init__(self, resolution, quests, server):
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
@@ -30,8 +36,8 @@ class Player:
         self.turn_in_loc = Player.TURN_IN_LOCATIONS.get(resolution)
         self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(resolution)
         self.yes_loc = Player.YES_LOCATIONS.get(resolution)
+
         self.resolution = resolution
-        self.location = location
         self.server = server
         self.log_on = False
         self.delay_time = 0.1
@@ -42,17 +48,17 @@ class Player:
         self.sniffer.set_concurrent_packet_summary_on(False)
         self.interpreter = Interpreter(self, self.sniffer)
         self.__connected = CustomEvent(False)
-        self.__autofight = CustomThread(target=self.fight, daemon=True, loop=True)
+        self.__autofight = LoopingThread(target=self.fight, daemon=True, loop=True)
 
     @property
     def autofight(self):
-        return self.__autofight.is_running()
+        return self.__autofight.running()
 
     @autofight.setter
     def autofight(self, fighting):
-        if fighting and not self.__autofight.is_running():
+        if fighting and not self.__autofight.running():
             self.__autofight.start()
-        elif not fighting and self.__autofight.is_running():
+        elif not fighting and self.__autofight.running():
             self.__autofight.stop()
         else:
             raise RuntimeError('Cannot start or stop fighting if Player instance has already started or stopped fighting, respectively.')
@@ -63,9 +69,6 @@ class Player:
 
     def delay(self):
         sleep(self.delay_time)
-
-    def set_inventory(self, item_id, iQtyNow):
-        self.drops.set_inventory(item_id, iQtyNow)
 
     def fight(self):
         move = self.combat.fight()

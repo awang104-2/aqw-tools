@@ -102,115 +102,180 @@ class Quests:
 class Combat:
 
     _config_path = os.path.join(os.path.dirname(__file__), 'config', 'classes.toml')
-    _class_config = toml.load(_config_path)
+    _combat_config = toml.load(_config_path)
+    _class_info = _combat_config.get('CLASS INFO')
+    _class_acronyms = _combat_config.get('ACRONYMS')
 
     @staticmethod
-    def _get_ability_info(cd: float, name: str, mana: int, key: str):
-        status = CustomEvent(True)
-        timer = CustomTimer(interval=cd, function=status.set, name=f'ability-{key} cd', daemon=True)
-        return {'cd': cd, 'status': status, 'timer': timer, 'name': name, 'key': key, 'mana': mana}
+    def _get_ability_info(cd: float, name: str, mana: int, key: str, speed: float):
+        timer = AdjustableTimer(interval=cd, name=f'ability-{key} cd', daemon=True, speed=speed)
+        return {'cd': cd, 'timer': timer, 'name': name, 'key': key, 'mana': mana}
 
-    def __init__(self, cls: str, haste: int, rotation: tuple | list, rotation_type: str, cd1: int, cd2: int, cd3: int, cd4: int, cd5: int, gcd: int):
-        self.cls = cls
-        self.cd_reduction = 1 - haste
-        self.kills = 0
-        self.rotation = deepcopy(rotation)
-        self.rotation_type = rotation_type
-        self.gcd = gcd
-        self.info = {
-            '1': {'cd': cd1 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '2': {'cd': cd2 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '3': {'cd': cd3 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '4': {'cd': cd4 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None},
-            '5': {'cd': cd5 * self.cd_reduction, 'status': CustomEvent(True), 'timer': None}
-        }
-        self._set_timers()
+    @staticmethod
+    def _abilities_to_dict(abilities, speed=1):
+        dictionary = {}
+        for key, info in abilities.items():
+            dictionary[key] = Combat._get_ability_info(**info, speed=speed)
+        return dictionary
 
-    def load(self, cls, haste):
-        class_name = Combat._class_config.get('ACRONYMS').get(cls, cls)
-        class_details = Combat._class_config.get(cls)
+    @classmethod
+    def load(cls, class_name, haste: float = 0):
+        class_name = class_name.upper()
+        class_name = Combat._class_acronyms.get(class_name, class_name)
+        class_info = {'class_name': class_name}
+        class_info.update(Combat._class_info.get(class_name))
+        return cls(**class_info, haste=haste)
 
-    def _set_timers(self):
-        for ability, ability_info in self.info.items():
-            interval = ability_info.get('cd')
-            function = ability_info.get('status').set
-            name = f'ability-{ability} cd'
-            daemon = True
-            ability_info['timer'] = CustomTimer(interval=interval, function=function, name=name, daemon=daemon)
+    def __init__(self, *, class_name, haste, rotation, rotation_type, abilities, gcd):
+        self._class = class_name
+        self._haste = min(haste, 0.5)
+        self._rotation = rotation
+        self._rotation_type = rotation_type
+        self._abilities = Combat._abilities_to_dict(abilities, self.cooldown_speed)
+        self._gcd = gcd
+        self._kills = 0
+        self._combat_data = {'crit': 0, 'miss': 0, 'dodge': 0, 'enemy dodge': 0, 'total': 0, 'enemy total': 0}
+
+    @property
+    def total(self):
+        return self._combat_data.get('hit')
+
+    @property
+    def enemy_total(self):
+        return self._combat_data.get('enemy hit')
+
+    @property
+    def crit_chance(self):
+        total = self.total
+        if total > 0:
+            return self._combat_data.get('crit') / total
+        else:
+            return None
+
+    @property
+    def dodge_chance(self):
+        enemy_total = self.total
+        if enemy_total > 0:
+            return self._combat_data.get('dodge') / enemy_total
+        else:
+            return None
+
+    @property
+    def haste(self):
+        return self._haste
+
+    @haste.setter
+    def haste(self, haste):
+        haste = min(haste, 0.5)
+        if self._haste != haste:
+            self._haste = haste
+            for ability in self._abilities.values():
+                ability.get('timer').adjust(self.cooldown_speed)
+
+    @property
+    def cooldown_reduction(self):
+        return 1 - self._haste
+
+    @property
+    def cooldown_speed(self):
+        return 1 / self.cooldown_reduction
+
+    @property
+    def original_gcd(self):
+        return self._gcd
+
+    @property
+    def reduced_gcd(self):
+        return self._gcd * self.cooldown_reduction
+
+    def add_combat_data(self, key, n):
+        self._combat_data[key] += n
 
     def add_kills(self, n):
-        self.kills += n
+        self._kills += n
 
     def get_kills(self):
-        return self.kills
+        return self._kills
 
     def get_move(self, key):
+        return deepcopy(self._get_move(key))
+
+    def _get_move(self, key):
         key = str(key)
-        return self.info.get(key)
+        return self._abilities.get(key)
 
-    def increment_move(self):
-        key = self.rotation[0]
-        if self.rotation_type == 'rotation':
-            self.rotation = self.rotation[1:] + [key]
-        return key
+    def _rotate(self):
+        last_key = self._rotation.pop(0)
+        self._rotation = self._rotation + [last_key]
 
-    def check_moves(self):
-        for move in self.rotation:
-            status = self.get_move(move).get('status')
-            if status.is_set():
-                return move
+    def _find_first_ready(self):
+        for key in self._rotation:
+            if self._abilities.get(key).get('timer').ready:
+                return key
         return None
 
     def sleep_gcd(self):
-        sleep(self.gcd * self.cd_reduction)
+        t, t0 = 0, time()
+        while t < self.reduced_gcd:
+            sleep(0.05)
+            t = time() - t0
 
+    def _use_ability_rotation(self, key):
+        ability = self._abilities.get(key)
+        if not ability.get('timer').ready:
+            self.sleep_gcd()
+            ability.get('timer').wait_until_ready()
+        ability.get('timer').start()
+        return ability.get('key')
 
-    def fight(self):
-        if self.rotation_type == 'rotation':
-            key = self.increment_move()
-            move = self.get_move(key)
-            status = move.get('status')
-            timer = move.get('timer')
-            timer.start()
-            status.wait()
-            status.clear()
-            return key
-        elif self.rotation_type == 'priority':
-            key = self.check_moves()
-            if key:
-                move = self.get_move(key)
-                status = move.get('status')
-                timer = move.get('timer')
-                timer.start()
-                status.clear()
-                return key
-            else:
-                return None
+    def _use_ability_priority(self, key):
+        ability = self._abilities.get(key)
+        if not ability:
+            return ability
+        ability.get('timer').start()
+        return ability.get('key')
+
+    def _attack_rotation(self):
+        key = self._use_ability_rotation(self._rotation[0])
+        self._rotate()
+        return key
+
+    def _attack_priority(self):
+        key = self._find_first_ready()
+        self._use_ability_priority(key)
+        return key
+
+    def attack(self, func=None):
+        if self._rotation_type == 'rotation':
+            key = self._attack_rotation()
+        elif self._rotation_type == 'priority':
+            key = self._attack_priority()
         else:
             raise ValueError('Rotation type must be \'priority\' or \'rotation\'.')
+        if func:
+            func(key)
+        self.sleep_gcd()
 
 
 class Item:
 
-    __config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
-
-
+    _config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
 
 
 class Inventory:
 
-    __config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
-    __sampling_path = os.path.join(os.path.dirname(__file__), 'config', 'sampling.toml')
+    _config_path = os.path.join(os.path.dirname(__file__), 'config', 'drops.toml')
+    _sampling_path = os.path.join(os.path.dirname(__file__), 'config', 'sampling.toml')
 
     @staticmethod
     def get_db():
-        with open(Inventory.__config_path, 'r') as file:
+        with open(Inventory._config_path, 'r') as file:
             drop_config = toml.load(file)
         return drop_config
 
     @staticmethod
     def write_db(db):
-        with open(Inventory.__config_path, 'w') as file:
+        with open(Inventory._config_path, 'w') as file:
             toml.dump(db, file)
 
     def __init__(self):
@@ -223,7 +288,7 @@ class Inventory:
     def set_inventory(self, item_id, iQtyNow):
         self.inventory[item_id]['count'] = iQtyNow
 
-    def add(self, item_id, name, iQty, quest_reqs):
+    def add(self, item_id, name, iQty):
         if self.drops.get(item_id, False):
             self.drops[item_id]['count'] += iQty
             self.inventory[item_id]['count'] += iQty
@@ -233,7 +298,6 @@ class Inventory:
         if not self.drops.get(item_id).get('name'):
             self.drops[item_id]['name'] = name
             self.inventory[item_id]['name'] = name
-        return item_id in quest_reqs
 
     def subtract(self, item_id, iQty):
         self.drops[item_id] -= iQty
@@ -255,7 +319,7 @@ class Inventory:
 
     def save(self, filepath=None):
         if not filepath:
-            filepath = Inventory.__sampling_path
+            filepath = Inventory._sampling_path
         drops = self.get_drops()
         for item_id in drops.keys():
             if not drops.get(item_id).get('name'):
@@ -266,7 +330,7 @@ class Inventory:
     def merge_db(self, filepath=None):
         db = self.get_db()
         if not filepath:
-            filepath = Inventory.__sampling_path
+            filepath = Inventory._sampling_path
         with open(filepath, 'r') as file:
             data = toml.load(file)
         for key, value in data.items():
@@ -276,4 +340,35 @@ class Inventory:
                 db[key] = {'name': value.get('name')}
         self.write_db(db)
 
+
+class Location:
+
+    @staticmethod
+    def parse_location(location):
+        map_name, lobby_num = location.split('-')
+        return map_name, lobby_num
+
+    @classmethod
+    def load(cls, location):
+        map_name, lobby_num = Location.parse_location(location)
+        return cls(map_name=map_name, lobby_num=lobby_num)
+
+    def __init__(self, map_name='battleon', lobby_num='1'):
+        self._map = map_name.lower()
+        self._lobby = lobby_num
+
+    def __str__(self):
+        return f'{self._map}-{self._lobby}'
+
+    @property
+    def lobby(self):
+        return self._lobby
+
+    @property
+    def map(self):
+        return self._map
+
+    def __self__(self, location):
+        self._map, self.lobby_num = Location.parse_location(location)
+        return self._map
 

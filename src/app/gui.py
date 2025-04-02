@@ -59,7 +59,7 @@ class Menu:
 
     def selection(self):
         server = self.server.get()
-        if self.bot and self.bot.is_running():
+        if self.bot and self.bot.running():
             return
         try:
             resolution, quests = get_resolution(), ['supplies to spin the wheel of chance']
@@ -74,7 +74,7 @@ class Menu:
         self.root.mainloop()
 
     def stop_bot(self):
-        if self.bot and self.bot.is_running:
+        if self.bot and self.bot.running:
             self.bot.stop()
             print('Drops -', self.bot.get_drops())
             print('Inventory -', self.bot.get_inventory())

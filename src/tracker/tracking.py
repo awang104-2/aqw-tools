@@ -22,9 +22,6 @@ class Tracker:
         for i, server_name in enumerate(list(servers.keys())):
             print(f'{i + 1}: {server_name}')
 
-    def set_server(self, server):
-        self.logger.set_server(server)
-
     def track(self):
         self.running.set()
         while self.running.is_set():
