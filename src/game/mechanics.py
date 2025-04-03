@@ -99,7 +99,7 @@ class Quests:
             quest.complete(n)
 
 
-class Combat:
+class CombatKit:
 
     _config_path = os.path.join(os.path.dirname(__file__), 'config', 'classes.toml')
     _combat_config = toml.load(_config_path)
@@ -115,15 +115,15 @@ class Combat:
     def _abilities_to_dict(abilities, speed=1):
         dictionary = {}
         for key, info in abilities.items():
-            dictionary[key] = Combat._get_ability_info(**info, speed=speed)
+            dictionary[key] = CombatKit._get_ability_info(**info, speed=speed)
         return dictionary
 
     @classmethod
     def load(cls, class_name, haste: float = 0):
         class_name = class_name.upper()
-        class_name = Combat._class_acronyms.get(class_name, class_name)
+        class_name = CombatKit._class_acronyms.get(class_name, class_name)
         class_info = {'class_name': class_name}
-        class_info.update(Combat._class_info.get(class_name))
+        class_info.update(CombatKit._class_info.get(class_name))
         return cls(**class_info, haste=haste)
 
     def __init__(self, *, class_name, haste, rotation, rotation_type, abilities, gcd):
@@ -131,7 +131,7 @@ class Combat:
         self._haste = min(haste, 0.5)
         self._rotation = rotation
         self._rotation_type = rotation_type
-        self._abilities = Combat._abilities_to_dict(abilities, self.cooldown_speed)
+        self._abilities = CombatKit._abilities_to_dict(abilities, self.cooldown_speed)
         self._gcd = gcd
         self._kills = 0
         self._combat_data = {'crit': 0, 'miss': 0, 'dodge': 0, 'enemy dodge': 0, 'total': 0, 'enemy total': 0}
