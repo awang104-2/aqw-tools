@@ -2,6 +2,8 @@ from network.processing import Processor
 from pynput.keyboard import Listener, Key
 from network.sniffing import Sniffer
 from network.layers import Raw
+from time import sleep
+from game.aqw_backend import AQW_SERVERS
 
 
 def on_release(key, sniffer, processor):
@@ -12,7 +14,7 @@ def on_release(key, sniffer, processor):
 
 
 def main():
-    bpf_filter = 'tcp and src host 172.65.235.85'
+    bpf_filter = f'tcp and src host {AQW_SERVERS.get('twig')}'
     sniffer = Sniffer(bpf_filter=bpf_filter, layers=[Raw])
     listener = Listener(on_release=lambda key: on_release(key, sniffer, processor))
     processor = Processor(sniffer=sniffer)
@@ -21,6 +23,7 @@ def main():
     print('Press \'esc\' to exit.')
     print('Sniffing...')
     listener.run()
+    sleep(1)
     print('Finished.')
 
 
