@@ -1,6 +1,6 @@
 from time import sleep
 from bot.autoclicker import AutoClicker
-from game.mechanics import Quests, Combat, Inventory
+from game.mechanics import Quests, CombatKit, Inventory
 from threads.custom_threading import CustomEvent, LoopingThread
 from network.sniffing import GameSniffer
 from game.interpreter import Interpreter
