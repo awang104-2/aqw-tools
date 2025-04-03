@@ -1,10 +1,10 @@
-from game.mechanics import Combat, Quests, Inventory, Location
+from game.mechanics import CombatKit, Quests, Inventory, Location
 
 
 class Character:
 
     def __init__(self, *, class_name, haste, quest_names, location=None):
-        self._combat = Combat.load(class_name=class_name, haste=haste)
+        self._combat = CombatKit.load(class_name=class_name, haste=haste)
         self._quest = Quests.from_names(quest_names)
         self._drops = Inventory()
         self._location = Location(location)
