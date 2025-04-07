@@ -1,4 +1,5 @@
 from handlers.ConfigHandler import *
+import math
 import time
 
 
@@ -109,20 +110,26 @@ class CombatKit:
         current_time = start_time
         while timeout_condition(current_time, start_time, timeout):
             for key in keys:
-                time.sleep(self._polling_delay)
                 ability = self._abilities.get(key)
-                current_time = time.time()
-                if current_time - ability.get('_time') > ability.get('cd') * self.cooldown_reduction:
-                    ability['_time'] = None
+                if ability.get('_time'):
+                    time.sleep(self._polling_delay)
+                    current_time = time.time()
+                    if current_time - ability.get('_time') > self.adjust_for_haste(ability.get('cd')):
+                        ability['_time'] = None
+                        return key
+                else:
                     return key
         return None
 
+    def adjust_for_haste(self, value):
+        return math.ceil(value * self.cooldown_reduction * 100) / 100
+
     def sleep_gcd(self):
         start_time = time.time()
-        end_time = start_time
-        while end_time - start_time < self._gcd * self.cooldown_reduction:
+        current_time = start_time
+        while current_time - start_time < self.adjust_for_haste(self._gcd):
             time.sleep(self._polling_delay)
-            end_time = time.time()
+            current_time = time.time()
 
     def attack(self, key=None):
         ability = self._abilities.get(key)
@@ -130,9 +137,11 @@ class CombatKit:
         if ability is None  :
             raise ValueError('Invalid key.')
         elif ability.get('_time'):
-            if current_time - ability.get('_time') > ability.get('cd') * self.cooldown_reduction:
+            if current_time - ability.get('_time') > self.adjust_for_haste(ability.get('cd')):
                 ability['_time'] = current_time
                 self._mana = max(0, self._mana - ability.get('mana'))
+            else:
+                raise RuntimeError(f'Ability-{key}: \'{ability.get('name')}\' is not ready.')
         else:
             ability['_time'] = current_time
             self._mana = max(0, self._mana - ability.get('mana'))

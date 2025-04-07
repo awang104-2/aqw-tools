@@ -3,25 +3,19 @@ from threading import Thread
 import time
 
 
-def attack_and_wait(combat_kit, key):
-    combat_kit.attack(key)
-    start_time = time.time()
-    combat_kit.wait([key])
-    end_time = time.time()
-    print(end_time - start_time)
-
-
-def speed_up(combat_kit, delay, haste):
-    time.sleep(delay)
-    combat_kit.haste = haste
-
-
 def main():
-    combat_kit = CombatKit.load('lr')
-    t1 = Thread(target=attack_and_wait, args=(combat_kit, None))
-    t2 = Thread(target=speed_up, args=(combat_kit, 6, 0.5))
-    t1.start()
-    t2.run()
+    combat_kit = CombatKit.load('lr', 0.5)
+    attack('5', combat_kit)
+
+def attack(key, combat_kit):
+    start_time = time.time()
+    combat_kit.attack(key)
+    current_time = time.time()
+    print(f'{current_time - start_time:.4}s')
+    combat_kit.wait(key)
+    combat_kit.attack(key)
+    current_time = time.time()
+    print(f'{current_time - start_time:.4}s')
 
 
 if __name__ == '__main__':

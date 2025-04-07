@@ -1,14 +1,10 @@
-from handlers.DictHandler import deepcopy
-import toml
-import os
+from handlers.ConfigHandler import *
 
 
-_backend_path = os.path.join(os.path.dirname(__file__), 'config', 'backend.toml')
-with open(_backend_path, 'r') as file:
-    _backend = toml.load(file)
+_config = get_config('backend.toml')
 
-AQW_SERVERS = deepcopy(_backend['AQW']['SERVERS'])
-AQW_PACKETS = deepcopy(_backend['AQW']['PACKETS'])
+AQW_SERVERS = Constant(_config['AQW']['SERVERS'])
+AQW_PACKETS = Constant(_config['AQW']['PACKETS'])
 AQW_SERVER_NAMES = list(AQW_SERVERS.keys())
 AQW_SERVER_IPS = list(AQW_SERVERS.values())
 

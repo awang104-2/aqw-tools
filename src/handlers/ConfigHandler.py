@@ -30,5 +30,19 @@ class Constant(dict):
             return copy.deepcopy(value)
         return value
 
+    def values(self):
+        values = list(super().values())
+        for i, value in enumerate(values):
+            if isinstance(value, (MutableMapping, MutableSequence, MutableSet)):
+                values[i] = copy.deepcopy(value)
+        return values
+
+    def keys(self):
+        keys = list(super().keys())
+        for i, key in enumerate(keys):
+            if isinstance(key, (MutableMapping, MutableSequence, MutableSet)):
+                keys[i] = copy.deepcopy(key)
+        return keys
+
 
 __all__ = ['get_config', 'Constant']

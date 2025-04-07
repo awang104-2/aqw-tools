@@ -5,6 +5,7 @@ LR = 'LEGION REVENANT'
 AF = 'ARCHFIEND'
 VHL = 'VOID HIGHLORD'
 TEST = 'TEST CLASS'
+CAV = 'CHAOS AVENGER'
 
 ['ABILITIES']
 
@@ -14,6 +15,13 @@ TEST = 'TEST CLASS'
 3 = {cd = 3, name = 'Consumed by the Abyss', mana = 15, key = '3'}
 4 = {cd = 26, name = 'Fiend Frenzy', mana = 25, key = '4'}
 5 = {cd = 26, name = 'Abyssal Contract', mana = 25, key = '5'}
+
+['ABILITIES'.'CHAOS AVENGER']
+1 = {cd = 2.3, name = 'Contract', mana = 0, key = '1'}
+2 = {cd = 4, name = 'Shackle', mana = 0, key = '2'}
+3 = {cd = 5, name = "Highlord's Gaze", mana = 20, key = '3'}
+4 = {cd = 4, name = 'Unshackle', mana = 0, key = '4'}
+5 = {cd = 15, name = 'Armageddon', mana = 50, key = '5'}
 
 ['ABILITIES'.'LEGION REVENANT']
 1 = {cd = 1.5, name = 'Malevolent Burst', mana = 0, key = '1'}
