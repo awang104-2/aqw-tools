@@ -34,8 +34,8 @@ def parse_bytes(bytes_obj, limit=200):
 class Processor:
 
     def __init__(self, sniffer):
+        self.sniffer = sniffer
         self._buffer_lock = Lock()
-        self._sniffer = sniffer
         self._buffer = ''
         self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
         self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
@@ -43,6 +43,7 @@ class Processor:
         self._flag.set()
         self._buffer_changed = Event()
         self._string_size_list = 0
+        self.print = Event()
 
     @property
     def running(self):
@@ -71,7 +72,7 @@ class Processor:
         self._buffer = ''
 
     def get_packet(self, timeout):
-        return self._sniffer.get(timeout)
+        return self.sniffer.get(timeout)
 
     def _update_buffer(self, packet):
         if packet:
@@ -88,11 +89,11 @@ class Processor:
         self._update_buffer(packet)
 
     def _update_buffer_loop(self):
-        while self._sniffer.running and self._flag.is_set():
+        while self.sniffer.running and self._flag.is_set():
             packet = self.get_packet(0.05)
             self._update_buffer(packet)
 
-    def _parse_buffer_once(self):
+    def parse_buffer_once(self):
         start, end, start_bracket_count, end_bracket_count = (0, 0, 0, 0)
         for i, char in enumerate(self._buffer):
             if char == '{':
@@ -112,7 +113,7 @@ class Processor:
         with self._buffer_lock:
             while True:
                 try:
-                    json = self._parse_buffer_once()
+                    json = self.parse_buffer_once()
                     jsons.append(json)
                 except ValueError:
                     return jsons
@@ -124,8 +125,19 @@ class Processor:
         return jsons
 
     def _parse_buffer_loop(self):
-        while self._sniffer.running and self._flag.is_set():
-            self.parse_buffer(0.05)
+        while self.sniffer.running and self._flag.is_set():
+            jsons = self.parse_buffer(0.05)
+            self._print_jsons(jsons)
+
+    def _print_jsons(self, jsons, header=None):
+        if self.print.is_set():
+            if header:
+                for json in jsons:
+                    print(f'{header} - {json}')
+            else:
+                for json in jsons:
+                    print(f'{json}')
+
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]

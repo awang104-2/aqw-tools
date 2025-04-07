@@ -1,4 +1,7 @@
-from game.mechanics import CombatKit, Quests, Inventory, Location
+from game.combat import CombatKit
+from game.items import Item, Inventory
+from game.locations import Location
+from game.quests import Quest
 
 
 class Character:
@@ -21,16 +24,15 @@ class Character:
         attack_function = lambda key: func(key, *args, **kwargs)
         self._combat.attack(attack_function)
 
-    def set_inventory(self, item_id, iQtyNow):
-        self._drops.set_inventory(item_id, iQtyNow)
+    def set_inventory(self, item_id, quantity):
+        self._drops.set_inventory(item_id, quantity)
 
-    def add_drop(self, item_id, name, iQty=1):
-        self._drops.add(item_id, name, iQty)
+    def add_drop(self, item_id, name, quantity=1):
+        self._drops.add(item_id, name, quantity)
 
     def kill(self):
         self._combat.add_kills(n=1)
 
     def add_combat_data(self, data):
         self._combat.add_combat_data()
-
 

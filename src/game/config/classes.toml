@@ -3,36 +3,42 @@ AM = 'ARCHMAGE'
 AI = 'ARCANA INVOKER'
 LR = 'LEGION REVENANT'
 AF = 'ARCHFIEND'
+VHL = 'VOID HIGHLORD'
 TEST = 'TEST CLASS'
 
-['CLASS INFO']
+['ABILITIES']
 
-['CLASS INFO'.'LEGION REVENANT']
-rotation = ['4', '5', '2', '3']
-rotation_type = 'priority'
-abilities.1 = {cd = 1.5, name = 'Malevolent Burst', mana = 0, key = '1'}
-abilities.2 = {cd = 6, name = 'Atramentous Shade', mana = 10, key = '2'}
-abilities.3 = {cd = 6, name = 'Wicked Purgatory', mana = 15, key = '3'}
-abilities.4 = {cd = 6, name = 'Depraved Empowerment', mana = 15, key = '4'}
-abilities.5 = {cd = 12, name = 'Anathema', mana = 20, key = '5'}
-gcd = 1.8
+['ABILITIES'.'ARCHFIEND']
+1 = {cd = 2, name = 'Mark of Death', mana = 0, key = '1'}
+2 = {cd = 3, name = 'Fiendish Strike', mana = 15, key = '2'}
+3 = {cd = 3, name = 'Consumed by the Abyss', mana = 15, key = '3'}
+4 = {cd = 26, name = 'Fiend Frenzy', mana = 25, key = '4'}
+5 = {cd = 26, name = 'Abyssal Contract', mana = 25, key = '5'}
 
-['CLASS INFO'.'ARCHFIEND']
-rotation = ['4', '2', '3']
-rotation_type = 'priority'
-abilities.1 = {cd = 2, name = 'Mark of Death', mana = 0, key = '1'}
-abilities.2 = {cd = 3, name = 'Fiendish Strike', mana = 15, key = '2'}
-abilities.3 = {cd = 3, name = 'Consumed by the Abyss', mana = 15, key = '3'}
-abilities.4 = {cd = 26, name = 'Fiend Frenzy', mana = 25, key = '4'}
-abilities.5 = {cd = 26, name = 'Abyssal Contract', mana = 25, key = '5'}
-gcd = 1.6
+['ABILITIES'.'LEGION REVENANT']
+1 = {cd = 1.5, name = 'Malevolent Burst', mana = 0, key = '1'}
+2 = {cd = 6, name = 'Atramentous Shade', mana = 10, key = '2'}
+3 = {cd = 6, name = 'Wicked Purgatory', mana = 15, key = '3'}
+4 = {cd = 6, name = 'Depraved Empowerment', mana = 15, key = '4'}
+5 = {cd = 12, name = 'Anathema', mana = 20, key = '5'}
 
-['CLASS INFO'.'TEST CLASS']
-rotation = ['1', '2', '3', '4', '5']
-rotation_type = 'priority'
-abilities.1 = {cd = 9999, name = 'Mark of Death', mana = 0, key = '1'}
-abilities.2 = {cd = 9999, name = 'Fiendish Strike', mana = 15, key = '2'}
-abilities.3 = {cd = 9999, name = 'Consumed by the Abyss', mana = 15, key = '3'}
-abilities.4 = {cd = 9999, name = 'Fiend Frenzy', mana = 25, key = '4'}
-abilities.5 = {cd = 9999, name = 'Abyssal Contract', mana = 25, key = '5'}
-gcd = 2
+['ABILITIES'.'VOID HIGHLORD']
+1 = {cd = 2.3, name = 'Contract', mana = 0, key = '1'}
+2 = {cd = 4, name = 'Shackle', mana = 0, key = '2'}
+3 = {cd = 5, name = "Highlord's Gaze", mana = 20, key = '3'}
+4 = {cd = 4, name = 'Unshackle', mana = 0, key = '4'}
+5 = {cd = 15, name = 'Armageddon', mana = 50, key = '5'}
+
+['ABILITIES'.'TEST CLASS']
+1 = {cd = 9999, name = 'Mark of Death', mana = 0, key = '1'}
+2 = {cd = 9999, name = 'Fiendish Strike', mana = 15, key = '2'}
+3 = {cd = 9999, name = 'Consumed by the Abyss', mana = 15, key = '3'}
+4 = {cd = 9999, name = 'Fiend Frenzy', mana = 25, key = '4'}
+5 = {cd = 9999, name = 'Abyssal Contract', mana = 25, key = '5'}
+
+['COMBOS']
+ARCHFIEND = [['4', '2', '3']]
+'LEGION REVENANT' = [['4', '5', '2', '3']]
+'VOID HIGHLORD' = [['2'], ['4'], ['5'], ['3'], ['2'], ['4'], ['3'], ['2'], ['4'], ['3']]
+'TEST CLASS' = [['1', '2', '3', '4', '5']]
+

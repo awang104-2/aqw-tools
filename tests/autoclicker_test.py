@@ -1,7 +1,7 @@
 from bot.autoclicker import AutoClicker
 from pynput.keyboard import Listener, Key
 from threading import Thread, Event
-from time import sleep
+from time import sleep, time
 
 
 def on_release(key, flag):
@@ -29,5 +29,34 @@ def main():
     listener.run()
 
 
+def sleep_print(t):
+    start_time = time()
+    sleep(t)
+    end_time = time()
+    print(end_time - start_time)
+
+
 if __name__ == '__main__':
-    main()
+    autoclicker = AutoClicker()
+    sleep(1)
+    for __ in range(50):
+        autoclicker.press('5')
+        sleep_print(0.75)
+        autoclicker.press('3')
+        sleep_print(0.75)
+        autoclicker.press('2')
+        sleep_print(0.75)
+        autoclicker.press('4')
+        sleep_print(0.75)
+        autoclicker.press('2')
+        sleep_print(0.75)
+        autoclicker.press('4')
+        sleep_print(0.75)
+        autoclicker.press('2')
+        sleep_print(0.75)
+        autoclicker.press('4')
+        sleep_print(0.75)
+        autoclicker.press('2')
+        sleep_print(0.75)
+        autoclicker.press('4')
+        sleep_print(0.75)
