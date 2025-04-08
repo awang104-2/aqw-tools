@@ -1,6 +1,7 @@
 from network.processing import Processor
-from threading import Thread, Lock
+from game.character import Character
 from game.aqw_backend import *
+from threading import Lock
 from decorators import *
 
 
@@ -71,6 +72,7 @@ class Interpreter(Processor):
         json = super().parse_buffer_once()
         return json['b']['o']
 
+    @needs_character_initialized
     def add_item(self, item_json):
         item_id = list(item_json.get('items').keys())[0]
         name = item_json.get('items').get(item_id).get('sName')
@@ -80,28 +82,59 @@ class Interpreter(Processor):
         if iQtyNow:
             self.character.set_inventory(item_id, iQtyNow)
 
+    @needs_character_initialized
     def add_drops(self, drop_json):
         item_id = list(drop_json.get('items').keys())[0]
         name = drop_json.get('items').get(item_id).get('sName')
         iQty = drop_json.get('items').get(item_id).get('iQty')
         self.character.add_drop(item_id=item_id, name=name, iQty=iQty)
 
+    @needs_character_initialized
     def add_kill(self, kill_json):
         kill_json.get('id')
         self.character.kill()
 
+    @needs_character_initialized
     def adjust_haste(self, stat_update_json):
         haste = stat_update_json.get('sta').get('$tha')
         if haste:
             self.character.haste = haste
 
+    def initialize_character(self, json, parameters):
+        cmd = json.get('cmd')
+        match cmd:
+            case 'stu':
+                parameters['haste'] = json.get('sta').get('$tha')
+                json = None
+            case 'moveToArea':
+                parameters['location'] = json.get('areaName')
+                json = None
+            case 'updateClass':
+                parameters['class_name'] = json.get('sClassName')
+                json = None
+        if all(parameters.values()):
+            self.character = Character(**parameters)
+        return json
+
+    @needs_character_initialized
+    def interpret(self, json):
+        cmd = json.get('cmd')
+        match cmd:
+            case 'addItems':
+                self.add_item(json)
+            case 'addDrop':
+                self.add_drops(json)
+            case 'stu':
+                self.adjust_haste(json)
+
     def parse_buffer(self, timeout=None):
+        parameters = {'class_name': None, 'haste': None, 'location': None}
         jsons = super().parse_buffer(timeout)
         for json in jsons:
-            cmd = json.get('cmd')
-            if cmd == AQW_PACKETS.get('addItems'):
-                self.add_item(json)
-            elif cmd == AQW_PACKETS.get('addDrop'):
-                self.add_drops(json)
-            elif cmd == AQW_PACKETS.get('stu'):
-                self.adjust_haste(json)
+            if not self.character:
+                json = self.initialize_character(json, parameters)
+                if json:
+                    jsons.append(json)
+            else:
+                self.interpret(json)
+
