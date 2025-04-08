@@ -28,7 +28,7 @@ class Player:
     NUM_COMPLETE_LOCATIONS = _clicking['QUEST']['NUM COMPLETE']
     YES_LOCATIONS = _clicking['QUEST']['YES']
 
-    def __init__(self, resolution, server, name):
+    def __init__(self, *, resolution=None, server=None):
         self.acc_item_loc = Player.ITEM_ACCEPT_LOCATIONS.get(resolution)
         self.rej_item_loc = Player.ITEM_REJECT_LOCATIONS.get(resolution)
         self.quest_loc = Player.QUEST_LOG_LOCATIONS.get(resolution)
@@ -36,14 +36,9 @@ class Player:
         self.num_loc = Player.NUM_COMPLETE_LOCATIONS.get(resolution)
         self.yes_loc = Player.YES_LOCATIONS.get(resolution)
 
-        self.resolution = resolution
-        self.server = server
-        self.log_on = False
-        self.delay_time = 0.1
-
         self.autoclicker = AutoClicker()
-        self.character = Character(class_name=name, haste=0.5)
-        self.sniffer = GameSniffer(server=self.server)
+        self.character = None
+        self.sniffer = GameSniffer(server=server)
         self.interpreter = Interpreter(character=self.character, sniffer=self.sniffer)
 
     def connect(self):
