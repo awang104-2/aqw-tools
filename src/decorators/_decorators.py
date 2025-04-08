@@ -44,4 +44,13 @@ def check_not_running(method):
     return wrapper
 
 
+def needs_character_initialized(method):
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.character:
+            raise RuntimeError(f'Character must be initialized before calling \'{self.__class__.__name__}.{method.__name__}\'.')
+        return method(self, *args, **kwargs)
+    return wrapper
+
+
 __all__ = [name for name in globals() if not name.startswith('-')]
