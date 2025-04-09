@@ -3,8 +3,8 @@ from handlers.ConfigHandler import *
 
 _config = get_config('backend.toml')
 
-AQW_SERVERS = Constant(_config['AQW']['SERVERS'])
-AQW_PACKETS = Constant(_config['AQW']['PACKETS'])
+AQW_SERVERS = SafeDict(_config['AQW']['SERVERS'])
+AQW_PACKETS = SafeDict(_config['AQW']['PACKETS'])
 AQW_SERVER_NAMES = list(AQW_SERVERS.keys())
 AQW_SERVER_IPS = list(AQW_SERVERS.values())
 

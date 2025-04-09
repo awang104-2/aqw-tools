@@ -2,7 +2,6 @@ from bot.autoclicker import AutoClicker
 from game.character import Character
 from game.game_sniffer import GameSniffer
 from game.interpreter import Interpreter
-import time
 import toml
 import os
 
@@ -37,7 +36,7 @@ class Player:
         self.yes_loc = Player.YES_LOCATIONS.get(resolution)
 
         self.autoclicker = AutoClicker()
-        self.character = None
+        self.character = Character()
         self.sniffer = GameSniffer(server=server)
         self.interpreter = Interpreter(character=self.character, sniffer=self.sniffer)
 
@@ -55,4 +54,7 @@ class Player:
 
     def wait(self, keys):
         return self.character.wait(keys)
+
+    def print(self):
+        print(self.character)
 

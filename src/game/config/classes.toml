@@ -38,11 +38,11 @@ CAV = 'CHAOS AVENGER'
 5 = {cd = 15, name = 'Armageddon', mana = 50, key = '5'}
 
 ['ABILITIES'.'TEST CLASS']
-1 = {cd = 9999, name = 'Mark of Death', mana = 0, key = '1'}
-2 = {cd = 9999, name = 'Fiendish Strike', mana = 15, key = '2'}
-3 = {cd = 9999, name = 'Consumed by the Abyss', mana = 15, key = '3'}
-4 = {cd = 9999, name = 'Fiend Frenzy', mana = 25, key = '4'}
-5 = {cd = 9999, name = 'Abyssal Contract', mana = 25, key = '5'}
+1 = {cd = 1, name = 'Placeholder 0 Mana', mana = 0, key = '1'}
+2 = {cd = 1, name = 'Placeholder 50 Mana', mana = 50, key = '2'}
+3 = {cd = 1, name = 'Placeholder 100 Mana', mana = 100, key = '3'}
+4 = {cd = 1, name = 'Placeholder -50 Mana', mana = -50, key = '4'}
+5 = {cd = 1, name = 'Placeholder -100 Mana', mana = -100, key = '5'}
 
 ['COMBOS']
 ARCHFIEND = [['4', '2', '3']]

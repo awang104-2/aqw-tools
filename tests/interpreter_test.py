@@ -1,9 +1,9 @@
-from game.character import Character
-from network.sniffing import GameSniffer
-from game.interpreter import Interpreter
+from game.game_sniffer import GameSniffer
 from pynput.keyboard import Listener, Key
-import time
+from game.interpreter import Interpreter
+from game.character import Character
 import threading
+import time
 
 
 def on_release(key, interpreter, sniffer):

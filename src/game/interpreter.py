@@ -1,5 +1,4 @@
 from network.processing import Processor
-from game.character import Character
 from game.aqw_backend import *
 from threading import Lock
 from decorators import *
@@ -68,73 +67,68 @@ class Interpreter(Processor):
         super().__init__(sniffer)
         self.character = character
 
-    def parse_buffer_once(self):
-        json = super().parse_buffer_once()
-        return json['b']['o']
-
     @needs_character_initialized
     def add_item(self, item_json):
         item_id = list(item_json.get('items').keys())[0]
         name = item_json.get('items').get(item_id).get('sName')
-        iQty = item_json.get('items').get(item_id).get('iQty')
-        self.character.add_item(item_id=item_id, name=name, iQty=iQty)
-        iQtyNow = item_json.get('items').get(item_id).get('iQtyNow', None)
-        if iQtyNow:
-            self.character.set_inventory(item_id, iQtyNow)
+        quantity = item_json.get('items').get(item_id).get('iQty')
+        self.character.add(item_id=item_id, name=name, quantity=quantity)
+        inventory_quantity = item_json.get('items').get(item_id).get('iQtyNow')
+        if inventory_quantity:
+            self.character.set_inventory(item_id, inventory_quantity)
 
-    @needs_character_initialized
     def add_drops(self, drop_json):
         item_id = list(drop_json.get('items').keys())[0]
         name = drop_json.get('items').get(item_id).get('sName')
-        iQty = drop_json.get('items').get(item_id).get('iQty')
-        self.character.add_drop(item_id=item_id, name=name, iQty=iQty)
+        quantity = drop_json.get('items').get(item_id).get('iQty')
+        self.character.add(item_id=item_id, name=name, quantity=quantity)
 
-    @needs_character_initialized
     def add_kill(self, kill_json):
-        kill_json.get('id')
-        self.character.kill()
+        local_id = kill_json.get('id')
+        if local_id:
+            self.character.kill(local_id)
 
-    @needs_character_initialized
     def adjust_haste(self, stat_update_json):
         haste = stat_update_json.get('sta').get('$tha')
         if haste:
             self.character.haste = haste
 
-    def initialize_character(self, json, parameters):
-        cmd = json.get('cmd')
-        match cmd:
-            case 'stu':
-                parameters['haste'] = json.get('sta').get('$tha')
-                json = None
-            case 'moveToArea':
-                parameters['location'] = json.get('areaName')
-                json = None
-            case 'updateClass':
-                parameters['class_name'] = json.get('sClassName')
-                json = None
-        if all(parameters.values()):
-            self.character = Character(**parameters)
-        return json
+    def update_location(self, loc_json):
+        location = loc_json.get('areaName')
+        self.character.reinitialize(location=location)
 
-    @needs_character_initialized
-    def interpret(self, json):
+    def update_class(self, class_json):
+        class_name = class_json.get('sClassName')
+        self.character.reinitialize(class_name=class_name)
+
+    def add_rewards(self, reward_json):
+        self.add_kill(reward_json)
+
+    def interpret_from_json(self, json):
         cmd = json.get('cmd')
         match cmd:
+            case 'moveToArea':
+                self.update_location(json)
+            case 'updateClass':
+                self.update_class(json)
             case 'addItems':
                 self.add_item(json)
             case 'addDrop':
                 self.add_drops(json)
             case 'stu':
                 self.adjust_haste(json)
+            case 'addGoldExp':
+                self.add_rewards(json)
 
-    def parse_buffer(self, timeout=None):
-        parameters = {'class_name': None, 'haste': None, 'location': None}
-        jsons = super().parse_buffer(timeout)
-        for json in jsons:
-            if not self.character:
-                json = self.initialize_character(json, parameters)
-                if json:
-                    jsons.append(json)
-            else:
-                self.interpret(json)
+    def interpret(self):
+        try:
+            extended_json = self.jsons.get(timeout=self.timeout)
+            json = extended_json['b']['o']
+            self.interpret_from_json(json)
+        except Processor.EmptyError:
+            return
+        except KeyError:
+            self.missed_packets += 1
+            return
+
 

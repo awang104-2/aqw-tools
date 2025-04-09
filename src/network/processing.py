@@ -1,6 +1,7 @@
 from threading import Thread, Event, Lock
+from queue import Queue, Empty
 from network import layers
-from json import loads
+from json import loads, decoder
 
 
 MAX_BUFFER_SIZE = 16384
@@ -33,17 +34,31 @@ def parse_bytes(bytes_obj, limit=200):
 
 class Processor:
 
-    def __init__(self, sniffer):
-        self.sniffer = sniffer
+    EmptyError = Empty
+
+    def __init__(self, sniffer, timeout=0.05):
+        # Protected attributes for internal functionality
         self._buffer_lock = Lock()
-        self._buffer = ''
-        self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
-        self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
         self._flag = Event()
         self._flag.set()
         self._buffer_changed = Event()
-        self._string_size_list = 0
+        self._clean_buffer = Event()
+        self._clean_buffer.set()
+
+        # Protected attributes for threading
+        self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
+        self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
+        self._interpret_buffer_thread = Thread(target=self._interpret_buffer_loop, name='processor thread internal-3', daemon=True)
+
+        # Public and protected attributes for bookkeeping
+        self._buffer = ''
+        self.missed_packets = 0
+
+        # Public attributes
+        self.sniffer = sniffer
+        self.jsons = Queue()
         self.print = Event()
+        self.timeout = timeout
 
     @property
     def running(self):
@@ -53,15 +68,11 @@ class Processor:
     def ready(self):
         return not self._parse_buffer_thread.is_alive()
 
-    @property
-    def buffer_size(self):
-        with self._buffer_lock:
-            return {'buffer': len(self._buffer), 'packets': self._string_size_list}
-
     def start(self):
         self._flag.set()
         self._update_buffer_thread.start()
         self._parse_buffer_thread.start()
+        self._interpret_buffer_thread.start()
 
     def stop(self):
         self._flag.clear()
@@ -69,75 +80,76 @@ class Processor:
     def reset(self):
         self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
         self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
+        self._interpret_buffer_thread = Thread(target=self._interpret_buffer_loop, name='processor thread internal-3', daemon=True)
+        self.missed_packets = 0
         self._buffer = ''
 
-    def get_packet(self, timeout):
-        return self.sniffer.get(timeout)
-
-    def _update_buffer(self, packet):
+    def update_buffer(self):
+        packet = self.sniffer.get(timeout=self.timeout)
         if packet:
             raw = get_raw(packet)
             blist = parse_bytes(raw)
             slist = decode(blist)
             with self._buffer_lock:
                 for s in slist:
-                    self._string_size_list += len(s)
                     self._buffer += s
                     self._buffer_changed.set()
 
-    def update_buffer(self, packet):
-        self._update_buffer(packet)
+    def parse_buffer(self):
+        try:
+            self._buffer_changed.wait(self.timeout)
+            start, end, depth, quoted, escaped = (-1, -1, 0, False, False)
+            with self._buffer_lock:
+                for i, char in enumerate(self._buffer):
+                    if char == '{':
+                        if depth == 0:
+                            start = i
+                        depth += 1
+                    elif char == '}':
+                        depth -= 1
+                        if depth == 0:
+                            end = i
+                            result = self._buffer[start:end + 1]
+                            self.jsons.put(loads(result))
+                if self._clean_buffer.is_set():
+                    self._buffer = self._buffer[end + 1:]
+            self._buffer_changed.clear()
+        except decoder.JSONDecodeError as e:
+            print(f'Decode Error - {result}')
+            self.missed_packets += 1
+
+    def interpret(self, *args, **kwargs):
+        try:
+            if self.print.is_set():
+                self.get_and_print_packet()
+        except Processor.EmptyError:
+            return
 
     def _update_buffer_loop(self):
         while self.sniffer.running and self._flag.is_set():
-            packet = self.get_packet(0.05)
-            self._update_buffer(packet)
-
-    def parse_buffer_once(self):
-        start, end, start_bracket_count, end_bracket_count = (0, 0, 0, 0)
-        for i, char in enumerate(self._buffer):
-            if char == '{':
-                if start_bracket_count == 0:
-                    start = i
-                start_bracket_count += 1
-            elif char == '}':
-                end_bracket_count += 1
-                if start_bracket_count == end_bracket_count != 0:
-                    end = i
-                    result, self._buffer = self._buffer[start:end + 1], self._buffer[end + 1:]
-                    return loads(result)
-        raise ValueError(f'Incomplete or incompatible string for JSON object parsing: {self._buffer}.')
-
-    def _parse_buffer(self):
-        jsons = []
-        with self._buffer_lock:
-            while True:
-                try:
-                    json = self.parse_buffer_once()
-                    jsons.append(json)
-                except ValueError:
-                    return jsons
-
-    def parse_buffer(self, timeout=None):
-        self._buffer_changed.wait(timeout)
-        jsons = self._parse_buffer()
-        self._buffer_changed.clear()
-        return jsons
+            self.update_buffer()
 
     def _parse_buffer_loop(self):
         while self.sniffer.running and self._flag.is_set():
-            jsons = self.parse_buffer(0.05)
-            self._print_jsons(jsons)
+            self.parse_buffer()
+        self.stop()
 
-    def _print_jsons(self, jsons, header=None):
-        if self.print.is_set():
-            if header:
-                for json in jsons:
-                    print(f'{header} - {json}')
-            else:
-                for json in jsons:
-                    print(f'{json}')
+    def _interpret_buffer_loop(self):
+        while self.sniffer.running and self._flag.is_set():
+            self.interpret()
 
+    def get_packet(self):
+        return self.jsons.get(timeout=self.timeout)
+
+    def get_and_print_packet(self):
+        packet = self.get_packet()
+        if packet:
+            print(packet)
+
+    def join(self, timeout=None):
+        self._update_buffer_thread.join(timeout)
+        self._parse_buffer_thread.join(timeout)
+        self._interpret_buffer_thread.join(timeout)
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]

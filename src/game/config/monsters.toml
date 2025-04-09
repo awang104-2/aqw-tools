@@ -1,105 +1,178 @@
+[BATTLEONTOWN]
+
+[BATTLEONTOWN.1]
+gid = 1
+name = 'FROGZARD'
+type = 'MONSTER'
+
 [DREADROCK]
 
 [DREADROCK.1]
-gid = 1
+gid = 2
 name = 'LEGION SENTINEL'
 type = 'HUMAN'
 drops = ['Crystal Dreadrock Gem', 'Dreadrock Axe', 'Dreadrock Enemy Recruited']
 drops_id = []
 
 [DREADROCK.2]
-gid = 2
+gid = 3
 name = 'SHADOWKNIGHT'
 type = 'HUMAN'
 
 [DREADROCK.14]
-gid = 3
+gid = 4
 name = 'VOID MERCENARY'
 type = 'HUMAN'
 
 [DREADROCK.15]
-gid = 4
+gid = 5
 name = 'SHADOWKNIGHT'
 type = 'HUMAN'
 
 [XANCAVE]
 
 [XANCAVE.1]
-gid = 5
+gid = 6
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
 [XANCAVE.2]
-gid = 6
-name = 'LAVA MAGE'
-type = 'MONSTER'
-
-[XANCAVE.3]
 gid = 7
 name = 'LAVA MAGE'
 type = 'MONSTER'
 
-[XANCAVE.4]
+[XANCAVE.3]
 gid = 8
-name = 'LAVA GOBLIN'
+name = 'LAVA MAGE'
 type = 'MONSTER'
 
-[XANCAVE.5]
+[XANCAVE.4]
 gid = 9
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
-[XANCAVE.6]
+[XANCAVE.5]
 gid = 10
+name = 'LAVA GOBLIN'
+type = 'MONSTER'
+
+[XANCAVE.6]
+gid = 11
 name = 'LAVA MAGE'
 type = 'MONSTER'
 
 [XANCAVE.7]
-gid = 11
-name = 'LAVA GOBLIN'
-type = 'MONSTER'
-
-[XANCAVE.8]
 gid = 12
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
-[XANCAVE.9]
+[XANCAVE.8]
 gid = 13
-name = 'LAVA MAGE'
+name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
-[XANCAVE.10]
+[XANCAVE.9]
 gid = 14
 name = 'LAVA MAGE'
 type = 'MONSTER'
 
-[XANCAVE.11]
+[XANCAVE.10]
 gid = 15
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.11]
+gid = 16
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
 [XANCAVE.12]
-gid = 16
-name = 'LAVA MAGE'
-type = 'MONSTER'
-
-[XANCAVE.13]
 gid = 17
 name = 'LAVA MAGE'
 type = 'MONSTER'
 
-[XANCAVE.14]
+[XANCAVE.13]
 gid = 18
+name = 'LAVA MAGE'
+type = 'MONSTER'
+
+[XANCAVE.14]
+gid = 19
 name = 'LAVA GOBLIN'
 type = 'MONSTER'
 
 [XANCAVE.15]
-gid = 19
+gid = 20
 name = 'LAVA MAGE'
 type = 'MONSTER'
 
 [XANCAVE.16]
-gid = 20
+gid = 21
 name = 'SHURPU RING GUARDIAN'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM]
+
+[TERCESSUINOTLIM.1]
+gid = 22
+name = 'DARK MAKAI'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM.11]
+gid = 23
+name = 'DARK MAKAI'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM.4]
+gid = 24
+name = 'DARK MAKAI'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM.5]
+gid = 25
+name = 'DARK MAKAI'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM.6]
+gid = 26
+name = 'EVIL ELEMENTAL'
+type = 'MONSTER'
+
+[TERCESSUINOTLIM.7]
+gid = 27
+name = 'EVIL ELEMENTAL'
+type = 'MONSTER'
+
+[ELEMENTAL]
+
+[ELEMENTAL.1]
+name = 'MANA IMP'
+type = 'ELEMENTAL'
+
+[ELEMENTAL.2]
+name = 'MANA IMP'
+type = 'ELEMENTAL'
+
+[ELEMENTAL.3]
+name = 'MANA FALCON'
+type = 'ELEMENTAL'
+
+[ELEMENTAL.4]
+name = 'MANA FALCON'
+type = 'ELEMENTAL'
+
+[ELEMENTAL.5]
+name = 'MANA FALCON'
+type = 'ELEMENTAL'
+
+[ELEMENTAl.6]
+name = 'MANA IMP'
+type = 'ELEMENTAL'
+
+[ELEMENTAL.7]
+name = 'MANA GOLEM'
+type = 'CHAOS'
+
+[ELEMENTAL.8]
+name = 'TREE OF DESTINY'
 type = 'MONSTER'

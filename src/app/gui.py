@@ -76,8 +76,8 @@ class Menu:
     def stop_bot(self):
         if self.bot and self.bot.running:
             self.bot.stop()
-            print('Drops -', self.bot.get_drops())
-            print('Inventory -', self.bot.get_inventory())
+            print('Drops -', self.bot.drops)
+            print('Inventory -', self.bot.inventory)
             print()
             self.bot = None
         self.button.config(text='Start', command=self.selection)

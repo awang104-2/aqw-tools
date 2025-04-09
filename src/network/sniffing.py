@@ -5,7 +5,7 @@ from decorators import *
 
 class Sniffer:
 
-    def __init__(self, bpf_filter, layers=None, summary_on=False):
+    def __init__(self, bpf_filter, layers: list | tuple = (), summary_on=False):
         self._filter = bpf_filter
         self._layers = layers
         self._packets = Queue()
@@ -53,20 +53,20 @@ class Sniffer:
             if len(self._layers) == 1 and packet.haslayer(self._layers[0]):
                 self._packets.put(packet)
                 if self._summary_on:
-                    return packet
-            elif any([packet.haslayer(layer) for layer in self._layers]):
+                    return packet.summary()
+            elif any(packet.haslayer(layer) for layer in self._layers):
                 self._packets.put(packet)
                 if self._summary_on:
-                    return packet
+                    return packet.summary()
         else:
             self._packets.put(packet)
             if self._summary_on:
-                return packet
+                return packet.summary()
 
     @check_not_running
     def reset(self):
         self._packets = Queue()
-        self._sniffer = AsyncSniffer(filter=self.filter, prn=self.log_packet, store=None)
+        self._sniffer = AsyncSniffer(filter=self.filter, prn=self.log_packet, store=0)
 
     def get(self, timeout=None):
         try:
