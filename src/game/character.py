@@ -40,6 +40,9 @@ class Character:
         monster_id = self._location.map + ':' + str(local_id)
         self._combat_kit.add_kills(monster_id, 1)
 
+    def add_combat_data(self, hit_type):
+        self._combat_kit.add_combat_data(hit_type)
+
     def __str__(self):
         return str(self._combat_kit) + '\n' + str(self._location)
 

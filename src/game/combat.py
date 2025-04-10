@@ -4,22 +4,30 @@ import time
 
 
 _config = get_config('classes.toml')
+_new_classes = get_config('new_classes.toml')
 CLASS_ACRONYMS = SafeDict(_config.get('ACRONYMS'))
 CLASS_ABILITIES = SafeDict(_config.get('ABILITIES'))
 ALL_ABILITY_KEYS = ('1', '2', '3', '4', '5', '6')
 SPECIAL_ABILITY_KEYS = ('2', '3', '4', '5')
+MAIN_ABILITY_KEYS = ('1', '2', '3', '4', '5')
+NEW_CLASS_ABILITIES = SafeDict(_new_classes)
 POTION_KEY = '6'
 
 
-def from_acronym(class_acronym):
-    class_acronym = class_acronym.upper()
-    class_name = CLASS_ACRONYMS.get(class_acronym, class_acronym)
+def from_acronym(class_acronym, upper=True):
+    if upper:
+        uppercased = class_acronym.upper()
+        default = class_acronym.upper()
+    else:
+        uppercased = class_acronym.upper()
+        default = class_acronym
+    class_name = CLASS_ACRONYMS.get(uppercased, default)
     return class_name
 
 
 def loads(class_name=None):
     class_name = from_acronym(class_name)
-    abilities = CLASS_ABILITIES.get(class_name)
+    abilities = CLASS_ABILITIES.get(class_name, {})
     return class_name, abilities
 
 
@@ -32,6 +40,10 @@ def timeout_condition(t, start_time, timeout):
 
 def get_ability(cd: float, name: str, mana: int, key: str):
     return {'cd': cd, 'name': name, 'key': key, 'mana': mana, '_time': None}
+
+
+def save_new_classes(abilities=NEW_CLASS_ABILITIES):
+    write_to_config(abilities, 'new_classes.toml')
 
 
 class InvalidClassError(TypeError):
@@ -53,13 +65,16 @@ class CombatKit:
 
     def __init__(self, class_name: str = None, *, abilities: dict = None, haste: float = 0):
         self._class = class_name
-        self._abilities = abilities
+        if abilities:
+            self._abilities = abilities
+        else:
+            self._abilities = {}
         self.initialize_abilities()
         self._haste = min(haste, 0.5)
         self._mana = 100
         self._gcd = 1.5
         self._kills = {}
-        self._combat_data = {'crit': 0, 'miss': 0, 'dodge': 0, 'enemy dodge': 0, 'total': 0, 'enemy total': 0}
+        self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
         self._polling_delay = 0.01
 
     def reinitialize(self, class_name, haste=None, deep=False):
@@ -71,12 +86,10 @@ class CombatKit:
             self._mana = 100
             self._gcd = 1.5
             self._kills = {}
-            self._combat_data = {'crit': 0, 'miss': 0, 'dodge': 0, 'enemy dodge': 0, 'total': 0, 'enemy total': 0}
+            self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
             self._polling_delay = 0.01
 
     def initialize_abilities(self):
-        if not self._abilities:
-            self.reinitialize('TEST CLASS')
         for ability in self._abilities.values():
             ability.update({'_time': None})
 
@@ -96,15 +109,7 @@ class CombatKit:
     def crit_chance(self):
         total = self.total
         if total > 0:
-            return self._combat_data.get('crit') / total
-        else:
-            return None
-
-    @property
-    def dodge_chance(self):
-        enemy_total = self.total
-        if enemy_total > 0:
-            return self._combat_data.get('dodge') / enemy_total
+            return self._combat_data.get('crit') / sum(list(self._combat_data.values()))
         else:
             return None
 
@@ -127,11 +132,12 @@ class CombatKit:
     def get_kills(self, monster_id):
         return self._kills.get(monster_id)
 
-    def add_combat_data(self, key, n=1):
+    def add_combat_data(self, hit_type, n=1):
         try:
-            self._combat_data[key] += n
+            if hit_type != 'none':
+                self._combat_data[hit_type] += n
         except KeyError:
-            raise ValueError("Use 'crit', 'miss', 'dodge', 'enemy dodge', 'total', or 'enemy total' as key.")
+            raise ValueError("hit_type must be 'hit', 'crit', 'miss', 'dodge', or 'none'.")
 
     def add_kills(self, monster_id, n):
         self._kills.setdefault(monster_id, 0)
@@ -180,8 +186,15 @@ class CombatKit:
 
     def __str__(self):
         string = f'Class Name: {self._class}'
-        for key, ability in self._abilities.items():
-            string += f'\nAbility-{key}: {ability}'
+        for key in MAIN_ABILITY_KEYS:
+            string += f'\nAbility-{key}: {self._abilities.get(key)}'
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
+
+    def add_to_new_classes(self):
+        is_new_class = not (self._class in list(CLASS_ACRONYMS.values()))
+        if is_new_class:
+            NEW_CLASS_ABILITIES[self._class] = self._abilities
+        return is_new_class
+
 

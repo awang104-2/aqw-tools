@@ -96,27 +96,27 @@ class Processor:
                     self._buffer_changed.set()
 
     def parse_buffer(self):
-        try:
-            self._buffer_changed.wait(self.timeout)
-            start, end, depth, quoted, escaped = (-1, -1, 0, False, False)
-            with self._buffer_lock:
-                for i, char in enumerate(self._buffer):
-                    if char == '{':
-                        if depth == 0:
-                            start = i
-                        depth += 1
-                    elif char == '}':
-                        depth -= 1
-                        if depth == 0:
-                            end = i
+        self._buffer_changed.wait(self.timeout)
+        start, end, depth, quoted, escaped = (-1, -1, 0, False, False)
+        with self._buffer_lock:
+            for i, char in enumerate(self._buffer):
+                if char == '{':
+                    if depth == 0:
+                        start = i
+                    depth += 1
+                elif char == '}':
+                    depth -= 1
+                    if depth == 0:
+                        end = i
+                        try:
                             result = self._buffer[start:end + 1]
                             self.jsons.put(loads(result))
-                if self._clean_buffer.is_set():
-                    self._buffer = self._buffer[end + 1:]
-            self._buffer_changed.clear()
-        except decoder.JSONDecodeError as e:
-            print(f'Decode Error - {result}')
-            self.missed_packets += 1
+                        except decoder.JSONDecodeError:
+                            print(f'Decode Error - {result}')
+                            self.missed_packets += 1
+            if self._clean_buffer.is_set():
+                self._buffer = self._buffer[end + 1:]
+        self._buffer_changed.clear()
 
     def interpret(self, *args, **kwargs):
         try:

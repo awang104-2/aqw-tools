@@ -99,10 +99,18 @@ class Interpreter(Processor):
 
     def update_class(self, class_json):
         class_name = class_json.get('sClassName')
+        print(class_name)
         self.character.reinitialize(class_name=class_name)
 
     def add_rewards(self, reward_json):
         self.add_kill(reward_json)
+
+    def update_combat_data(self, combat_json):
+        try:
+            hit_type = combat_json['sarsa'][0]['a'][0]['type']
+            self.character.add_combat_data(hit_type)
+        except KeyError:
+            pass
 
     def interpret_from_json(self, json):
         cmd = json.get('cmd')
@@ -119,6 +127,8 @@ class Interpreter(Processor):
                 self.adjust_haste(json)
             case 'addGoldExp':
                 self.add_rewards(json)
+            case 'ct':
+                self.update_combat_data(json)
 
     def interpret(self):
         try:
@@ -126,9 +136,6 @@ class Interpreter(Processor):
             json = extended_json['b']['o']
             self.interpret_from_json(json)
         except Processor.EmptyError:
-            return
+            pass
         except KeyError:
             self.missed_packets += 1
-            return
-
-
