@@ -22,7 +22,7 @@ def processor_with_game_sniffer(server):
     processor = Processor(sniffer=sniffer)
     sniffer.start()
     processor.start()
-    # processor.print.set()
+    processor.print.set()
     print('Press \'esc\' to exit.')
     print('Sniffing...')
     listener.run()

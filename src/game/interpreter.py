@@ -112,15 +112,16 @@ class Interpreter(Processor):
         except KeyError:
             pass
 
-    def update_class_skills(self, skill_data_json):
-        if not self.character.is_class_defined():
-            skills = skill_data_json['actions']['active'][:5]
-            abilities = {}
-            for i, skill in enumerate(skills):
-                key, cd, name, mana = str(i + 1), skill.get('cd') / 1000, skill.get('nam'), skill.get('mp')
-                abilities[key] = self.character.create_ability(cd, name, mana, key)
-            self.character.reinitialize(abilities=abilities)
-            self.character.store()
+    def update_class_skills(self, skill_data_json, force=False):
+        if not force and self.character.is_class_defined():
+            return
+        skills = skill_data_json['actions']['active'][:5]
+        abilities = {}
+        for i, skill in enumerate(skills):
+            key, cd, name, mana = str(i + 1), skill.get('cd') / 1000, skill.get('nam'), skill.get('mp')
+            abilities[key] = self.character.create_ability(cd, name, mana, key)
+        self.character.reinitialize(abilities=abilities)
+        self.character.store()
 
     def interpret_from_json(self, json):
         cmd = json.get('cmd')

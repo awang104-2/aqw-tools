@@ -6,6 +6,7 @@ import time
 
 _config = get_config('classes.toml')
 CLASS_ACRONYMS = SafeDict(_config.get('ACRONYMS'))
+CLASS_NAMES = tuple(CLASS_ACRONYMS.values())
 CLASS_ABILITIES = SafeDict(_config.get('ABILITIES'))
 ALL_ABILITY_KEYS = ('1', '2', '3', '4', '5', '6')
 SPECIAL_ABILITY_KEYS = ('2', '3', '4', '5')
@@ -73,7 +74,7 @@ def save_new_classes(abilities):
 class InvalidClassError(TypeError):
 
     def __init__(self, class_name):
-        valid_classes = CLASS_ACRONYMS.values()
+        valid_classes = CLASS_NAMES
         string = f'\'{class_name}\' is not a valid class name. Use one from {valid_classes}.'
         super().__init__(string)
 
@@ -93,7 +94,7 @@ class CombatKit:
             class_name, abilities = loads(class_name)
         return CombatKit(class_name, abilities=abilities, haste=haste)
 
-    def __init__(self, class_name: str = None, *, abilities: dict = None, haste: float = 0):
+    def __init__(self, class_name: str | None = None, *, abilities: dict | None = None, haste: float = 0):
         self._class = class_name
         if abilities:
             self._abilities = abilities
@@ -109,8 +110,7 @@ class CombatKit:
 
     def reinitialize(self, *, class_name: str = None, abilities: dict = None, haste: float = None, deep: bool = False):
         if class_name:
-            self._class, self._abilities = loads(class_name)
-            self.initialize_abilities()
+            self._class = class_name
         if abilities:
             if not are_valid_abilities(abilities):
                 raise ValueError("Parameter \'abilities\' must be in the following format: {'1': {'cd': cd1, 'name': name1, 'mana': mana1, 'key': key1}, '2': {'cd': cd2, 'name': name2, 'mana': mana2, 'key': key2}, '3': {'cd': cd3, 'name': name3, 'mana': mana3, 'key': key3}, '4': {'cd': cd4, 'name': name4, 'mana': mana4, 'key': key4}, '5': {'cd': cd5, 'name': name5, 'mana': mana5, 'key': key5}}")
@@ -167,7 +167,7 @@ class CombatKit:
 
     @property
     def well_defined(self):
-        return bool(self._class) and bool(self._abilities)
+        return bool(self._class) and (self._class in CLASS_NAMES)
 
     def get_kills(self, monster_id):
         return self._kills.get(monster_id)
@@ -231,7 +231,9 @@ class CombatKit:
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
 
-    def store(self):
+    def store(self, check=True):
+        if check and not (self._class and self._abilities):
+            return
         abilities = _del_time(self._abilities)
         CombatKit._new_classes[self._class] = abilities
 

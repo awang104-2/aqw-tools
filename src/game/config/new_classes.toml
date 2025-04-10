@@ -237,3 +237,213 @@ cd = 5.0
 name = "Enrage"
 mana = 10
 key = "5"
+
+[SWORDMASTER.1]
+cd = 1.75
+name = "Nukitsuke"
+mana = 0
+key = "1"
+
+[SWORDMASTER.2]
+cd = 5.0
+name = "Bladefury"
+mana = 0
+key = "2"
+
+[SWORDMASTER.3]
+cd = 25.0
+name = "Uke Negashi"
+mana = 10
+key = "3"
+
+[SWORDMASTER.4]
+cd = 9.0
+name = "Sever"
+mana = 15
+key = "4"
+
+[SWORDMASTER.5]
+cd = 10.0
+name = "Nukiuchi"
+mana = 20
+key = "5"
+
+[Arachnomancer.1]
+cd = 2.0
+name = "Spider Bite"
+mana = 0
+key = "1"
+
+[Arachnomancer.2]
+cd = 6.0
+name = "Venom Fangs"
+mana = 6
+key = "2"
+
+[Arachnomancer.3]
+cd = 6.0
+name = "Slingshot Web"
+mana = 6
+key = "3"
+
+[Arachnomancer.4]
+cd = 6.0
+name = "Leaping Arachnid"
+mana = 15
+key = "4"
+
+[Arachnomancer.5]
+cd = 6.0
+name = "Toxic Adrenaline"
+mana = 21
+key = "5"
+
+["Arcana Invoker".1]
+cd = 2.2
+name = "Anagenesis"
+mana = 0
+key = "1"
+
+["Arcana Invoker".2]
+cd = 5.0
+name = "The Beginning and the End"
+mana = 0
+key = "2"
+
+["Arcana Invoker".3]
+cd = 3.0
+name = "Arcana Invocation"
+mana = -15
+key = "3"
+
+["Arcana Invoker".4]
+cd = 3.0
+name = "Arcana Revocation"
+mana = 40
+key = "4"
+
+["Arcana Invoker".5]
+cd = 9.0
+name = "One With the Cycle"
+mana = 0
+key = "5"
+
+[ArchFiend.1]
+cd = 2.0
+name = "Mark of Death"
+mana = 0
+key = "1"
+
+[ArchFiend.2]
+cd = 3.0
+name = "Fiendish Strike"
+mana = 15
+key = "2"
+
+[ArchFiend.3]
+cd = 3.0
+name = "Consumed by the Abyss"
+mana = 15
+key = "3"
+
+[ArchFiend.4]
+cd = 26.0
+name = "Fiend Frenzy"
+mana = 25
+key = "4"
+
+[ArchFiend.5]
+cd = 26.0
+name = "Abyssal Contract"
+mana = 25
+key = "5"
+
+[ArchMage.1]
+cd = 1.5
+name = "Incantation"
+mana = 0
+key = "1"
+
+[ArchMage.2]
+cd = 4.0
+name = "Immolation"
+mana = 10
+key = "2"
+
+[ArchMage.3]
+cd = 2.4
+name = "Glacial Impact"
+mana = -15
+key = "3"
+
+[ArchMage.4]
+cd = 4.0
+name = "Supernova"
+mana = 20
+key = "4"
+
+[ArchMage.5]
+cd = 3.0
+name = "Arcane Sigil"
+mana = 0
+key = "5"
+
+[ArchPaladin.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[ArchPaladin.2]
+cd = 5.0
+name = "Commandment"
+mana = 10
+key = "2"
+
+[ArchPaladin.3]
+cd = 10.0
+name = "Hymn of Light"
+mana = 40
+key = "3"
+
+[ArchPaladin.4]
+cd = 25.0
+name = "Righteous Seal"
+mana = 20
+key = "4"
+
+[ArchPaladin.5]
+cd = 25.0
+name = "Sacred Magic: Eden"
+mana = 40
+key = "5"
+
+["Yami no Ronin".1]
+cd = 2.0
+name = "Batto"
+mana = 0
+key = "1"
+
+["Yami no Ronin".2]
+cd = 3.0
+name = "Tachi"
+mana = 3
+key = "2"
+
+["Yami no Ronin".3]
+cd = 14.0
+name = "Yami no Maku"
+mana = 20
+key = "3"
+
+["Yami no Ronin".4]
+cd = 3.0
+name = "Kettou"
+mana = 3
+key = "4"
+
+["Yami no Ronin".5]
+cd = 6.0
+name = "Jigen Kogeki"
+mana = 20
+key = "5"
