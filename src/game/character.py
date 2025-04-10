@@ -1,18 +1,24 @@
 from game.items import Inventory
 from game.locations import Location
-from game.combat import CombatKit
+from game.combat import CombatKit, get_ability
 
 
 class Character:
+
+    @staticmethod
+    def create_ability(cd: float, name: str, mana: int, key: str):
+        return get_ability(cd, name, mana, key)
 
     def __init__(self, class_name=None, *, haste=0, location=None):
         self._combat_kit = CombatKit.load(class_name, haste)
         self._location = Location.load(location)
         self._inventory = Inventory()
 
-    def reinitialize(self, class_name=None, haste=None, location=None):
+    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None):
         if class_name:
-            self._combat_kit.reinitialize(class_name)
+            self._combat_kit.reinitialize(class_name=class_name)
+        if abilities:
+            self._combat_kit.reinitialize(abilities=abilities)
         if location:
             self._location.update(location)
         if haste:
@@ -43,6 +49,11 @@ class Character:
     def add_combat_data(self, hit_type):
         self._combat_kit.add_combat_data(hit_type)
 
+    def is_class_defined(self):
+        return self._combat_kit.well_defined
+
     def __str__(self):
-        return str(self._combat_kit) + '\n' + str(self._location)
+        return f'{str(self._combat_kit)}\n{str(self._location)}'
+
+
 

@@ -11,5 +11,8 @@ class GameSniffer(Sniffer):
         server = AQW_SERVERS.get(server, server)
         super().__init__(f'tcp and src host {server}', layers=[Raw])
 
+    def log_packet(self, packet):
+        super().log_packet(packet)
+
     def reset(self):
         super().reset()

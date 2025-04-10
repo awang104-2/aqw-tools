@@ -58,3 +58,6 @@ class Player:
     def print(self):
         print(self.character)
 
+    def packet_count(self):
+        return self.sniffer.packet_count
+

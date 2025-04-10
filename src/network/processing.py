@@ -48,7 +48,7 @@ class Processor:
         # Protected attributes for threading
         self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
         self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
-        self._interpret_buffer_thread = Thread(target=self._interpret_buffer_loop, name='processor thread internal-3', daemon=True)
+        self._interpret_json_thread = Thread(target=self._interpret_json_loop, name='processor thread internal-3', daemon=True)
 
         # Public and protected attributes for bookkeeping
         self._buffer = ''
@@ -72,7 +72,7 @@ class Processor:
         self._flag.set()
         self._update_buffer_thread.start()
         self._parse_buffer_thread.start()
-        self._interpret_buffer_thread.start()
+        self._interpret_json_thread.start()
 
     def stop(self):
         self._flag.clear()
@@ -80,7 +80,7 @@ class Processor:
     def reset(self):
         self._update_buffer_thread = Thread(target=self._update_buffer_loop, name='processor thread internal-1', daemon=True)
         self._parse_buffer_thread = Thread(target=self._parse_buffer_loop, name='processor thread internal-2', daemon=True)
-        self._interpret_buffer_thread = Thread(target=self._interpret_buffer_loop, name='processor thread internal-3', daemon=True)
+        self._interpret_json_thread = Thread(target=self._interpret_json_loop, name='processor thread internal-3', daemon=True)
         self.missed_packets = 0
         self._buffer = ''
 
@@ -132,9 +132,8 @@ class Processor:
     def _parse_buffer_loop(self):
         while self.sniffer.running and self._flag.is_set():
             self.parse_buffer()
-        self.stop()
 
-    def _interpret_buffer_loop(self):
+    def _interpret_json_loop(self):
         while self.sniffer.running and self._flag.is_set():
             self.interpret()
 
@@ -149,7 +148,7 @@ class Processor:
     def join(self, timeout=None):
         self._update_buffer_thread.join(timeout)
         self._parse_buffer_thread.join(timeout)
-        self._interpret_buffer_thread.join(timeout)
+        self._interpret_json_thread.join(timeout)
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]

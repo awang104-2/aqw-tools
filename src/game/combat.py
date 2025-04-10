@@ -1,4 +1,5 @@
 from handlers.ConfigHandler import *
+from typing import Self
 import math
 import time
 
@@ -39,7 +40,25 @@ def timeout_condition(t, start_time, timeout):
 
 
 def get_ability(cd: float, name: str, mana: int, key: str):
-    return {'cd': cd, 'name': name, 'key': key, 'mana': mana, '_time': None}
+    return {'cd': cd, 'name': name, 'mana': mana, 'key': key}
+
+
+def _get_ability(cd: float, name: str, mana: int, key: str):
+    return {'cd': cd, 'name': name, 'mana': mana, 'key': key, '_time': None}
+
+
+def is_valid_ability(ability):
+    return ability == get_ability(**ability)
+
+
+def are_valid_abilities(abilities):
+    if tuple(abilities.keys()) != MAIN_ABILITY_KEYS:
+        return False
+    for ability in abilities.values():
+        if ability == get_ability(**ability):
+            continue
+        return False
+    return True
 
 
 def save_new_classes(abilities=NEW_CLASS_ABILITIES):
@@ -57,7 +76,7 @@ class InvalidClassError(TypeError):
 class CombatKit:
 
     @classmethod
-    def load(cls, class_name=None, haste=0):
+    def load(cls, class_name=None, haste=0) -> Self:
         abilities = None
         if class_name:
             class_name, abilities = loads(class_name)
@@ -77,9 +96,15 @@ class CombatKit:
         self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
         self._polling_delay = 0.01
 
-    def reinitialize(self, class_name, haste=None, deep=False):
-        self._class, self._abilities = loads(class_name)
-        self.initialize_abilities()
+    def reinitialize(self, *, class_name: str = None, abilities: dict = None, haste: float = None, deep: bool = False):
+        if class_name:
+            self._class, self._abilities = loads(class_name)
+            self.initialize_abilities()
+        if abilities:
+            if not are_valid_abilities(abilities):
+                raise ValueError("Parameter \'abilities\' must be in the following format: {'1': {'cd': cd1, 'name': name1, 'mana': mana1, 'key': key1}, '2': {'cd': cd2, 'name': name2, 'mana': mana2, 'key': key2}, '3': {'cd': cd3, 'name': name3, 'mana': mana3, 'key': key3}, '4': {'cd': cd4, 'name': name4, 'mana': mana4, 'key': key4}, '5': {'cd': cd5, 'name': name5, 'mana': mana5, 'key': key5}}")
+            self._abilities = abilities
+            self.initialize_abilities()
         if haste:
             self._haste = min(haste, 0.5)
         if deep:
@@ -128,6 +153,10 @@ class CombatKit:
     @property
     def gcd(self):
         return self._gcd
+
+    @property
+    def well_defined(self):
+        return bool(self._class) and bool(self._abilities)
 
     def get_kills(self, monster_id):
         return self._kills.get(monster_id)
@@ -190,11 +219,4 @@ class CombatKit:
             string += f'\nAbility-{key}: {self._abilities.get(key)}'
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
-
-    def add_to_new_classes(self):
-        is_new_class = not (self._class in list(CLASS_ACRONYMS.values()))
-        if is_new_class:
-            NEW_CLASS_ABILITIES[self._class] = self._abilities
-        return is_new_class
-
 

@@ -11,6 +11,7 @@ class Sniffer:
         self._packets = Queue()
         self._sniffer = AsyncSniffer(filter=bpf_filter, prn=self.log_packet, store=0)
         self._summary_on = summary_on
+        self.packet_count = 0
 
     @property
     def summary_on(self):
@@ -52,6 +53,7 @@ class Sniffer:
         if self._layers:
             if len(self._layers) == 1 and packet.haslayer(self._layers[0]):
                 self._packets.put(packet)
+                self.packet_count += 1
                 if self._summary_on:
                     return packet.summary()
             elif any(packet.haslayer(layer) for layer in self._layers):
@@ -67,6 +69,7 @@ class Sniffer:
     def reset(self):
         self._packets = Queue()
         self._sniffer = AsyncSniffer(filter=self.filter, prn=self.log_packet, store=0)
+        self.packet_count = 0
 
     def get(self, timeout=None):
         try:

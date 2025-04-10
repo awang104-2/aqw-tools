@@ -31,6 +31,9 @@ class Location:
         self._map, self._lobby = Location.parse_location(location)
 
     def __str__(self):
+        return f'Location: {self._map}-{self._lobby}'
+
+    def __repr__(self):
         return f'{self._map}-{self._lobby}'
 
 

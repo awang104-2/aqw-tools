@@ -98,9 +98,11 @@ class Interpreter(Processor):
         self.character.reinitialize(location=location)
 
     def update_class(self, class_json):
-        class_name = class_json.get('sClassName')
-        print(class_name)
-        self.character.reinitialize(class_name=class_name)
+        class_name = class_json['sClassName']
+        if class_json.get('sDesc'):
+            self.character.reinitialize(class_name=class_name)
+        else:
+            print(f'Other Class: {class_name}')
 
     def add_rewards(self, reward_json):
         self.add_kill(reward_json)
@@ -111,6 +113,15 @@ class Interpreter(Processor):
             self.character.add_combat_data(hit_type)
         except KeyError:
             pass
+
+    def update_class_skills(self, skill_data_json):
+        if not self.character.is_class_defined():
+            skills = skill_data_json['actions']['active'][:5]
+            abilities = {}
+            for i, skill in enumerate(skills):
+                key, cd, name, mana = str(i + 1), skill.get('cd') / 1000, skill.get('nam'), skill.get('mp')
+                abilities[key] = self.character.create_ability(cd, name, mana, key)
+            self.character.reinitialize(abilities=abilities)
 
     def interpret_from_json(self, json):
         cmd = json.get('cmd')
@@ -129,6 +140,8 @@ class Interpreter(Processor):
                 self.add_rewards(json)
             case 'ct':
                 self.update_combat_data(json)
+            case 'sAct':
+                self.update_class_skills(json)
 
     def interpret(self):
         try:
@@ -139,3 +152,6 @@ class Interpreter(Processor):
             pass
         except KeyError:
             self.missed_packets += 1
+
+    def stop(self):
+        super().stop()

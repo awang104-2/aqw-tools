@@ -16,13 +16,13 @@ def on_release(key, sniffer, processor):
         pass
 
 
-def processor_with_game_sniffer():
-    sniffer = GameSniffer(server='twig')
+def processor_with_game_sniffer(server):
+    sniffer = GameSniffer(server=server)
     listener = Listener(on_release=lambda key: on_release(key, sniffer, processor))
     processor = Processor(sniffer=sniffer)
     sniffer.start()
     processor.start()
-    processor.print.set()
+    # processor.print.set()
     print('Press \'esc\' to exit.')
     print('Sniffing...')
     listener.run()
@@ -123,5 +123,6 @@ def sAct_test():
 
 
 if __name__ == '__main__':
-    raw_processor('artix')
-    # processor_with_game_sniffer()
+    server = input('server > ').lower()
+    # raw_processor(server)
+    processor_with_game_sniffer(server)
