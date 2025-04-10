@@ -5,13 +5,11 @@ import time
 
 
 _config = get_config('classes.toml')
-_new_classes = get_config('new_classes.toml')
 CLASS_ACRONYMS = SafeDict(_config.get('ACRONYMS'))
 CLASS_ABILITIES = SafeDict(_config.get('ABILITIES'))
 ALL_ABILITY_KEYS = ('1', '2', '3', '4', '5', '6')
 SPECIAL_ABILITY_KEYS = ('2', '3', '4', '5')
 MAIN_ABILITY_KEYS = ('1', '2', '3', '4', '5')
-NEW_CLASS_ABILITIES = SafeDict(_new_classes)
 POTION_KEY = '6'
 
 
@@ -39,6 +37,13 @@ def timeout_condition(t, start_time, timeout):
         return True
 
 
+def _del_time(abilities):
+    abilities_copy = copy.deepcopy(abilities)
+    for ability in abilities_copy.values():
+        del ability['_time']
+    return abilities_copy
+
+
 def get_ability(cd: float, name: str, mana: int, key: str):
     return {'cd': cd, 'name': name, 'mana': mana, 'key': key}
 
@@ -61,7 +66,7 @@ def are_valid_abilities(abilities):
     return True
 
 
-def save_new_classes(abilities=NEW_CLASS_ABILITIES):
+def save_new_classes(abilities):
     write_to_config(abilities, 'new_classes.toml')
 
 
@@ -74,6 +79,12 @@ class InvalidClassError(TypeError):
 
 
 class CombatKit:
+
+    _new_classes = get_config('new_classes.toml')
+
+    @staticmethod
+    def save():
+        write_to_config(CombatKit._new_classes, 'new_classes.toml')
 
     @classmethod
     def load(cls, class_name=None, haste=0) -> Self:
@@ -219,4 +230,8 @@ class CombatKit:
             string += f'\nAbility-{key}: {self._abilities.get(key)}'
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
+
+    def store(self):
+        abilities = _del_time(self._abilities)
+        CombatKit._new_classes[self._class] = abilities
 

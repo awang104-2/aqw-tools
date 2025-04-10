@@ -101,8 +101,6 @@ class Interpreter(Processor):
         class_name = class_json['sClassName']
         if class_json.get('sDesc'):
             self.character.reinitialize(class_name=class_name)
-        else:
-            print(f'Other Class: {class_name}')
 
     def add_rewards(self, reward_json):
         self.add_kill(reward_json)
@@ -122,6 +120,7 @@ class Interpreter(Processor):
                 key, cd, name, mana = str(i + 1), skill.get('cd') / 1000, skill.get('nam'), skill.get('mp')
                 abilities[key] = self.character.create_ability(cd, name, mana, key)
             self.character.reinitialize(abilities=abilities)
+            self.character.store()
 
     def interpret_from_json(self, json):
         cmd = json.get('cmd')
@@ -153,5 +152,3 @@ class Interpreter(Processor):
         except KeyError:
             self.missed_packets += 1
 
-    def stop(self):
-        super().stop()

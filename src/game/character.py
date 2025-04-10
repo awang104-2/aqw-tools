@@ -55,5 +55,11 @@ class Character:
     def __str__(self):
         return f'{str(self._combat_kit)}\n{str(self._location)}'
 
+    def save(self):
+        self._combat_kit.save()
+
+    def store(self):
+        self._combat_kit.store()
+
 
 

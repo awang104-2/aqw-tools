@@ -28,7 +28,9 @@ def player_test():
     print('Sniffing...')
     while flag.is_set():
         sleep(0.1)
-    print(player.interpreter.missed_packets)
+    player.disconnect()
+    player.save()
+    print('Finished.')
 
 
 def character_test():

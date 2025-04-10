@@ -1,0 +1,239 @@
+[ARACHNOMANCER.1]
+cd = 2.0
+name = "Spider Bite"
+mana = 0
+key = "1"
+
+[ARACHNOMANCER.2]
+cd = 6.0
+name = "Venom Fangs"
+mana = 6
+key = "2"
+
+[ARACHNOMANCER.3]
+cd = 6.0
+name = "Slingshot Web"
+mana = 6
+key = "3"
+
+[ARACHNOMANCER.4]
+cd = 6.0
+name = "Leaping Arachnid"
+mana = 15
+key = "4"
+
+[ARACHNOMANCER.5]
+cd = 6.0
+name = "Toxic Adrenaline"
+mana = 21
+key = "5"
+
+["ARCANA INVOKER".1]
+cd = 2.2
+name = "Anagenesis"
+mana = 0
+key = "1"
+
+["ARCANA INVOKER".2]
+cd = 5.0
+name = "The Beginning and the End"
+mana = 0
+key = "2"
+
+["ARCANA INVOKER".3]
+cd = 3.0
+name = "Arcana Invocation"
+mana = -15
+key = "3"
+
+["ARCANA INVOKER".4]
+cd = 3.0
+name = "Arcana Revocation"
+mana = 40
+key = "4"
+
+["ARCANA INVOKER".5]
+cd = 9.0
+name = "One With the Cycle"
+mana = 0
+key = "5"
+
+[ARCHMAGE.1]
+cd = 1.5
+name = "Incantation"
+mana = 0
+key = "1"
+
+[ARCHMAGE.2]
+cd = 4.0
+name = "Immolation"
+mana = 10
+key = "2"
+
+[ARCHMAGE.3]
+cd = 2.4
+name = "Glacial Impact"
+mana = -15
+key = "3"
+
+[ARCHMAGE.4]
+cd = 4.0
+name = "Supernova"
+mana = 20
+key = "4"
+
+[ARCHMAGE.5]
+cd = 3.0
+name = "Arcane Sigil"
+mana = 0
+key = "5"
+
+[ARCHPALADIN.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[ARCHPALADIN.2]
+cd = 5.0
+name = "Commandment"
+mana = 10
+key = "2"
+
+[ARCHPALADIN.3]
+cd = 10.0
+name = "Hymn of Light"
+mana = 40
+key = "3"
+
+[ARCHPALADIN.4]
+cd = 25.0
+name = "Righteous Seal"
+mana = 20
+key = "4"
+
+[ARCHPALADIN.5]
+cd = 25.0
+name = "Sacred Magic: Eden"
+mana = 40
+key = "5"
+
+["CHRONO SHADOWHUNTER".1]
+cd = 0.2
+name = "Fire!"
+mana = 15
+key = "1"
+
+["CHRONO SHADOWHUNTER".2]
+cd = 6.0
+name = "Reload"
+mana = -1000
+key = "2"
+
+["CHRONO SHADOWHUNTER".3]
+cd = 3.0
+name = "Tracer Rounds"
+mana = 5
+key = "3"
+
+["CHRONO SHADOWHUNTER".4]
+cd = 1.5
+name = "FMJ Rounds"
+mana = 5
+key = "4"
+
+["CHRONO SHADOWHUNTER".5]
+cd = 6.0
+name = "Silver Bullet"
+mana = 0
+key = "5"
+
+["DRAGON OF TIME".1]
+cd = 2.0
+name = "Rend Time"
+mana = 0
+key = "1"
+
+["DRAGON OF TIME".2]
+cd = 6.0
+name = "Confluence of Fates"
+mana = 0
+key = "2"
+
+["DRAGON OF TIME".3]
+cd = 3.0
+name = "Dragon's Will"
+mana = 15
+key = "3"
+
+["DRAGON OF TIME".4]
+cd = 6.0
+name = "Burning Fates"
+mana = 0
+key = "4"
+
+["DRAGON OF TIME".5]
+cd = 8.0
+name = "Hero's Heartbeat"
+mana = 25
+key = "5"
+
+["EXALTED SOUL CLEAVER".1]
+cd = 3.0
+name = "Soul Breaker"
+mana = 0
+key = "1"
+
+["EXALTED SOUL CLEAVER".2]
+cd = 6.0
+name = "Soul Rend"
+mana = 15
+key = "2"
+
+["EXALTED SOUL CLEAVER".3]
+cd = 6.0
+name = "Soul Leech"
+mana = 30
+key = "3"
+
+["EXALTED SOUL CLEAVER".4]
+cd = 12.0
+name = "Soul Pact"
+mana = 50
+key = "4"
+
+["EXALTED SOUL CLEAVER".5]
+cd = 3.0
+name = "Blood Price"
+mana = 0
+key = "5"
+
+["FROSTVAL BARBARIAN".1]
+cd = 2.75
+name = "Barbaric Strike"
+mana = 0
+key = "1"
+
+["FROSTVAL BARBARIAN".2]
+cd = 5.0
+name = "Winter's Depress"
+mana = 20
+key = "2"
+
+["FROSTVAL BARBARIAN".3]
+cd = 5.0
+name = "Frostval Gifts"
+mana = 20
+key = "3"
+
+["FROSTVAL BARBARIAN".4]
+cd = 8.0
+name = "Silver Thaw/Maw/Jaw"
+mana = -20
+key = "4"
+
+["FROSTVAL BARBARIAN".5]
+cd = 5.0
+name = "Enrage"
+mana = 10
+key = "5"
