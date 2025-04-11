@@ -1,5 +1,4 @@
-from game.combat import CombatKit
-from threading import Thread
+from game.mechanics.combat import CombatKit
 import time
 
 

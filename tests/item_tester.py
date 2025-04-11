@@ -1,4 +1,4 @@
-from game.items import *
+from game.mechanics.items import *
 
 
 inventory = Inventory()

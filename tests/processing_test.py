@@ -26,7 +26,7 @@ def processor_with_game_sniffer(server):
     print('Press \'esc\' to exit.')
     print('Sniffing...')
     listener.run()
-    sleep(1)
+    processor.join()
     print('Finished.')
 
 
@@ -34,6 +34,14 @@ def get_and_print_packet_kills(processor):
     packet = processor.get_packet()['b']['o']
     if packet.get('cmd') == 'addGoldExp' and packet.get('typ') == 'm':
         print(packet)
+
+
+def get_and_print_move_to_packets(processor):
+    packet = processor.get_packet()['b']['o']
+    if packet.get('cmd') == 'moveToArea':
+        for key, value in packet.items():
+            print(f'{key} - {value}')
+        print('\n')
 
 
 def get_and_print_packet_combat(processor):
@@ -52,7 +60,7 @@ def raw_processor(server):
     listener = Listener(on_release=lambda key: on_release(key, sniffer, processor))
     processor = Processor(sniffer=sniffer)
     processor.print.set()
-    # processor.get_and_print_packet = lambda: get_and_print_packet_combat(processor)
+    processor.get_and_print_packet = lambda: get_and_print_move_to_packets(processor)
     sniffer.start()
     processor.start()
     print('Press \'esc\' to exit.')
@@ -122,7 +130,21 @@ def sAct_test():
         print(f'{action.get('nam')}')
 
 
+MOVE_TO_AREA_JSON = {'t': 'xt', 'b': {'r': -1, 'o': {'cmd': 'moveToArea', 'areaName': 'battleontown-4232', 'uoBranch': [{'strFrame': 'Enter', 'intMP': 100, 'intLevel': 100, 'entID': 107274, 'strPad': 'Spawn', 'intMPMax': 100, 'intHP': 2075, 'afk': False, 'intHPMax': 2075, 'ty': 0, 'tx': 0, 'intState': 1, 'entType': 'p', 'showHelm': True, 'showCloak': True, 'strUsername': 'ike65', 'uoName': 'ike65'}], 'strMapFileName': 'battleon/town-Battleontown-5Apr24.swf', 'mondef': [{'sRace': 'Chaos', 'MonID': '1825', 'intLevel': 26, 'strLinkage': 'ChickenCow_v2', 'strMonName': 'ChickenCow', 'strMonFileName': 'monster-Chickencow_v2.swf', 'strBehave': 'walk'}, {'sRace': 'None', 'MonID': '3273', 'intLevel': 4, 'strLinkage': 'Frogzard1_v2', 'strMonName': 'FrogZard', 'strMonFileName': 'Frogzard1_v2.swf', 'strBehave': 'walk'}], 'intType': '1', 'monBranch': [{'intHPMax': 670, 'iLvl': 4, 'MonMapID': 1, 'MonID': '3273', 'intMP': 100, 'wDPS': 2, 'intState': 1, 'intMPMax': 100, 'bRed': '0', 'intHP': 670}, {'intHPMax': 37290, 'iLvl': 26, 'MonMapID': 29, 'MonID': '1825', 'intMP': 100, 'wDPS': 88, 'intState': 1, 'intMPMax': 100, 'bRed': '0', 'intHP': 37290}], 'sExtra': '', 'monmap': [{'MonMapID': '1', 'strFrame': 'Enter', 'intRSS': '-1', 'MonID': '3273', 'bRed': '0'}, {'MonMapID': '29', 'strFrame': 'bs2', 'intRSS': '-1', 'MonID': '1825', 'bRed': '0'}], 'areaId': 193535, 'strMapName': 'battleontown'}}}
+MOVE_TO_AREA_JSON = MOVE_TO_AREA_JSON['b']['o']
+
+def analyze_move_to_area_json():
+    json = MOVE_TO_AREA_JSON
+    keys = list(json.keys())
+    for key in keys:
+        print(key)
+    print('\n')
+    for m_name in json['mondef']:
+        print(f'monster: {m_name['strMonName']}')
+
+
 if __name__ == '__main__':
     server = input('server > ').lower()
-    # raw_processor(server)
-    processor_with_game_sniffer(server)
+    raw_processor(server)
+    # processor_with_game_sniffer(server)
+    # analyze_move_to_area_json()
