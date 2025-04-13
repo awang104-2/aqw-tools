@@ -1,81 +1,76 @@
-from scapy.all import AsyncSniffer, Scapy_Exception
-from queue import Queue, Empty
-from decorators import *
+from scapy.all import sniff
+from multiprocessing import Process, Queue
+from queue import Empty
+
+
+class SnifferRunningError(RuntimeError):
+
+    def __init__(self, msg):
+        super().__init__(msg)
+
+
+class Sniff(Process):
+
+    def __init__(self, bpf_filter, layers, queue):
+        self.bpf_filter = bpf_filter
+        self.layers = layers
+        self.packets = queue
+        super().__init__(name='Sniff Process')
+
+    def run(self):
+        print('Sniffing...')
+        sniff(filter=self.bpf_filter, prn=self.log_packets, store=0)
+
+    def log_packets(self, packet):
+        if self.layers:
+            if len(self.layers) == 1 and packet.haslayer(self.layers[0]):
+                self.packets.put(packet)
+            elif any(packet.haslayer(layer) for layer in self.layers):
+                self.packets.put(packet)
+        else:
+            self.packets.put(packet)
 
 
 class Sniffer:
 
-    def __init__(self, bpf_filter, layers: list | tuple = (), summary_on=False):
-        self._filter = bpf_filter
-        self._layers = layers
-        self._packets = Queue()
-        self._sniffer = AsyncSniffer(filter=bpf_filter, prn=self.log_packet, store=0)
-        self._summary_on = summary_on
-        self.packet_count = 0
-
-    @property
-    def summary_on(self):
-        return self._summary_on
-
-    @summary_on.setter
-    @check_not_running
-    def summary_on(self, boolean):
-        self._summary_on = boolean
+    def __init__(self, bpf_filter, layers: list | tuple = ()):
+        self.packets = Queue()
+        self._process = Sniff(bpf_filter, layers, self.packets)
 
     @property
     def filter(self):
-        return self._filter
+        return self._process.bpf_filter
 
     @property
     def layers(self):
-        return self._layers
+        return self._process.layers
 
     @property
     def running(self):
-        return self._sniffer.running
+        return self._process.is_alive()
 
-    @check_not_running
     def start(self):
-        try:
-            self._sniffer.start()
-        except Scapy_Exception:
-            raise RuntimeError(f'Call reset before starting {self.__name__} instance again.')
+        self._process.start()
 
-    @check_running
     def stop(self):
-        self._sniffer.join(timeout=0.01)
-        self._sniffer.stop()
+        self._process.terminate()
+        self._process.join()
 
-    def put(self, packet):
-        self._packets.put(packet)
-
-    def log_packet(self, packet):
-        if self._layers:
-            if len(self._layers) == 1 and packet.haslayer(self._layers[0]):
-                self._packets.put(packet)
-                self.packet_count += 1
-                if self._summary_on:
-                    return packet.summary()
-            elif any(packet.haslayer(layer) for layer in self._layers):
-                self._packets.put(packet)
-                if self._summary_on:
-                    return packet.summary()
-        else:
-            self._packets.put(packet)
-            if self._summary_on:
-                return packet.summary()
-
-    @check_not_running
     def reset(self):
-        self._packets = Queue()
-        self._sniffer = AsyncSniffer(filter=self.filter, prn=self.log_packet, store=0)
-        self.packet_count = 0
+        if self._process.is_alive():
+            raise SnifferRunningError('Cannot reset while Sniffer is running.')
+        bpf_filter, layers = self._process.bpf_filter, self._process.layers
+        self.packets = Queue()
+        self._process = Sniff(bpf_filter, layers, self.packets)
 
     def get(self, timeout=None):
         try:
-            return self._packets.get(timeout=timeout)
+            return self.packets.get(timeout=timeout)
         except Empty:
             return None
+
+    def join(self, timeout=None):
+        self._process.join(timeout)
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]
