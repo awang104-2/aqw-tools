@@ -327,3 +327,153 @@ cd = 3.0
 name = "Enraging Pain"
 mana = 0
 key = "5"
+
+[LightCaster.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[LightCaster.2]
+cd = 4.0
+name = "Lingering Light"
+mana = 10
+key = "2"
+
+[LightCaster.3]
+cd = 4.0
+name = "Light Blast"
+mana = 15
+key = "3"
+
+[LightCaster.4]
+cd = 12.0
+name = "Illuminate"
+mana = 20
+key = "4"
+
+[LightCaster.5]
+cd = 15.0
+name = "Burned by Light"
+mana = 35
+key = "5"
+
+["Lord Of Order".1]
+cd = 2.0
+name = "Strike of Order"
+mana = 0
+key = "1"
+
+["Lord Of Order".2]
+cd = 8.0
+name = "Harmony"
+mana = 20
+key = "2"
+
+["Lord Of Order".3]
+cd = 12.0
+name = "Ordinance"
+mana = 20
+key = "3"
+
+["Lord Of Order".4]
+cd = 8.0
+name = "Axiom"
+mana = 20
+key = "4"
+
+["Lord Of Order".5]
+cd = 8.0
+name = "Blessing of Order"
+mana = 30
+key = "5"
+
+["Verus DoomKnight".1]
+cd = 2.0
+name = "Necrotic Blade"
+mana = 0
+key = "1"
+
+["Verus DoomKnight".2]
+cd = 5.0
+name = "Soul Fracture"
+mana = 5
+key = "2"
+
+["Verus DoomKnight".3]
+cd = 5.0
+name = "Life Carve"
+mana = 5
+key = "3"
+
+["Verus DoomKnight".4]
+cd = 5.0
+name = "Doom Spikes"
+mana = 5
+key = "4"
+
+["Verus DoomKnight".5]
+cd = 10.0
+name = "Unleash Doom"
+mana = 8
+key = "5"
+
+[StoneCrusher.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[StoneCrusher.2]
+cd = 6.0
+name = "Stalagmite"
+mana = 15
+key = "2"
+
+[StoneCrusher.3]
+cd = 18.0
+name = "Echoing Earth"
+mana = 25
+key = "3"
+
+[StoneCrusher.4]
+cd = 12.0
+name = "Land's Embrace"
+mana = 25
+key = "4"
+
+[StoneCrusher.5]
+cd = 30.0
+name = "Endless Fissure"
+mana = 35
+key = "5"
+
+[SwordMaster.1]
+cd = 1.75
+name = "Nukitsuke"
+mana = 0
+key = "1"
+
+[SwordMaster.2]
+cd = 5.0
+name = "Bladefury"
+mana = 0
+key = "2"
+
+[SwordMaster.3]
+cd = 25.0
+name = "Uke Negashi"
+mana = 10
+key = "3"
+
+[SwordMaster.4]
+cd = 9.0
+name = "Sever"
+mana = 15
+key = "4"
+
+[SwordMaster.5]
+cd = 10.0
+name = "Nukiuchi"
+mana = 20
+key = "5"
