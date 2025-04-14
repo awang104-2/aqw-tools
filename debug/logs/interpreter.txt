@@ -1,7 +1,0 @@
-[2025-04-14 15:59:41] INFO - Updated Location: battleon-1.
-[2025-04-14 15:59:41] INFO - Monsters in battleon-1: {}
-[2025-04-14 15:59:42] INFO - Updated Class: ArchPaladin
-[2025-04-14 15:59:42] INFO - Updated ArchPaladin abilities: {'1': {'cd': 2.0, 'name': 'Auto Attack', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 5.0, 'name': 'Commandment', 'mana': 10, 'key': '2', '_time': None}, '3': {'cd': 10.0, 'name': 'Hymn of Light', 'mana': 40, 'key': '3', '_time': None}, '4': {'cd': 25.0, 'name': 'Righteous Seal', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 25.0, 'name': 'Sacred Magic: Eden', 'mana': 40, 'key': '5', '_time': None}}
-[2025-04-14 15:59:42] INFO - Changed Haste: 0.3053.
-[2025-04-14 15:59:45] INFO - Updated Location: house-xxxxxxxxx.
-[2025-04-14 15:59:45] INFO - Monsters in house-xxxxxxxxx: {}
