@@ -1,7 +1,6 @@
-from game.mechanics.items import Inventory
-from game.mechanics.locations import Location
-from game.mechanics.combat import CombatKit, get_ability
-from game.mechanics.bosses import *
+from game.items import Inventory
+from game.locations import Location
+from game.combat import CombatKit, get_ability
 
 
 class Character:
@@ -10,13 +9,12 @@ class Character:
     def create_ability(cd: float, name: str, mana: int, key: str):
         return get_ability(cd, name, mana, key)
 
-    def __init__(self, class_name=None, *, haste=0, location=None, bosses=()):
+    def __init__(self, class_name=None, *, haste=0, location=None):
         self._combat_kit = CombatKit.load(class_name, haste)
         self._location = Location.load(location)
         self._inventory = Inventory()
-        self._bosses = Bosses(*bosses)
 
-    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None, bosses=None):
+    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None):
         if class_name:
             self._combat_kit.reinitialize(class_name=class_name)
         if abilities:
@@ -25,8 +23,6 @@ class Character:
             self._location.update(location)
         if haste:
             self._combat_kit.haste = haste
-        if bosses:
-            self._bosses.reinitialize(*bosses)
 
     @property
     def haste(self):
@@ -65,13 +61,4 @@ class Character:
     def store(self):
         self._combat_kit.store()
 
-    def trigger(self, boss_name, args: tuple | list = (), kwargs: dict | None = None):
-        if kwargs is None:
-            kwargs = {}
-        if boss_name in self._bosses.names():
-            self._bosses[boss_name].trigger(*args, **kwargs)
-
-
-character = Character(bosses=['Malgor', 'Drakath'])
-character.trigger('Drakath', [1000])
 
