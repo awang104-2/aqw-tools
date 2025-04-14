@@ -13,3 +13,24 @@
 1 = "Skeleton Warrior"
 
 [bank]
+
+[battleunderc]
+1 = "Purple Crystalized Undead"
+2 = "Purple Crystalized Jellyfish"
+3 = "Blue Crystalized Undead"
+4 = "Green Crystalized Undead"
+
+[battleundere]
+7 = "Lavasite"
+
+[house]
+
+[dragonrune]
+
+[greenguardwest]
+9 = "Slime"
+10 = "Frogzard"
+
+[museum]
+9 = "Slime"
+10 = "Frogzard"

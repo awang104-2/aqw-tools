@@ -477,3 +477,33 @@ cd = 10.0
 name = "Nukiuchi"
 mana = 20
 key = "5"
+
+[Shaman.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[Shaman.2]
+cd = 4.0
+name = "Ancestor's Flame"
+mana = 15
+key = "2"
+
+[Shaman.3]
+cd = 4.0
+name = "Hydrophobia"
+mana = 15
+key = "3"
+
+[Shaman.4]
+cd = 16.0
+name = "Dry Lightning"
+mana = 30
+key = "4"
+
+[Shaman.5]
+cd = 16.0
+name = "Elemental Embrace"
+mana = 30
+key = "5"
