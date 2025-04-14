@@ -213,11 +213,11 @@ class Character:
     def store(self, attribute):
         match attribute:
             case 'combat kit':
-                self._combat_kit.store(True)
+                self._combat_kit.store(False)
             case 'location':
                 self._location.store(force=True)
             case 'all':
-                self._combat_kit.store(True)
+                self._combat_kit.store(False)
                 self._location.store(True)
             case _:
                 raise ValueError('attribute must be \'combat kit\', \'location\', or \'all\'.')
