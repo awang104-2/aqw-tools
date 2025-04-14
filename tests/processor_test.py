@@ -25,7 +25,10 @@ def main():
     game_sniffer.stop()
     print('\n\nUndistorted:')
     for json in undistorted:
-        print(json)
+        if json.get('cmd') == 'moveToArea':
+            for k, v in json.items():
+                print(f'{k} - {v}')
+            print()
     print('\nDistorted:')
     for json in distorted:
         print(json)

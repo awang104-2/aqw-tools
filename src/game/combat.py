@@ -227,13 +227,17 @@ class CombatKit:
     def __str__(self):
         string = f'Class Name: {self._class}'
         for key in MAIN_ABILITY_KEYS:
-            string += f'\nAbility-{key}: {self._abilities.get(key)}'
+            dictionary = copy.deepcopy(self._abilities.get(key))
+            if dictionary:
+                dictionary.pop('_time')
+            string += f'\nAbility-{key}: {dictionary}'
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
 
-    def store(self, check=True):
-        if check and not (self._class and self._abilities):
-            return
-        abilities = _del_time(self._abilities)
-        CombatKit._new_classes[self._class] = abilities
+    def store(self, force):
+        if self._class and self._abilities:
+            if not force and CombatKit._new_classes.get(self._class):
+                return
+            abilities = _del_time(self._abilities)
+            CombatKit._new_classes[self._class] = abilities
 

@@ -11,16 +11,16 @@ class Character:
 
     def __init__(self, class_name=None, *, haste=0, location=None):
         self._combat_kit = CombatKit.load(class_name, haste)
-        self._location = Location.load(location)
+        self._location = Location.load(location, False)
         self._inventory = Inventory()
 
-    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None):
+    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None, monsters=None):
         if class_name:
             self._combat_kit.reinitialize(class_name=class_name)
         if abilities:
             self._combat_kit.reinitialize(abilities=abilities)
-        if location:
-            self._location.update(location)
+        if location or monsters:
+            self._location.update(location, monsters)
         if haste:
             self._combat_kit.haste = haste
 
@@ -55,10 +55,29 @@ class Character:
     def __str__(self):
         return f'{str(self._combat_kit)}\n{str(self._location)}'
 
-    def save(self):
-        self._combat_kit.save()
+    def store(self, attribute):
+        match attribute:
+            case 'combat kit':
+                self._combat_kit.store(True)
+            case 'location':
+                self._location.store(force=True)
+            case 'all':
+                self._combat_kit.store(True)
+                self._location.store(True)
+            case _:
+                raise ValueError('attribute must be \'combat kit\', \'location\', or \'all\'.')
 
-    def store(self):
-        self._combat_kit.store()
+    def save(self, attribute):
+        match attribute:
+            case 'combat kit':
+                self._combat_kit.save()
+            case 'location':
+                self._location.save()
+            case 'all':
+                self._combat_kit.save()
+                self._location.save()
+            case _:
+                raise ValueError('attribute must be \'combat kit\', \'location\', or \'all\'.')
 
 
+__all__ = [name for name in globals() if not name.startswith('-')]

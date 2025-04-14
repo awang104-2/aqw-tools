@@ -39,6 +39,11 @@ class Interpreter:
         self._flag.set()
         self._interpreter.start()
 
+    def stop(self, timeout=None):
+        self._flag.clear()
+        self.processor.jsons.put(SENTINEL)
+        self._interpreter.join(timeout)
+
     def connected(self, process: str):
         match process:
             case 'sniffer':
@@ -74,9 +79,21 @@ class Interpreter:
         if haste:
             self.character.haste = haste
 
-    def update_location(self, loc_json):
-        location = loc_json.get('areaName')
-        self.character.reinitialize(location=location)
+    def update_location(self, location_json):
+        location = location_json.get('areaName')
+        monsters = {}
+        monster_info = location_json.get('mondef')
+        if monster_info:
+            map_ids = location_json['monmap']
+            for i, monster in enumerate(monster_info):
+                monster_id = monster['MonID']
+                name = monster['strMonName']
+                map_id = map_ids[i]['MonMapID']
+                if monster_id == map_ids[i]['MonID']:
+                    monsters[map_id] = name
+            print(monsters)
+        self.character.reinitialize(location=location, monsters=monsters)
+        self.character.store('location')
 
     def update_class(self, class_json):
         class_name = class_json['sClassName']
@@ -102,7 +119,7 @@ class Interpreter:
             key, cd, name, mana = str(i + 1), skill.get('cd') / 1000, skill.get('nam'), skill.get('mp')
             abilities[key] = self.character.create_ability(cd, name, mana, key)
         self.character.reinitialize(abilities=abilities)
-        self.character.store()
+        self.character.store('combat kit')
 
     def reset(self, server):
         if server:
@@ -117,6 +134,7 @@ class Interpreter:
             json = self.processor.get()
             if json == SENTINEL:
                 continue
+            json = json['b']['o']
             cmd = json.get('cmd')
             match cmd:
                 case 'moveToArea':
@@ -135,3 +153,8 @@ class Interpreter:
                     self.update_combat_data(json)
                 case 'sAct':
                     self.update_class_skills(json)
+
+    def join(self, timeout=None):
+        self.sniffer.join(timeout)
+        self.processor.join(timeout)
+        self._interpreter.join(timeout)
