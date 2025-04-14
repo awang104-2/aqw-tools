@@ -1,0 +1,44 @@
+[2025-04-14 15:21:55] INFO - Updated Location: battleon-1.
+[2025-04-14 15:21:55] INFO - Monsters in battleon-1: {}
+[2025-04-14 15:21:56] INFO - Updated Class: Chrono ShadowHunter
+[2025-04-14 15:21:56] INFO - Updated Chrono ShadowHunter abilities: {'1': {'cd': 0.2, 'name': 'Fire!', 'mana': 15, 'key': '1', '_time': None}, '2': {'cd': 6.0, 'name': 'Reload', 'mana': -1000, 'key': '2', '_time': None}, '3': {'cd': 3.0, 'name': 'Tracer Rounds', 'mana': 5, 'key': '3', '_time': None}, '4': {'cd': 1.5, 'name': 'FMJ Rounds', 'mana': 5, 'key': '4', '_time': None}, '5': {'cd': 6.0, 'name': 'Silver Bullet', 'mana': 0, 'key': '5', '_time': None}}
+[2025-04-14 15:21:56] INFO - Changed Haste: 0.2319.
+[2025-04-14 15:22:13] INFO - Updated Location: battleon-1.
+[2025-04-14 15:22:13] INFO - Monsters in battleon-1: {}
+[2025-04-14 15:22:14] INFO - Updated Class: Chrono ShadowHunter
+[2025-04-14 15:22:14] INFO - Updated Chrono ShadowHunter abilities: {'1': {'cd': 0.2, 'name': 'Fire!', 'mana': 15, 'key': '1', '_time': None}, '2': {'cd': 6.0, 'name': 'Reload', 'mana': -1000, 'key': '2', '_time': None}, '3': {'cd': 3.0, 'name': 'Tracer Rounds', 'mana': 5, 'key': '3', '_time': None}, '4': {'cd': 1.5, 'name': 'FMJ Rounds', 'mana': 5, 'key': '4', '_time': None}, '5': {'cd': 6.0, 'name': 'Silver Bullet', 'mana': 0, 'key': '5', '_time': None}}
+[2025-04-14 15:22:14] INFO - Changed Haste: 0.2319.
+[2025-04-14 15:22:18] INFO - Updated Class: ArchFiend
+[2025-04-14 15:22:18] INFO - Updated ArchFiend abilities: {'1': {'cd': 2.0, 'name': 'Mark of Death', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 3.0, 'name': 'Fiendish Strike', 'mana': 15, 'key': '2', '_time': None}, '3': {'cd': 3.0, 'name': 'Consumed by the Abyss', 'mana': 15, 'key': '3', '_time': None}, '4': {'cd': 26.0, 'name': 'Fiend Frenzy', 'mana': 25, 'key': '4', '_time': None}, '5': {'cd': 26.0, 'name': 'Abyssal Contract', 'mana': 25, 'key': '5', '_time': None}}
+[2025-04-14 15:22:18] INFO - Changed Haste: 0.1553.
+[2025-04-14 15:22:25] INFO - Updated Location: battleon-1.
+[2025-04-14 15:22:25] INFO - Monsters in battleon-1: {}
+[2025-04-14 15:22:26] INFO - Updated Class: ArchFiend
+[2025-04-14 15:22:26] INFO - Updated ArchFiend abilities: {'1': {'cd': 2.0, 'name': 'Mark of Death', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 3.0, 'name': 'Fiendish Strike', 'mana': 15, 'key': '2', '_time': None}, '3': {'cd': 3.0, 'name': 'Consumed by the Abyss', 'mana': 15, 'key': '3', '_time': None}, '4': {'cd': 26.0, 'name': 'Fiend Frenzy', 'mana': 25, 'key': '4', '_time': None}, '5': {'cd': 26.0, 'name': 'Abyssal Contract', 'mana': 25, 'key': '5', '_time': None}}
+[2025-04-14 15:22:26] INFO - Changed Haste: 0.1553.
+[2025-04-14 15:22:30] INFO - Updated Class: ArchMage
+[2025-04-14 15:22:30] INFO - Updated ArchMage abilities: {'1': {'cd': 1.5, 'name': 'Incantation', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 4.0, 'name': 'Immolation', 'mana': 10, 'key': '2', '_time': None}, '3': {'cd': 2.4, 'name': 'Glacial Impact', 'mana': -15, 'key': '3', '_time': None}, '4': {'cd': 4.0, 'name': 'Supernova', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 3.0, 'name': 'Arcane Sigil', 'mana': 0, 'key': '5', '_time': None}}
+[2025-04-14 15:22:30] INFO - Changed Haste: 0.2853.
+[2025-04-14 15:22:33] INFO - Updated Class: ArchPaladin
+[2025-04-14 15:22:33] INFO - Updated ArchPaladin abilities: {'1': {'cd': 2.0, 'name': 'Auto Attack', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 5.0, 'name': 'Commandment', 'mana': 10, 'key': '2', '_time': None}, '3': {'cd': 10.0, 'name': 'Hymn of Light', 'mana': 40, 'key': '3', '_time': None}, '4': {'cd': 25.0, 'name': 'Righteous Seal', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 25.0, 'name': 'Sacred Magic: Eden', 'mana': 40, 'key': '5', '_time': None}}
+[2025-04-14 15:22:33] INFO - Changed Haste: 0.3053.
+[2025-04-14 15:22:39] INFO - Updated Location: battleon-1.
+[2025-04-14 15:22:39] INFO - Monsters in battleon-1: {}
+[2025-04-14 15:22:40] INFO - Updated Class: ArchPaladin
+[2025-04-14 15:22:40] INFO - Updated ArchPaladin abilities: {'1': {'cd': 2.0, 'name': 'Auto Attack', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 5.0, 'name': 'Commandment', 'mana': 10, 'key': '2', '_time': None}, '3': {'cd': 10.0, 'name': 'Hymn of Light', 'mana': 40, 'key': '3', '_time': None}, '4': {'cd': 25.0, 'name': 'Righteous Seal', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 25.0, 'name': 'Sacred Magic: Eden', 'mana': 40, 'key': '5', '_time': None}}
+[2025-04-14 15:22:40] INFO - Changed Haste: 0.3053.
+[2025-04-14 15:22:48] INFO - Updated Class: LightCaster
+[2025-04-14 15:22:48] INFO - Updated LightCaster abilities: {'1': {'cd': 2.0, 'name': 'Auto Attack', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 4.0, 'name': 'Lingering Light', 'mana': 10, 'key': '2', '_time': None}, '3': {'cd': 4.0, 'name': 'Light Blast', 'mana': 15, 'key': '3', '_time': None}, '4': {'cd': 12.0, 'name': 'Illuminate', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 15.0, 'name': 'Burned by Light', 'mana': 35, 'key': '5', '_time': None}}
+[2025-04-14 15:22:48] INFO - Changed Haste: 0.2925.
+[2025-04-14 15:22:50] INFO - Updated Class: Lord Of Order
+[2025-04-14 15:22:50] INFO - Updated Lord Of Order abilities: {'1': {'cd': 2.0, 'name': 'Strike of Order', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 8.0, 'name': 'Harmony', 'mana': 20, 'key': '2', '_time': None}, '3': {'cd': 12.0, 'name': 'Ordinance', 'mana': 20, 'key': '3', '_time': None}, '4': {'cd': 8.0, 'name': 'Axiom', 'mana': 20, 'key': '4', '_time': None}, '5': {'cd': 8.0, 'name': 'Blessing of Order', 'mana': 30, 'key': '5', '_time': None}}
+[2025-04-14 15:22:50] INFO - Changed Haste: 0.371.
+[2025-04-14 15:22:55] INFO - Updated Class: Verus DoomKnight
+[2025-04-14 15:22:55] INFO - Updated Verus DoomKnight abilities: {'1': {'cd': 2.0, 'name': 'Necrotic Blade', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 5.0, 'name': 'Soul Fracture', 'mana': 5, 'key': '2', '_time': None}, '3': {'cd': 5.0, 'name': 'Life Carve', 'mana': 5, 'key': '3', '_time': None}, '4': {'cd': 5.0, 'name': 'Doom Spikes', 'mana': 5, 'key': '4', '_time': None}, '5': {'cd': 10.0, 'name': 'Unleash Doom', 'mana': 8, 'key': '5', '_time': None}}
+[2025-04-14 15:22:55] INFO - Changed Haste: 0.2664.
+[2025-04-14 15:22:57] INFO - Updated Class: StoneCrusher
+[2025-04-14 15:22:57] INFO - Updated StoneCrusher abilities: {'1': {'cd': 2.0, 'name': 'Auto Attack', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 6.0, 'name': 'Stalagmite', 'mana': 15, 'key': '2', '_time': None}, '3': {'cd': 18.0, 'name': 'Echoing Earth', 'mana': 25, 'key': '3', '_time': None}, '4': {'cd': 12.0, 'name': "Land's Embrace", 'mana': 25, 'key': '4', '_time': None}, '5': {'cd': 30.0, 'name': 'Endless Fissure', 'mana': 35, 'key': '5', '_time': None}}
+[2025-04-14 15:22:57] INFO - Changed Haste: 0.371.
+[2025-04-14 15:22:59] INFO - Updated Class: SwordMaster
+[2025-04-14 15:22:59] INFO - Updated SwordMaster abilities: {'1': {'cd': 1.75, 'name': 'Nukitsuke', 'mana': 0, 'key': '1', '_time': None}, '2': {'cd': 5.0, 'name': 'Bladefury', 'mana': 0, 'key': '2', '_time': None}, '3': {'cd': 25.0, 'name': 'Uke Negashi', 'mana': 10, 'key': '3', '_time': None}, '4': {'cd': 9.0, 'name': 'Sever', 'mana': 15, 'key': '4', '_time': None}, '5': {'cd': 10.0, 'name': 'Nukiuchi', 'mana': 20, 'key': '5', '_time': None}}
+[2025-04-14 15:22:59] INFO - Changed Haste: 0.2271.
