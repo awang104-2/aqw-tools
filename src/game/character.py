@@ -144,6 +144,22 @@ class Character:
         return result
 
     @property
+    def map(self):
+        return self._location.map
+
+    def lobby(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxxxxxx'
+        return lobby
+
+    def location(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxxxxxx'
+        return f'{self._location.map}-{lobby}'
+
+    @property
     def haste(self):
         return self._combat_kit.haste
 
