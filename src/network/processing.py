@@ -6,6 +6,7 @@ from json import loads, decoder
 
 
 MAX_STRING_SIZE = 5000
+SENTINEL = 'STOP COMMAND PROCESSING'
 
 
 def decode(bytes_list, code='utf-8'):
@@ -42,17 +43,21 @@ class ProcessorRunningError(RuntimeError):
 
 class ProcessPackets(Process):
 
-    def __init__(self, packets, jsons, flag):
+    def __init__(self, packets, jsons, flag, *, daemon=False):
         self.buffer = ''
         self.buffer_changed = Event()
         self.packets = packets
         self.jsons = jsons
         self.flag = flag
-        super().__init__(name='Process Packets Process')
+        self.return_value = Queue()
+        super().__init__(name='Process Packets Process', daemon=daemon)
 
     def update_buffer(self, buffer_lock):
         while self.flag.is_set():
             packet = self.packets.get()
+            if packet == SENTINEL:
+                self.buffer_changed.set()
+                continue
             if packet:
                 raw = get_raw(packet)
                 blist = parse_bytes(raw)
@@ -70,28 +75,27 @@ class ProcessPackets(Process):
                 for i, char in enumerate(self.buffer):
                     if escaped:
                         escaped = False
-                        continue
                     else:
                         match char:
                             case '"':
                                 in_string = not in_string
                             case '\\':
                                 escaped = True
-                            case '{':
+                            case '{' if not in_string:
                                 if depth == 0:
                                     start = i
                                 depth += 1
-                            case '}':
+                            case '}' if not in_string:
                                 depth -= 1
                                 if depth == 0:
-                                    end = i
+                                    end = i + 1
                                     try:
-                                        result = self.buffer[start:end + 1]
+                                        result = self.buffer[start:end]
                                         self.jsons.put(loads(result))
                                     except decoder.JSONDecodeError:
                                         pass
-                self.buffer = self.buffer[end + 1:]
-            self.buffer_changed.clear()
+                self.buffer = self.buffer[max(start, end):]
+                self.buffer_changed.clear()
 
     def run(self):
         buffer_lock = Lock()
@@ -105,10 +109,18 @@ class ProcessPackets(Process):
 
 class Processor:
 
-    def __init__(self, sniffer):
+    def __init__(self, sniffer, *, daemon=False):
         self.jsons = Queue()
         self._flag = Event()
-        self._process = ProcessPackets(sniffer.packets, self.jsons, self._flag)
+        self._process = ProcessPackets(sniffer.packets, self.jsons, self._flag, daemon=daemon)
+
+    @property
+    def daemon(self):
+        return self._process.daemon
+
+    @daemon.setter
+    def daemon(self, daemon):
+        self._process.daemon = daemon
 
     @property
     def running(self):
@@ -118,20 +130,24 @@ class Processor:
         self._flag.set()
         self._process.start()
 
-    def stop(self):
+    def stop(self, force=True):
         self._flag.clear()
-        self._process.join(1)
+        self._process.packets.put(SENTINEL)
+        self._process.join(0.5)
         if self._process.is_alive():
-            self._process.terminate()
-            self._process.join()
+            if force:
+                self._process.terminate()
+                self._process.join()
+            else:
+                raise RuntimeError('Processor shutdown failed.')
 
     def reset(self):
         if self._process.is_alive():
             raise ProcessorRunningError('Cannot reset while Sniffer is running.')
         self.jsons = Queue()
         self._flag.clear()
-        packets = self._process.packets
-        self._process = ProcessPackets(packets, self.jsons, self._flag)
+        packets, daemon = self._process.packets, self._process.daemon
+        self._process = ProcessPackets(packets, self.jsons, self._flag, daemon=daemon)
 
     def join(self, timeout=None):
         self._process.join(timeout)

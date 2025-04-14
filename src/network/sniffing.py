@@ -11,11 +11,11 @@ class SnifferRunningError(RuntimeError):
 
 class Sniff(Process):
 
-    def __init__(self, bpf_filter, layers, queue):
+    def __init__(self, bpf_filter, layers, queue, *, daemon=False):
         self.bpf_filter = bpf_filter
         self.layers = layers
         self.packets = queue
-        super().__init__(name='Sniff Process')
+        super().__init__(name='Sniff Process', daemon=daemon)
 
     def run(self):
         print('Sniffing...')
@@ -33,9 +33,9 @@ class Sniff(Process):
 
 class Sniffer:
 
-    def __init__(self, bpf_filter, layers: list | tuple = ()):
+    def __init__(self, bpf_filter, layers: list | tuple = (), *, daemon=False):
         self.packets = Queue()
-        self._process = Sniff(bpf_filter, layers, self.packets)
+        self._process = Sniff(bpf_filter, layers, self.packets, daemon=daemon)
 
     @property
     def filter(self):
@@ -44,6 +44,14 @@ class Sniffer:
     @property
     def layers(self):
         return self._process.layers
+
+    @property
+    def daemon(self):
+        return self._process.daemon
+
+    @daemon.setter
+    def daemon(self, daemon):
+        self._process.daemon = daemon
 
     @property
     def running(self):

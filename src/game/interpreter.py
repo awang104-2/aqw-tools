@@ -1,73 +1,54 @@
 from network.processing import Processor
-from game.aqw_backend import *
-from threading import Lock
-from decorators import *
+from game.game_sniffer import GameSniffer
+from threading import Thread, Event
 
 
-class JsonDict:
-
-    def __init__(self, dictionary=None):
-        self._lock = Lock()
-        if dictionary:
-            self._jsons = dictionary
-        else:
-            self._jsons = dict.fromkeys(list(AQW_PACKETS.keys()), [])
-
-    @with_lock
-    def __str__(self):
-        return str(self._jsons)
-
-    @with_lock
-    def __getitem__(self, item):
-        return self._jsons.get(item)
-
-    @with_lock
-    def __setitem__(self, key, value):
-        self._jsons[key] = value
-
-    @with_lock
-    def get(self, key):
-        return self._jsons.get(key)
-
-    @with_lock
-    def add(self, key, json):
-        self._jsons[key].append(json)
-
-    @with_lock
-    def adds(self, key, jsons):
-        self._jsons[key] += jsons
-
-    @with_lock
-    def update(self, jsons_dictionary):
-        for key, json_list in jsons_dictionary.items():
-            self.adds(key, json_list)
-
-    @with_lock
-    def to_dict(self):
-        return self._jsons
-
-    @with_lock
-    def clear(self):
-        self._jsons = dict.fromkeys(list(AQW_PACKETS.keys()), [])
-
-    @with_lock
-    def pop(self, key):
-        return self._jsons.pop(key)
-
-    @with_lock
-    def pop_all(self):
-        jsons = self._jsons
-        self._jsons = dict.fromkeys(list(AQW_PACKETS.keys()), [])
-        return jsons
+SENTINEL = 'STOP COMMAND INTERPRETER'
 
 
-class Interpreter(Processor):
+class Interpreter:
 
-    def __init__(self, character, sniffer):
-        super().__init__(sniffer)
+    def __init__(self, character, server, daemon=False):
         self.character = character
+        self.sniffer = GameSniffer(server=server, daemon=True)
+        self.processor = Processor(self.sniffer, daemon=True)
+        self._interpreter = Thread(target=self.interpret, name='Interpreting Thread', daemon=daemon)
+        self._flag = Event()
 
-    @needs_character_initialized
+    @property
+    def daemon(self):
+        return self._interpreter.daemon
+
+    @daemon.setter
+    def daemon(self, daemon):
+        self._interpreter.daemon = daemon
+
+    @property
+    def running(self):
+        return self._interpreter.is_alive()
+
+    def connect(self):
+        self.sniffer.start()
+        self.processor.start()
+
+    def disconnect(self):
+        self.sniffer.stop()
+        self.processor.stop()
+
+    def start(self):
+        self._flag.set()
+        self._interpreter.start()
+
+    def connected(self, process: str):
+        match process:
+            case 'sniffer':
+                return self.sniffer.running
+            case 'processor':
+                return self.processor.running
+            case 'both':
+                return self.sniffer.running and self.processor.running
+        raise ValueError('Argument must be \'sniffer\', \'processor\', or \'both\'.')
+
     def add_item(self, item_json):
         item_id = list(item_json.get('items').keys())[0]
         name = item_json.get('items').get(item_id).get('sName')
@@ -123,33 +104,34 @@ class Interpreter(Processor):
         self.character.reinitialize(abilities=abilities)
         self.character.store()
 
-    def interpret_from_json(self, json):
-        cmd = json.get('cmd')
-        match cmd:
-            case 'moveToArea':
-                self.update_location(json)
-            case 'updateClass':
-                self.update_class(json)
-            case 'addItems':
-                self.add_item(json)
-            case 'addDrop':
-                self.add_drops(json)
-            case 'stu':
-                self.adjust_haste(json)
-            case 'addGoldExp':
-                self.add_rewards(json)
-            case 'ct':
-                self.update_combat_data(json)
-            case 'sAct':
-                self.update_class_skills(json)
+    def reset(self, server):
+        if server:
+            self.sniffer = GameSniffer(server=server)
+            self.processor = Processor(self.sniffer)
+        daemon = self._interpreter.daemon
+        self._interpreter = Thread(target=self.interpret, name='Interpreting Thread', daemon=daemon)
+        self._flag.clear()
 
     def interpret(self):
-        try:
-            extended_json = self.jsons.get(timeout=self.timeout)
-            json = extended_json['b']['o']
-            self.interpret_from_json(json)
-        except Processor.EmptyError:
-            pass
-        except KeyError:
-            self.missed_packets += 1
-
+        while self._flag.is_set():
+            json = self.processor.get()
+            if json == SENTINEL:
+                continue
+            cmd = json.get('cmd')
+            match cmd:
+                case 'moveToArea':
+                    self.update_location(json)
+                case 'updateClass':
+                    self.update_class(json)
+                case 'addItems':
+                    self.add_item(json)
+                case 'addDrop':
+                    self.add_drops(json)
+                case 'stu':
+                    self.adjust_haste(json)
+                case 'addGoldExp':
+                    self.add_rewards(json)
+                case 'ct':
+                    self.update_combat_data(json)
+                case 'sAct':
+                    self.update_class_skills(json)
