@@ -34,17 +34,17 @@ class Sniff(Process):
                 self.packet_count += 1
                 self.packets.put(packet)
                 if logger:
-                    logger.info(f'Received Packet-{self.packet_count}: {packet}')
+                    logger.info(f'Received Packet #{self.packet_count}')
             elif any(packet.haslayer(layer) for layer in self.layers):
                 self.packet_count += 1
                 self.packets.put(packet)
                 if logger:
-                    logger.info(f'Received Packet-{self.packet_count}: {packet}')
+                    logger.info(f'Received Packet #{self.packet_count}')
         else:
             self.packet_count += 1
             self.packets.put(packet)
             if logger:
-                logger.info(f'Received Packet-{self.packet_count}: {packet}')
+                logger.info(f'Received Packet #{self.packet_count}')
 
 
 class Sniffer:
