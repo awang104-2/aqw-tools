@@ -1,47 +1,57 @@
 [ACRONYMS]
-AM = "ARCHMAGE"
-AI = "ARCANA INVOKER"
-LR = "LEGION REVENANT"
-AF = "ARCHFIEND"
-VHL = "VOID HIGHLORD"
-TEST = "TEST CLASS"
-CAV = "CHAOS AVENGER"
+AM = "Archmage"
+AI = "Arcana Invoker"
+LR = "Legion Revenant"
+AF = "Archfiend"
+VHL = "Void Highlord"
+TEST = "Test Class"
+CAV = "Chaos Avenger"
 
-[COMBOS]
-ARCHFIEND = [ [ "4", "2", "3",],]
-"LEGION REVENANT" = [ [ "4", "5", "2", "3",],]
-"VOID HIGHLORD" = [ [ "2",], [ "4",], [ "5",], [ "3",], [ "2",], [ "4",], [ "3",], [ "2",], [ "4",], [ "3",],]
-"TEST CLASS" = [ [ "1", "2", "3", "4", "5",],]
 
 [SKILLS.Arachnomancer.1]
 cd = 2.0
 name = "Spider Bite"
 mana = 0
 key = "1"
+description = "Sink your fangs into your opponent, siphoning health from opponents affected by your Venom Fangs."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Arachnomancer.2]
 cd = 6.0
 name = "Venom Fangs"
 mana = 6
 key = "2"
+description = "Bite your target with Venom Fangs, injecting them with a powerful toxin for 4 seconds. Retreat with the grace of an arachnid, increasing your Dodge by 70% for 1 second."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Arachnomancer.3]
 cd = 6.0
 name = "Slingshot Web"
 mana = 6
 key = "3"
+description = "Constrict your opponent with steel-like spider thread coated in poison, causing damage over time for 10 seconds that increases the lower your health is. Retreat with the grace of an arachnid, increasing your Dodge by 70% for 1 second."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Arachnomancer.4]
 cd = 6.0
 name = "Leaping Arachnid"
 mana = 15
 key = "4"
+description = "A powerful strike of self-abandon that costs 10% of your max HP and tears away at their armor. Inflict your foe with Panic, increasing the DoT they take by 100% for 12 seconds. \r\n"
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Arachnomancer.5]
 cd = 6.0
 name = "Toxic Adrenaline"
 mana = 21
 key = "5"
+description = "Toxic adrenaline flows through your veins and with your webbing, melting your body and your opponent's armor. Cocoon your foe with your toxic webbing, costing 20% of your max HP, increasing the damage they take by 100% for 12 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Arcana Invoker".1]
 cd = 2.2
@@ -93,300 +103,450 @@ cd = 2.0
 name = "Mark of Death"
 mana = 0
 key = "1"
+description = "Strike your opponents and curse them with a Mark of Death, increasing the damage they take by 4% for 12 seconds, stacks to 8."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchFiend.2]
 cd = 3.0
 name = "Fiendish Strike"
 mana = 15
 key = "2"
+description = "Lash out at your opponent, dealing damage while drawing strength from the Abyss. Applies a stack of ArchFiend's Mark to yourself, increasing Crit Chance by 5% for 12 seconds, stacks to 8."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchFiend.3]
 cd = 3.0
 name = "Consumed by the Abyss"
 mana = 15
 key = "3"
+description = "Unleash the twisted power of the Abyss onto your opponents. You enter your natural Fiendish state, granting you 25% Haste for 6 seconds while your foes are Consumed by the Abyss, lowering their Dodge by 25% for 6 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchFiend.4]
 cd = 26.0
 name = "Fiend Frenzy"
 mana = 25
 key = "4"
+description = "Your abyssal power sends you and your allies into a Fiendish Frenzy, increasing Crit Damage by 120% for 8 seconds. If you have stacks of Archfiend's Mark, also apply Fiend Leech to yourself, a 2 second HoT that increases in power based on the number of Archfiend's Mark stacks."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchFiend.5]
 cd = 26.0
 name = "Abyssal Contract"
 mana = 25
 key = "5"
+description = "Bind your opponents to the Abyss. Consumes all stacks of Archfiend's Mark and deals damage based on the amount consumed. Also applies Abyssal Contract for 10 seconds, increasing the physical damage your opponents take by 30%, plus 5% for each stack of Mark of Death they have (up to 70% total)."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchMage.1]
 cd = 1.5
 name = "Incantation"
 mana = 0
 key = "1"
+description = "Incant an unavoidable status spell and inflict your foes with Leywilt, reducing Dodge by 35%, damage by 25%, and Crit Chance by 15% for 20 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchMage.2]
 cd = 4.0
 name = "Immolation"
 mana = 10
 key = "2"
+description = "Set ablaze the mana current, consuming the foes around you in an intense inferno and thawing any afflicted with Cryostasis. The fire ravenously burns, dealing more damage the lower your MP and leaving your foes burning based on the damage dealt, stacking to 2 and lasting 6 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchMage.3]
 cd = 2.4
 name = "Glacial Impact"
 mana = -15
 key = "3"
+description = "Still the flow of the mana stream, flash freezing your foes in place and drawing in 15 mana for yourself. Your foes remain in Cryostasis, reducing their Hit Chance and Damage dealt by 30% while they take 30% increased magic damage for 6 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchMage.4]
 cd = 4.0
 name = "Supernova"
 mana = 20
 key = "4"
+description = "Agitated mana bursts forth from you, engulfing your foes in a radiant supernova dealing more damage the lower your life force is."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchMage.5]
 cd = 3.0
 name = "Arcane Sigil"
 mana = 0
 key = "5"
+description = "Inscribe an Arcane Sigil, significantly increasing your magical power. Your Arcane Sigil increases your Damage Dealt by 30% for 30 seconds, but the Overload of the spell increases your mana costs by 50% for 4 seconds and costs 40% of your current health."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchPaladin.1]
 cd = 2.0
 name = "Auto Attack"
 mana = 0
 key = "1"
+description = "A strong attack known only to disciplined fighters. Damage dealt is based on weapon damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchPaladin.2]
 cd = 5.0
 name = "Commandment"
 mana = 10
 key = "2"
+description = "Attack with a weapon infused with the power of light, weakening them up to 6 times, lasting 10 seconds. Your foes are commanded by the light, reducing their outgoing damage, Crit Chance, and Hit Chance by 5%, and Dodge and Defense by 10% per stack. Undead foes take extra damage from the holy light."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchPaladin.3]
 cd = 10.0
 name = "Hymn of Light"
 mana = 40
 key = "3"
+description = "A forgiving light encompasses you and up to 6 allies, recovering a great amount of health that always crits and granting you 20% defense and END for 15 seconds."
+"always hits" = false
+"always crits" = true
 
 [SKILLS.ArchPaladin.4]
 cd = 25.0
 name = "Righteous Seal"
 mana = 20
 key = "4"
+description = "Using holy magic, you temporarily seal the offensive powers of your opponent away. Your foe does 90% less damage for 7 seconds. Undead foes are stunned by the holy power of the seal for 3 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.ArchPaladin.5]
 cd = 25.0
 name = "Sacred Magic: Eden"
 mana = 40
 key = "5"
+description = "Invoke your most powerful holy light spell, dealing massive damage to your foes. If your foes are sealed, your holy magic is even stronger, breaking the seal and doing double damage. The effects of the Broken Seal linger, reducing your opponent's damage dealt by 15% for 25 seconds, stacking up to 2."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Yami no Ronin".1]
 cd = 2.0
 name = "Batto"
 mana = 0
 key = "1"
+description = "Attack your enemy from the shadows using the cover of darkness. Each hit applies Flash, increasing your Outgoing Damage, Hit Chance, and Crit Chance by 4% and Revealed, reducing your Dodge by 7% and Damage Resistance by 4%. Both effects last 15 seconds and stack to 20. "
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Yami no Ronin".2]
 cd = 3.0
 name = "Tachi"
 mana = 3
 key = "2"
+description = "Sequentially cut through your opponent's defenses with three strikes, each dealing moderate damage. The first strike increases your outgoing damage by 20% for 9 seconds, the second strike increases your outgoing physical damage by 20% for 7 seconds, and the third strike increases your Crit Damage by 150% for 5 seconds. Effects do not refresh. Always hits but can't crit."
+"always hits" = true
+"always crits" = true
 
 [SKILLS."Yami no Ronin".3]
 cd = 14.0
 name = "Yami no Maku"
 mana = 20
 key = "3"
+description = "Wrap your weapon in shadows and lash out, releasing a shockwave of homing dark energy. The darkness gradually consumes your opponent before fading away, applying a DoT that grows progressively stronger for 10 seconds. Also has a 35% chance to apply Spinning Dragon, reducing their next attack to 0 damage. Always hits but can't crit."
+"always hits" = true
+"always crits" = true
 
 [SKILLS."Yami no Ronin".4]
 cd = 3.0
 name = "Kettou"
 mana = 3
 key = "4"
+description = "Gouge your target with your weapon, dealing strong damage. You also absorb their life force, restoring your health based on damage dealt. Also applies 1 stack of Flash and Revealed."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Yami no Ronin".5]
 cd = 6.0
 name = "Jigen Kogeki"
 mana = 20
 key = "5"
+description = "Use your control of the shadows to tear through reality itself, dealing unavoidable strong damage. If Yami is applied on your opponent, deals massive damage depending on how much time is left on before it fades (less time means more damage). Consumes all stacks of Flash and Revealed."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Exalted Soul Cleaver".1]
 cd = 3.0
 name = "Soul Breaker"
 mana = 0
 key = "1"
+description = "You relentlessly beat at your foe's soul. Dealing high damage based on weapon attack, but with a longer cooldown."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Exalted Soul Cleaver".2]
 cd = 6.0
 name = "Soul Rend"
 mana = 15
 key = "2"
+description = "Rend your foe for unavoidable damage based on the difference between your current and maximum HP, dealing more damage the lower your health is. Your strike leaves them rent, decreasing Crit Chance by 30%."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Exalted Soul Cleaver".3]
 cd = 6.0
 name = "Soul Leech"
 mana = 30
 key = "3"
+description = "Drain life directly from your target's soul, dealing damage and healing you."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Exalted Soul Cleaver".4]
 cd = 12.0
 name = "Soul Pact"
 mana = 50
 key = "4"
+description = "Enter a Soul Pact, reducing your incoming healing by 50% but increasing your defense by 50% for 30 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Exalted Soul Cleaver".5]
 cd = 3.0
 name = "Blood Price"
 mana = 0
 key = "5"
+description = "Sacrifice your very life force to increase all damage dealt by 125% Crit Chance by 15%, and Haste by 8% for 10 seconds. Each sacrifice you make increases your Crit Damage by 20% for 10 seconds as well, does not refresh."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Dragon of Time".1]
 cd = 2.0
 name = "Rend Time"
 mana = 0
 key = "1"
+description = "Strike at your opponents' being with your force of will, Rending them for Damage over Time, stacking to 5 and lasting 10 seconds. Cannot crit."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Dragon of Time".2]
 cd = 6.0
 name = "Confluence of Fates"
 mana = 0
 key = "2"
+description = "Violently tear through the boundaries between timelines, sacrificing 10% of your health per target hit to Converge your successive strikes on a single target, removing all of your skills' area of effect, increasing your Magical Damage by 100%, and decreasing your mana costs by 60%. Further Rends all targets hit, and cannot crit."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Dragon of Time".3]
 cd = 3.0
 name = "Dragon's Will"
 mana = 15
 key = "3"
+description = "Strike your opponent for noncrit damage, and Rend them while pulling your corporeal form back together, healing you for half of your missing health. If your strikes are Converged, you gain Coalescence for 5 seconds, an additional small HoT."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Dragon of Time".4]
 cd = 6.0
 name = "Burning Fates"
 mana = 0
 key = "4"
+description = "Breathe temporal fire over the battlefield, burning away you and your foes' fates, removing your Convergence and burning you for 10% of your health per target hit. The most intense flames affect your primary target, searing their timeline and increasing the DoT damage they take by 150% for 7 seconds. Their destiny remains alight for the duration, burning them for a powerful DoT. Cannot be avoided, but cannot crit."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Dragon of Time".5]
 cd = 8.0
 name = "Hero's Heartbeat"
 mana = 25
 key = "5"
+description = "Lash out with the force of your vitality, dealing heavy damage based on your current health while further Rending them. Cannot crit."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chaos Avenger".1]
 cd = 3.0
 name = "Chaos Greatsword"
 mana = -60
 key = "1"
+description = "Swing your Greatsword down on your target for massive damage. Gain a stack of Chaos Fury, increasing your Crit Chance and Crit Damage by 15% for 12 seconds, stacks to 4. Deals double damage to Branded targets. Recovers 60 mana on hit."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chaos Avenger".2]
 cd = 6.0
 name = "Chaos Siphon"
 mana = 50
 key = "2"
+description = "Impale your target with your Greatsword to drain life from them. Chaorrupt your target's defenses, increasing the damage they take by 10% for 15 seconds, stacks to 4."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chaos Avenger".3]
 cd = 15.0
 name = "Flux"
 mana = 50
 key = "3"
+description = "Chaos manifests itself, dealing damage while randomly reducing your target's Dodge, Crit Chance, Hit Chance, Haste, and outgoing damage. Each debuff reduces its respective stat by 30% for 20 seconds. Also applies Focus for 4 seconds, which forces your target to attack only you for the duration. Can't miss and always crits."
+"always hits" = true
+"always crits" = true
 
 [SKILLS."Chaos Avenger".4]
 cd = 6.0
 name = "Chaos Bulwark"
 mana = 50
 key = "4"
+description = "Chaorrupt the raw energy around you and release a portion of it at your target, dealing damage while absorbing the remainder into your armor. Gain Chaotic Armor, healing you over time and granting you 60% defense for 15 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chaos Avenger".5]
 cd = 35.0
 name = "Fury Unleashed"
 mana = 50
 key = "5"
+description = "Deals damage and channels your fury into your greatsword. Gain Unstoppable Force, increasing your haste by 25% for 35 seconds. If your opponent is Ravaged, gain Fury Unleashed, increasing your outgoing damage by 50% for 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chrono ShadowHunter".1]
 cd = 0.2
 name = "Fire!"
 mana = 15
 key = "1"
+description = "Fire as fast as you can pull the trigger! Your shots are so fast that they're unavoidable. Your cylinder holds 6 shots, needing to be reloaded when empty."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chrono ShadowHunter".2]
 cd = 6.0
 name = "Reload"
 mana = -1000
 key = "2"
+description = "Load 6 shots into your revolver and refill your mana. Removes Tracer rounds and FMJ rounds.\r\n\r\nIf you have 4 or more stacks of Temporal Rift, consume them and enter Gunslinger Stance for 2 seconds, granting you free shots and generating Chaos Rifts, which block Temporal Rift and increase your Crit Damage by 20% per stack for 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chrono ShadowHunter".3]
 cd = 3.0
 name = "Tracer Rounds"
 mana = 5
 key = "3"
+description = "Load Tracers and fire one, increasing your Defense by 20% and Dodge by 40% until you reload. Gain a Temporal Rift, stacking to 4 and lasting 10 seconds, and a HoT for 4 seconds based on max health. Replaces FMJ rounds.\r\n\r\nFiring with Tracer rounds Paints your opponent, reducing their damage, Dodge, and Crit Chance by 6% per stack, up to 4 stacks, for 16 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chrono ShadowHunter".4]
 cd = 1.5
 name = "FMJ Rounds"
 mana = 5
 key = "4"
+description = "Load Full Metal Jackets and fire an empowered shot, dealing additional damage and increasing your Physical Damage by 25% until you reload. Gain a Temporal Rift, stacking to 4 and lasting 10 seconds. Replaces Tracer rounds.\r\n\r\nFiring with FMJ rounds shreds your opponent's defense by 6% per stack, up to 6 stacks, for 12 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Chrono ShadowHunter".5]
 cd = 6.0
 name = "Silver Bullet"
 mana = 0
 key = "5"
+description = "Fire a silver bullet, dealing powerful damage based on how much damage was dealt in the last 10 seconds while a Rift was present. Empties your rounds and Blinds your target, reducing their Hit Chance by 50% for 1 second."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Neo Metal Necro".1]
 cd = 2.0
 name = "Auto Attack"
 mana = 0
 key = "1"
+description = "A basic attack, taught to all adventurers. Damage dealt is based on your weapon damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Neo Metal Necro".2]
 cd = 6.0
 name = "Shocking Soundwave"
 mana = 10
 key = "2"
+description = "Strum your guitar with all your might, summoning an otherworldly ghoul to attack your foe while applying Soundwave, increasing your outgoing damage by 15% and Haste by 10% for 8 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Neo Metal Necro".3]
 cd = 8.0
 name = "Mental Breakdown"
 mana = 15
 key = "3"
+description = "Attack your opponent's psyche, dealing more damage that increases as your health decreases. Also applies Lost Sanity, increasing your Crit Chance by 15% for 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Neo Metal Necro".4]
 cd = 6.0
 name = "Subsuming Scream"
 mana = 10
 key = "4"
+description = "Scream at your opponent with all your might, absorbing their health and applying Shaken, decreasing their Dodge by 30% for 8 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Neo Metal Necro".5]
 cd = 3.0
 name = "Enraging Pain"
 mana = 0
 key = "5"
+description = "By entering a contract with a sinister entity, acquire power at the cost of your health. Applies Enraged Power, increasing your outgoing damage by 20% for 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.LightCaster.1]
 cd = 2.0
 name = "Auto Attack"
 mana = 0
 key = "1"
+description = "A basic attack, taught to all adventurers. Damage dealt is based on your weapon damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.LightCaster.2]
 cd = 4.0
 name = "Lingering Light"
 mana = 10
 key = "2"
+description = "Cast down an elemental light beacon upon the target. Does light damage and applies In The Spotlight increasing the amount of damage your opponent takes by 3% per stack and lasts 10 seconds if not restacked. (Stacks up to 50 times)"
+"always hits" = false
+"always crits" = false
 
 [SKILLS.LightCaster.3]
 cd = 4.0
 name = "Light Blast"
 mana = 15
 key = "3"
+description = "Blasts your opponent with a ball of pure light. Deals significant damage that is guaranteed to hit but cannot crit. Each hit applies a stack of Blinded by Light which decreases your opponent's chance to hit by 5% per stack and lasts 12 seconds if not restacked. Maxes out at 5 stacks."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.LightCaster.4]
 cd = 12.0
 name = "Illuminate"
 mana = 20
 key = "4"
+description = "Casts a net of light upon your allies. Heals yourself and up to 6 allies and applies Illuminated, increasing outgoing damage, Crit Chance, Crit Damage, Hit Chance, Dodge, Haste and Damage Resistance by 15% for 12 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.LightCaster.5]
 cd = 15.0
 name = "Burned by Light"
 mana = 35
 key = "5"
+description = "You focus the power of the entire sun on a single point. Does a large amount of damage on hit then deals 700% damage over 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Lord Of Order".1]
 cd = 2.0
@@ -438,120 +598,180 @@ cd = 2.0
 name = "Necrotic Blade"
 mana = 0
 key = "1"
+description = "Strike your target with your Doom Blade. Applies Weakened, reducing your target's outgoing damage by 15% for 20 seconds"
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Verus DoomKnight".2]
 cd = 5.0
 name = "Soul Fracture"
 mana = 5
 key = "2"
+description = "Ravage your target's soul, severely crippling their defenses. Applies Fractured Soul, reducing your target's Damage Resistance by 50% and Physical and Magical Resistance by 30% for 8 seconds. \r\n\r\nIf Unleashed Doom is active, applies Shattered Soul, reducing your target's Physical and Magical Resistance by an additional 30% for 5 seconds. \r\n\r\nIf Darkness is gathered, applies Cataclysm, increasing your Crit Chance by 20% and Crit Damage by 50% for 20 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Verus DoomKnight".3]
 cd = 5.0
 name = "Life Carve"
 mana = 5
 key = "3"
+description = "Carve into your target, draining life from them and applying Lingering Darkness, a DoT for 6 seconds.\r\n\r\nIf Unleashed Doom is active, applies Necrotic Warmth, restoring your HP over 5 seconds.\r\n\r\nIf Darkness is gathered, applies Veil of Darkness, increasing your Damage Resistance by 50% for 20 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Verus DoomKnight".4]
 cd = 5.0
 name = "Doom Spikes"
 mana = 5
 key = "4"
+description = "Raise spikes from the ground, piercing your target. Applies Spiked, reducing your target's Haste and Dodge by 15% for 8 seconds. Can't miss.\r\n\r\nIf Unleashed Doom is active, applies Skewered, reducing your target's Haste and Dodge by an additional 15% for 5 seconds, while also stunning them for 1 second. \r\n\r\nIf Darkness is gathered, applies Demise, increasing your outgoing damage by 15% for 20 seconds."
+"always hits" = true
+"always crits" = false
 
 [SKILLS."Verus DoomKnight".5]
 cd = 10.0
 name = "Unleash Doom"
 mana = 8
 key = "5"
+description = "Release calamitous shadows upon your target, inflicting them with Decay which negates all non lifesteal healing they receive for 3 seconds. If you have 10 stacks of Doom, they are consumed to apply Unleashed Doom, empowering your skills and increasing your outgoing damage by 25% and Haste by 50% for 8 seconds. Can't miss. \r\n\r\nIf Unleashed Doom is activated or is already active, you Gather Darkness, empowering the next skill you use (except Necrotic Blade) with an additional effect."
+"always hits" = true
+"always crits" = false
 
 [SKILLS.StoneCrusher.1]
 cd = 2.0
 name = "Auto Attack"
 mana = 0
 key = "1"
+description = "A basic attack, taught to all adventurers. Damage dealt is based on your weapon damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.StoneCrusher.2]
 cd = 6.0
 name = "Stalagmite"
 mana = 15
 key = "2"
+description = "Causes a stalagmite to erupt out of the ground at your opponents feet, dealing damage and crippling their defenses. Applies Bruised to the target, increasing all incoming damage in by 8% for 8 seconds. Stacks up to 5 times. Has a 25% chance to apply Magnitude for 2 seconds, increasing your outgoing magical damage by 275%. If Magnitude is applied, immediately has a 50% chance to stun for 4 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.StoneCrusher.3]
 cd = 18.0
 name = "Echoing Earth"
 mana = 25
 key = "3"
+description = "Harness the residual energy of great battles from ages past trapped beneath the surface. Applies Resonance and Dissonance, increasing Haste and Crit chance by 30% for the caster and up to 6 friendly targets while improving mana regain. Lasts for 10 seconds. Has a 25% chance to apply Magnitude for 2 seconds, increasing your outgoing magical damage by 275%. If Magnitude is applied, mana costs are immediately reduced for you and your party by 20% for 10 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.StoneCrusher.4]
 cd = 12.0
 name = "Land's Embrace"
 mana = 25
 key = "4"
+description = "Draw upon the strength within the earth to conjure a barrier of stone. Applies Shielded, increasing Damage Resistance for the caster and up to 6 friendly targets by 50% and applying a small HoT for 4 seconds. Has a 25% chance to apply Magnitude for 2 seconds, increasing your outgoing magical damage by 275%. If Magnitude is applied, immediately increases your Damage Resistance by 80% while doubling your HoT for 4 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.StoneCrusher.5]
 cd = 30.0
 name = "Endless Fissure"
 mana = 35
 key = "5"
+description = "Rip open the ground beneath your opponents feet, dealing massive damage. Also applies Aftershock, a DoT that grows stronger with every attack that hits your opponent for 30 seconds. Has a 25% chance to apply Magnitude for 2 seconds, increasing your outgoing magical damage by 275%. If Magnitude is applied, the target becomes caught in a sinkhole, reducing crit rate and haste by 40% for 8 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.SwordMaster.1]
 cd = 1.75
 name = "Nukitsuke"
 mana = 0
 key = "1"
+description = "A blade strike from the hilt, fast enough to hit before your opponent gets a chance to act."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.SwordMaster.2]
 cd = 5.0
 name = "Bladefury"
 mana = 0
 key = "2"
+description = "Unleash a fury of steel to strike at up to 4 targets. This attack also has a 20% chance to apply Spinning Dragon, reducing their next attack to 0 damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.SwordMaster.3]
 cd = 25.0
 name = "Uke Negashi"
 mana = 10
 key = "3"
+description = "A technique used to deflect incoming attacks and strike back at your target. Grants Evasion, increasing your Dodge by 25% and Crit Chance by 15% for 15 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.SwordMaster.4]
 cd = 9.0
 name = "Sever"
 mana = 15
 key = "4"
+description = "Strike at your target's tendons to deal moderate damage and affect their ability to fight back significantly, reducing their Outgoing Damage by 70% for 5 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.SwordMaster.5]
 cd = 10.0
 name = "Nukiuchi"
 mana = 20
 key = "5"
+description = "Attempt to split your target in two with a powerful strike. Has a 50% chance to stun your target for 2 seconds and a 50% chance to apply Spinning Dragon, reducing their next attack to 0 damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Shaman.1]
 cd = 2.0
 name = "Auto Attack"
 mana = 0
 key = "1"
+description = "Double click a monster to start Auto Attacking it. This is a basic attack, taught to all adventurers. Damage dealt is based on your weapon damage."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Shaman.2]
 cd = 4.0
 name = "Ancestor's Flame"
 mana = 15
 key = "2"
+description = "Deals moderate damage to up to three targets, and applies Scorched Spirit. Damage increased by Elemental Embrace."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Shaman.3]
 cd = 4.0
 name = "Hydrophobia"
 mana = 15
 key = "3"
+description = "Deals moderate damage to up to three targets. If Scorched Spirit is active, the amount of damage dealt is doubled. Also applies an HoT for 6 seconds."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Shaman.4]
 cd = 16.0
 name = "Dry Lightning"
 mana = 30
 key = "4"
+description = "Deals heavy damage to the target. Damage increased by Elemental Embrace."
+"always hits" = false
+"always crits" = false
 
 [SKILLS.Shaman.5]
 cd = 16.0
 name = "Elemental Embrace"
 mana = 30
 key = "5"
+description = "Deals light damage to target and applies Elemental Embrace, negating all target Evasion and Critical Strike chance. This effect also makes the Shaman's spells more powerful, and gets stronger the more spells the Shaman casts against the target."
+"always hits" = false
+"always crits" = false
 
 [SKILLS."Legion Revenant".1]
 cd = 1.5
@@ -595,5 +815,140 @@ name = "Anathema"
 mana = 20
 key = "5"
 description = "Focus all your energy and unleash a massive burst of dark magic, dealing high damage."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Frostval Barbarian".1]
+cd = 2.75
+name = "Barbaric Strike"
+mana = 0
+key = "1"
+description = "Swing your poleaxe at your target, dealing unavoidable damage that can't crit. If Enrage is active, has a 25% chance to stun your target for 1 second."
+"always hits" = false
+"always crits" = true
+
+[SKILLS."Frostval Barbarian".2]
+cd = 5.0
+name = "Winter's Depress"
+mana = 20
+key = "2"
+description = "Depress your foe with a wintry blast, dealing unavoidable damage that can't crit and applying Winter's Depress, reducing your target's  Haste by 20% for 10 seconds, stacks to 4."
+"always hits" = false
+"always crits" = true
+
+[SKILLS."Frostval Barbarian".3]
+cd = 5.0
+name = "Frostval Gifts"
+mana = 20
+key = "3"
+description = "Your allies are on the nice list, that means presents! Applies Frostval Gifts to you and your allies, a 10 second HoT. If you're Enraged, applies Frozen Beard to yourself instead of Frostval Gifts, increasing Damage Resistance by 30% for 10 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Frostval Barbarian".4]
+cd = 8.0
+name = "Silver Thaw/Maw/Jaw"
+mana = -20
+key = "4"
+description = "Cast a wintry spell, restoring 20 mana for yourself and applying Silver Thaw, Silver Maw, and Silver Jaw to you and your allies. Silver Thaw reduces mana costs by 15%, Silver Maw increases Crit Chance by 10%, and Silver Jaw increases Crit Damage by 20%. Effects last 10 seconds and stack to 4."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Frostval Barbarian".5]
+cd = 5.0
+name = "Enrage"
+mana = 10
+key = "5"
+description = "Your foes are on the naughty list, that means a beating! Deals unavoidable damage that can't crit and applies Enrage, increasing your outgoing damage by 50% and removing Frostval Gifts from yourself. "
+"always hits" = false
+"always crits" = true
+
+[SKILLS."Legion SwordMaster Assassin".1]
+cd = 1.75
+name = "Nukitsuke"
+mana = 0
+key = "1"
+description = "A blade strike from the hilt, fast enough to hit before your opponent gets a chance to act."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion SwordMaster Assassin".2]
+cd = 9.0
+name = "Diminished Steel"
+mana = 12
+key = "2"
+description = "Your inner Legion beckons, dealing more damage on the verge of death. Also has 50% chance to apply Spinning Dragon, reducing their next attack to 0 damage. Always crits and can't miss."
+"always hits" = true
+"always crits" = true
+
+[SKILLS."Legion SwordMaster Assassin".3]
+cd = 20.0
+name = "Reanimation"
+mana = 18
+key = "3"
+description = "As you come back to the living temporarily you empower yourself, increasing your Dodge by 25% and Outgoing Damage and Critical Strike Damage by 30% for 18 seconds. As your body deteriorates back into an undead form your flesh mutates, applying a moderate DoT to yourself while preventing you from receiving any healing from sources other than life drain for the duration."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion SwordMaster Assassin".4]
+cd = 11.0
+name = "Consuming Blades"
+mana = 20
+key = "4"
+description = "Lashes out on anyone too close, dealing moderate damage at up to 3 targets while draining their life force, healing you for some of the damage done."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion SwordMaster Assassin".5]
+cd = 10.0
+name = "Dark Mantle"
+mana = 25
+key = "5"
+description = "Unleashes a wave of darkness dealing moderately strong damage at up to 4 targets around you while applying a moderate DoT and lowering their Crit Chance by 20% for 4 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Void Highlord".1]
+cd = 2.3
+name = "Contract"
+mana = 0
+key = "1"
+description = "Seal your opponent's fate. If Shackled is active, applies Soul Fend to yourself, a HoT for 5 seconds, stacks to 5. If Unshackled is active, applies Soul Breach to your target, a DoT for 5 seconds, stacks to 5."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Void Highlord".2]
+cd = 4.0
+name = "Shackle"
+mana = 0
+key = "2"
+description = "Binds your soul for protection, dealing damage while reducing your incoming damage by 50% for 15 seconds. Also applies Soul Void, increasing your Haste, HoT power, and DoT power by 30% for 12 seconds. Always crits and can't miss. Costs 20% of your maximum health. (Replaces Unshackled)"
+"always hits" = true
+"always crits" = true
+
+[SKILLS."Void Highlord".3]
+cd = 5.0
+name = "Highlord's Gaze"
+mana = 20
+key = "3"
+description = "Strike fear into your opponent with the eyes of the Void, dealing damage and feeding off their despair, healing you. Has a 30% chance to stun and applies Congealed, reducing their Hit Chance, Haste, and Dodge by 20% for 6 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Void Highlord".4]
+cd = 4.0
+name = "Unshackle"
+mana = 0
+key = "4"
+description = "Releases your soul for destruction, dealing damage while increasing your outgoing damage by 50% for 15 seconds. Also applies Soul Void, increasing your Haste, HoT power, and DoT power by 30% for 12 seconds. Always crits and can't miss. Costs 20% of your maximum health. (Replaces Shackled)"
+"always hits" = true
+"always crits" = true
+
+[SKILLS."Void Highlord".5]
+cd = 15.0
+name = "Armageddon"
+mana = 50
+key = "5"
+description = "Spawn a portal straight to the Void itself to call a mass amount of swords to do your bidding, dealing cataclysmic damage. Applies Arbiter's Wrath, increasing your Crit Damage by 75% for 12 seconds. Also applies Kneel Before the Nation, increasing your outgoing damage and reducing your incoming damage by 50% for 12 seconds. At rank 10, you sacrifice your opponent's soul to the Void, increasing their incoming damage by 5% for 20 seconds, stacks to 10."
 "always hits" = false
 "always crits" = false
