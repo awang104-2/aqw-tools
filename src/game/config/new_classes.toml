@@ -33,30 +33,45 @@ cd = 2.2
 name = "Anagenesis"
 mana = 0
 key = "1"
+description = "Deliver a strike with your blade of flesh. Deals physical damage based on your Attack Power and Spell Power."
+"always hits" = false
+"always crits" = false
 
 ["Arcana Invoker".2]
 cd = 5.0
 name = "The Beginning and the End"
 mana = 0
 key = "2"
+description = "Begin the cycle anew by summoning The Fool, increasing your Damage Resistance by 80% for 122 seconds. \r\n\r\nIf Judgement is active, instead summon The World for 122 seconds, increasing your Damage Resistance by 40% and changing the effects of your other skills. \r\n\r\nIf The World is active, instead deals damage based on your stacks of End of the World. \r\n\r\nUsing this skill while Judgement isn't active will reset the cycle. Can't miss."
+"always hits" = true
+"always crits" = false
 
 ["Arcana Invoker".3]
 cd = 3.0
 name = "Arcana Invocation"
 mana = -15
 key = "3"
+description = "If The Fool is present, summon an Arcana. Arcana are summoned in a set order, with each one granting you a new effect and the effects of all previously summoned Arcana. Each time an Arcana is summoned, your Damage Resistance is reduced by 2% until The World is summoned. \r\n\r\nIf The World is active, instead applies End of the World for 8 seconds, increasing the damage of this skill, but reducing your Damage Resistance by 4% for each stack. Recovers 15 mana on hit. Can't miss."
+"always hits" = true
+"always crits" = false
 
 ["Arcana Invoker".4]
 cd = 3.0
 name = "Arcana Revocation"
 mana = 40
 key = "4"
+description = "Channel a magical attack through your Arcana, applying a Reversed effect to your target based on your currently summoned Arcana. All effects last 22 seconds unless otherwise specified.\r\n\r\nIf The Fool is your only active Arcana, applies The Fool (Reversed).\r\n\r\nIf Judgement is active, deals one time bonus damage to your primary target. \r\n\r\nIf The World is active, applies The World (Reversed) for 5 seconds, applying all Reversed stat debuffs and stuns at half potency. Can't miss."
+"always hits" = true
+"always crits" = false
 
 ["Arcana Invoker".5]
 cd = 9.0
 name = "One With the Cycle"
 mana = 0
 key = "5"
+description = "Perform the Arcana's ritual, using your foe as the offering! Applies Sacrifice to your target, increasing the damage they take from each successive hit of this skill by 150%, up to 22 times. \r\n\r\nIf The World is active, applies Erasure to your target, a 3 second DoT based on your End of the World stacks. "
+"always hits" = false
+"always crits" = false
 
 [ArchFiend.1]
 cd = 2.0
@@ -363,30 +378,45 @@ cd = 2.0
 name = "Strike of Order"
 mana = 0
 key = "1"
+description = "Attack with an enchanted weapon, dealing damage based on both attack power and spell power."
+"always hits" = false
+"always crits" = false
 
 ["Lord Of Order".2]
 cd = 8.0
 name = "Harmony"
 mana = 20
 key = "2"
+description = "Heighten the inner peace within you and up to 6 allies, strengthening the foundations of your combat style. Applies Empowerment to all targets for 10 seconds, increasing Strength, Intellect, Endurance, Dexterity, Wisdom, and Luck by 20%."
+"always hits" = false
+"always crits" = false
 
 ["Lord Of Order".3]
 cd = 12.0
 name = "Ordinance"
 mana = 20
 key = "3"
+description = "Purge corruption from yourself and up to 6 allies, healing everyone for a small amount. You return to battle with new strength-- applies Resurgence, which increases all outgoing damage and reduces all incoming damage by 30% for 12 seconds."
+"always hits" = false
+"always crits" = false
 
 ["Lord Of Order".4]
 cd = 8.0
 name = "Axiom"
 mana = 20
 key = "4"
+description = "Cast a veil of magic that greatly heightens focus in yourself and up to 6 allies. Applies Clarity, which increases haste by 30%, and hit chance and critical hit damage by 40% for up to 6 friendly targets for 8 seconds."
+"always hits" = false
+"always crits" = false
 
 ["Lord Of Order".5]
 cd = 8.0
 name = "Blessing of Order"
 mana = 30
 key = "5"
+description = "Bestow the unrestrained power of order onto your target. Applies Quixotic for 4 seconds, reducing your target's outgoing physical and magical damage by 105%, and Stability for 25 seconds, which prevents Quixotic from applying. Also applies Order, which reduces your target's outgoing damage by 8% for 15 seconds, stacks to 5."
+"always hits" = false
+"always crits" = false
 
 ["Verus DoomKnight".1]
 cd = 2.0
@@ -507,3 +537,48 @@ cd = 16.0
 name = "Elemental Embrace"
 mana = 30
 key = "5"
+
+["Legion Revenant".1]
+cd = 1.5
+name = "Malevolent Burst"
+mana = -15
+key = "1"
+description = "A sinister spell of powerful dark energy. Deals moderate damage to one target and light damage to two additional targets. Recovers 15 mana on hit."
+"always hits" = false
+"always crits" = false
+
+["Legion Revenant".2]
+cd = 6.0
+name = "Atramentous Shade"
+mana = 10
+key = "2"
+description = "Summon a malicious pitch black fog, applying Decay for 2 seconds. The darkness traps your enemy, decreasing their Dodge by 25% while damaging them over time for 12 seconds. Always crits and can't miss."
+"always hits" = true
+"always crits" = true
+
+["Legion Revenant".3]
+cd = 6.0
+name = "Wicked Purgatory"
+mana = 15
+key = "3"
+description = "Conjure otherworldly flames to sear your opponents for moderate damage, reducing their Crit Chance by 15%, plus an additional 3% per stack (up to 30% total). The flames protect you, decreasing your incoming damage by 20%, plus an additional 4% per stack (up to 40% total). Both effects last 12 seconds."
+"always hits" = false
+"always crits" = false
+
+["Legion Revenant".4]
+cd = 6.0
+name = "Depraved Empowerment"
+mana = 15
+key = "4"
+description = "Touch the darkness within yourself and your allies by drawing out their twisted inclinations, increasing their Dodge, Crit Chance, and outgoing damage by 30% for 12 seconds. Immorality strengthens your magic, increasing your Haste by 10%, Crit Damage by 30%, and applying a strong heal over time effect and mana shield for 12 seconds."
+"always hits" = false
+"always crits" = false
+
+["Legion Revenant".5]
+cd = 12.0
+name = "Anathema"
+mana = 20
+key = "5"
+description = "Focus all your energy and unleash a massive burst of dark magic, dealing high damage."
+"always hits" = false
+"always crits" = false

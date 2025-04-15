@@ -176,22 +176,6 @@ class Character:
         return f'{self._location.map}-{lobby}'
 
     @property
-    def map(self):
-        return self._location.map
-
-    def lobby(self, anonymize=False):
-        lobby = self._location.lobby
-        if anonymize:
-            lobby = 'xxxxxxxxx'
-        return lobby
-
-    def location(self, anonymize=False):
-        lobby = self._location.lobby
-        if anonymize:
-            lobby = 'xxxxxxxxx'
-        return f'{self._location.map}-{lobby}'
-
-    @property
     def haste(self):
         return self._combat_kit.haste
 
@@ -229,11 +213,11 @@ class Character:
     def store(self, attribute):
         match attribute:
             case 'combat kit':
-                self._combat_kit.store(False)
+                self._combat_kit.store(True)
             case 'location':
                 self._location.store(force=True)
             case 'all':
-                self._combat_kit.store(False)
+                self._combat_kit.store(True)
                 self._location.store(True)
             case _:
                 raise ValueError('attribute must be \'combat kit\', \'location\', or \'all\'.')

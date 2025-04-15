@@ -1,160 +1,31 @@
-[2025-04-14 16:26:34] INFO - Started update buffer thread.
-[2025-04-14 16:26:48] INFO - Buffer Change #1
-[2025-04-14 16:26:48] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:48] INFO - Buffer Change #2
-[2025-04-14 16:26:48] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:48] INFO - Buffer Change #3
-[2025-04-14 16:26:48] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:48] INFO - Buffer Change #4
-[2025-04-14 16:26:48] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:48] INFO - Buffer Change #5
-[2025-04-14 16:26:48] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:49] INFO - Buffer Change #6
-[2025-04-14 16:26:49] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:49] INFO - Buffer Change #7
-[2025-04-14 16:26:49] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #8
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #9
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #10
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #11
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #12
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:50] INFO - Buffer Change #13
-[2025-04-14 16:26:50] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #14
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #15
-[2025-04-14 16:26:51] INFO - Class Update Detected.
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #16
-[2025-04-14 16:26:51] INFO - Class Update Detected.
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #17
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #18
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #19
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #20
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #21
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Added to buffer 2 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #22
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Added to buffer 2 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #23
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #24
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #25
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #26
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #27
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #28
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #29
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #30
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #31
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #32
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #33
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #34
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #35
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #36
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Added to buffer 2 time(s).
-[2025-04-14 16:26:51] INFO - Added to buffer 3 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #37
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #38
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #39
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #40
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #41
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #42
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #43
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #44
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #45
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #46
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #47
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #48
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #49
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #50
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:51] INFO - Buffer Change #51
-[2025-04-14 16:26:51] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:53] INFO - Buffer Change #52
-[2025-04-14 16:26:53] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:53] INFO - Buffer Change #53
-[2025-04-14 16:26:53] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:53] INFO - Buffer Change #54
-[2025-04-14 16:26:53] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:53] INFO - Buffer Change #55
-[2025-04-14 16:26:53] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:26:59] INFO - Buffer Change #56
-[2025-04-14 16:26:59] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #57
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #58
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #59
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #60
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #61
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:02] INFO - Buffer Change #62
-[2025-04-14 16:27:02] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:05] INFO - Buffer Change #63
-[2025-04-14 16:27:05] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:07] INFO - Buffer Change #64
-[2025-04-14 16:27:07] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:09] INFO - Buffer Change #65
-[2025-04-14 16:27:09] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:09] INFO - Buffer Change #66
-[2025-04-14 16:27:09] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:09] INFO - Buffer Change #67
-[2025-04-14 16:27:09] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:10] INFO - Buffer Change #68
-[2025-04-14 16:27:10] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:11] INFO - Buffer Change #69
-[2025-04-14 16:27:11] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:11] INFO - Buffer Change #70
-[2025-04-14 16:27:11] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:12] INFO - Buffer Change #71
-[2025-04-14 16:27:12] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:12] INFO - Buffer Change #72
-[2025-04-14 16:27:12] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:13] INFO - Buffer Change #73
-[2025-04-14 16:27:13] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:14] INFO - Buffer Change #74
-[2025-04-14 16:27:14] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:15] INFO - Buffer Change #75
-[2025-04-14 16:27:15] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:16] INFO - Buffer Change #76
-[2025-04-14 16:27:16] INFO - Added to buffer 1 time(s).
-[2025-04-14 16:27:16] INFO - Stopped update buffer thread.
+[2025-04-15 00:23:36] INFO - Started update buffer thread.
+[2025-04-15 00:23:36] INFO - Buffer Change #1
+[2025-04-15 00:23:36] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:36] INFO - Buffer Change #2
+[2025-04-15 00:23:36] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:38] INFO - Buffer Change #3
+[2025-04-15 00:23:38] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:38] INFO - Buffer Change #4
+[2025-04-15 00:23:38] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:38] INFO - Buffer Change #5
+[2025-04-15 00:23:38] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:39] INFO - Buffer Change #6
+[2025-04-15 00:23:39] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:41] INFO - Buffer Change #7
+[2025-04-15 00:23:41] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:41] INFO - Buffer Change #8
+[2025-04-15 00:23:41] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #9
+[2025-04-15 00:23:43] INFO - Class Update Detected.
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #10
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #11
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #12
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #13
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:43] INFO - Buffer Change #14
+[2025-04-15 00:23:43] INFO - Added to buffer 1 time(s).
+[2025-04-15 00:23:59] INFO - Stopped update buffer thread.

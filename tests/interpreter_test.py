@@ -40,7 +40,7 @@ def display(label, character, interpreter):
 
 def main():
     character = Character()
-    interpreter = Interpreter(server='twig', character=character, daemon=True)
+    interpreter = Interpreter(server='artix', character=character, daemon=True)
     interpreter.connect()
     interpreter.start()
     window(interpreter, character)
