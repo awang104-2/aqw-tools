@@ -1,32 +1,64 @@
 from game.items import Inventory
 from game.locations import Location
-from game.combat import CombatKit, get_ability
+from game.combat import CombatKit, get_skill
 
 
 class Character:
 
     @staticmethod
-    def create_ability(cd: float, name: str, mana: int, key: str):
-        return get_ability(cd, name, mana, key)
+    def create_skill(cd: float, name: str, mana: int, key: str, **kwargs):
+        return get_skill(cd, name, mana, key, **kwargs)
 
     def __init__(self, class_name=None, *, haste=0, location=None):
         self._combat_kit = CombatKit.load(class_name, haste)
         self._location = Location.load(location, False)
         self._inventory = Inventory()
 
-    def reinitialize(self, *, class_name=None, abilities=None, haste=None, location=None, monsters=None):
-        if class_name:
-            self._combat_kit.reinitialize(class_name=class_name)
-        if abilities:
-            self._combat_kit.reinitialize(abilities=abilities)
+    def reinitialize(self, *, class_name=None, skills=None, passives=None, haste=None, location=None, monsters=None):
+        if class_name or skills or passives or haste:
+            self._combat_kit.reinitialize(class_name=class_name, skills=skills, passives=passives, haste=haste)
         if location or monsters:
             self._location.update(location, monsters)
-        if haste:
-            self._combat_kit.haste = haste
+
+    @property
+    def map(self):
+        return self._location.map
+
+    def lobby(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxx'
+        return lobby
+
+    def location(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxx'
+        return f'{self._location.map}-{lobby}'
+
+    @property
+    def map(self):
+        return self._location.map
+
+    def lobby(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxxxxxx'
+        return lobby
+
+    def location(self, anonymize=False):
+        lobby = self._location.lobby
+        if anonymize:
+            lobby = 'xxxxxxxxx'
+        return f'{self._location.map}-{lobby}'
 
     @property
     def haste(self):
         return self._combat_kit.haste
+
+    @property
+    def class_name(self):
+        return self._combat_kit.name
 
     @haste.setter
     def haste(self, haste):
@@ -58,11 +90,11 @@ class Character:
     def store(self, attribute):
         match attribute:
             case 'combat kit':
-                self._combat_kit.store(True)
+                self._combat_kit.store(False)
             case 'location':
                 self._location.store(force=True)
             case 'all':
-                self._combat_kit.store(True)
+                self._combat_kit.store(False)
                 self._location.store(True)
             case _:
                 raise ValueError('attribute must be \'combat kit\', \'location\', or \'all\'.')

@@ -22,7 +22,8 @@ def stop(interpreter, character):
 
 def window(interpreter, character):
     root = Tk()
-    root.geometry('400x300')
+    root.geometry('420x250+0+0')
+    root.attributes('-topmost', True)
     label = Label(root)
     label.pack()
     start_stop = Button(root, text='STOP', command=lambda: stop(interpreter, character))
@@ -39,7 +40,7 @@ def display(label, character, interpreter):
 
 def main():
     character = Character()
-    interpreter = Interpreter(server='twig', character=character)
+    interpreter = Interpreter(server='artix', character=character, daemon=True)
     interpreter.connect()
     interpreter.start()
     window(interpreter, character)

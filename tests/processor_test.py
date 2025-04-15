@@ -11,24 +11,22 @@ distorted = []
 def main():
     game_sniffer.start()
     processor.start()
-    for i in range(300):
+    for i in range(100):
         json = processor.get(0.1)
         if json:
             try:
                 extracted_json = json['b']['o']
                 undistorted.append(extracted_json)
-                print(extracted_json)
+                print(json)
             except KeyError:
                 distorted.append(json)
+                print(f'Error - {json}')
     processor.stop()
     processor.join()
     game_sniffer.stop()
     print('\n\nUndistorted:')
     for json in undistorted:
-        if json.get('cmd') == 'moveToArea':
-            for k, v in json.items():
-                print(f'{k} - {v}')
-            print()
+            print(json)
     print('\nDistorted:')
     for json in distorted:
         print(json)

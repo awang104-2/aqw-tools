@@ -3,6 +3,7 @@ from multiprocessing import Event, Process, Queue
 from queue import Empty
 from network import layers
 from json import loads, decoder
+from debug.logger import Logger
 
 
 MAX_STRING_SIZE = 5000
@@ -52,22 +53,39 @@ class ProcessPackets(Process):
         self.return_value = Queue()
         super().__init__(name='Process Packets Process', daemon=daemon)
 
-    def update_buffer(self, buffer_lock):
+    def update_buffer(self, buffer_lock, logger=None):
+        if logger:
+            logger.info('Started update buffer thread.')
+        buffer_change = 0
         while self.flag.is_set():
             packet = self.packets.get()
             if packet == SENTINEL:
                 self.buffer_changed.set()
+                if logger:
+                    logger.info('Stopped update buffer thread.')
                 continue
-            if packet:
-                raw = get_raw(packet)
-                blist = parse_bytes(raw)
-                slist = decode(blist)
+            buffer_change += 1
+            if logger:
+                logger.info(f'Buffer Change #{buffer_change}')
+            raw = get_raw(packet)
+            blist = parse_bytes(raw)
+            slist = decode(blist)
+            for i, s in enumerate(slist):
                 with buffer_lock:
-                    for s in slist:
-                        self.buffer += s
-                        self.buffer_changed.set()
+                    self.buffer += s
+                    if logger:
+                        try:
+                            self.buffer.index('updateClass')
+                            logger.info('Class Update Detected.')
+                        except ValueError:
+                            pass
+                if logger and slist:
+                    logger.info(f'Added to buffer {i + 1} time(s).')
+                    self.buffer_changed.set()
 
-    def parse_buffer(self, buffer_lock):
+    def parse_buffer(self, buffer_lock, logger=None):
+        if logger:
+            logger.info('Started parse buffer thread.')
         while self.flag.is_set():
             self.buffer_changed.wait()
             start, end, depth, quoted, escaped, in_string = (0, 0, 0, False, False, False)
@@ -92,15 +110,27 @@ class ProcessPackets(Process):
                                     try:
                                         result = self.buffer[start:end]
                                         self.jsons.put(loads(result))
+                                        if logger:
+                                            logger.info(f'Recorded JSON: {result}')
                                     except decoder.JSONDecodeError:
-                                        pass
+                                        if logger:
+                                            logger.error(f'Broken JSON: {result}')
+                                elif depth < 0:
+                                    end = i + 1
+                                    break
                 self.buffer = self.buffer[max(start, end):]
                 self.buffer_changed.clear()
+        if logger:
+            logger.info('Stopped parse buffer thread.')
 
     def run(self):
         buffer_lock = Lock()
-        update_thread = Thread(target=self.update_buffer, name='Update Thread', args=[buffer_lock])
-        parse_thread = Thread(target=self.parse_buffer, name='Parse Thread', args=[buffer_lock])
+        update_logger = Logger('buffer_update.txt', 'updater')
+        update_logger.clear()
+        parse_logger = Logger('parse_buffer.txt', 'parser')
+        parse_logger.clear()
+        update_thread = Thread(target=self.update_buffer, name='Update Thread', args=[buffer_lock, update_logger])
+        parse_thread = Thread(target=self.parse_buffer, name='Parse Thread', args=[buffer_lock, parse_logger])
         update_thread.start()
         parse_thread.start()
         update_thread.join()

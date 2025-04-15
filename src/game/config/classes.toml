@@ -1,66 +1,599 @@
 [ACRONYMS]
-AM = 'ARCHMAGE'
-AI = 'ARCANA INVOKER'
-LR = 'LEGION REVENANT'
-AF = 'ARCHFIEND'
-VHL = 'VOID HIGHLORD'
-TEST = 'TEST CLASS'
-CAV = 'CHAOS AVENGER'
+AM = "ARCHMAGE"
+AI = "ARCANA INVOKER"
+LR = "LEGION REVENANT"
+AF = "ARCHFIEND"
+VHL = "VOID HIGHLORD"
+TEST = "TEST CLASS"
+CAV = "CHAOS AVENGER"
 
-[ABILITIES]
+[COMBOS]
+ARCHFIEND = [ [ "4", "2", "3",],]
+"LEGION REVENANT" = [ [ "4", "5", "2", "3",],]
+"VOID HIGHLORD" = [ [ "2",], [ "4",], [ "5",], [ "3",], [ "2",], [ "4",], [ "3",], [ "2",], [ "4",], [ "3",],]
+"TEST CLASS" = [ [ "1", "2", "3", "4", "5",],]
 
-[ABILITIES.'ARCHFIEND']
-1 = {cd = 2, name = 'Mark of Death', mana = 0, key = '1'}
-2 = {cd = 3, name = 'Fiendish Strike', mana = 15, key = '2'}
-3 = {cd = 3, name = 'Consumed by the Abyss', mana = 15, key = '3'}
-4 = {cd = 26, name = 'Fiend Frenzy', mana = 25, key = '4'}
-5 = {cd = 26, name = 'Abyssal Contract', mana = 25, key = '5'}
+[SKILLS.Arachnomancer.1]
+cd = 2.0
+name = "Spider Bite"
+mana = 0
+key = "1"
 
-[ABILITIES.'CHAOS AVENGER']
-1 = {cd = 2.3, name = 'Contract', mana = 0, key = '1'}
-2 = {cd = 4, name = 'Shackle', mana = 0, key = '2'}
-3 = {cd = 5, name = "Highlord's Gaze", mana = 20, key = '3'}
-4 = {cd = 4, name = 'Unshackle', mana = 0, key = '4'}
-5 = {cd = 15, name = 'Armageddon', mana = 50, key = '5'}
+[SKILLS.Arachnomancer.2]
+cd = 6.0
+name = "Venom Fangs"
+mana = 6
+key = "2"
 
-[ABILITIES.'LEGION REVENANT']
-1 = {cd = 1.5, name = 'Malevolent Burst', mana = 0, key = '1'}
-2 = {cd = 6, name = 'Atramentous Shade', mana = 10, key = '2'}
-3 = {cd = 6, name = 'Wicked Purgatory', mana = 15, key = '3'}
-4 = {cd = 6, name = 'Depraved Empowerment', mana = 15, key = '4'}
-5 = {cd = 12, name = 'Anathema', mana = 20, key = '5'}
+[SKILLS.Arachnomancer.3]
+cd = 6.0
+name = "Slingshot Web"
+mana = 6
+key = "3"
 
-[ABILITIES.'VOID HIGHLORD']
-1 = {cd = 2.3, name = 'Contract', mana = 0, key = '1'}
-2 = {cd = 4, name = 'Shackle', mana = 0, key = '2'}
-3 = {cd = 5, name = "Highlord's Gaze", mana = 20, key = '3'}
-4 = {cd = 4, name = 'Unshackle', mana = 0, key = '4'}
-5 = {cd = 15, name = 'Armageddon', mana = 50, key = '5'}
+[SKILLS.Arachnomancer.4]
+cd = 6.0
+name = "Leaping Arachnid"
+mana = 15
+key = "4"
 
-[ABILITIES.'TEST CLASS']
-1 = {cd = 1, name = 'Placeholder 0 Mana', mana = 0, key = '1'}
-2 = {cd = 1, name = 'Placeholder 50 Mana', mana = 50, key = '2'}
-3 = {cd = 1, name = 'Placeholder 100 Mana', mana = 100, key = '3'}
-4 = {cd = 1, name = 'Placeholder -50 Mana', mana = -50, key = '4'}
-5 = {cd = 1, name = 'Placeholder -100 Mana', mana = -100, key = '5'}
+[SKILLS.Arachnomancer.5]
+cd = 6.0
+name = "Toxic Adrenaline"
+mana = 21
+key = "5"
 
-[ABILITIES.'DEFAULT CLASS']
-1 = {cd = 0, name = 'Placeholder 0 Mana', mana = 0, key = '1'}
-2 = {cd = 0, name = 'Placeholder 0 Mana', mana = 0, key = '2'}
-3 = {cd = 0, name = 'Placeholder 0 Mana', mana = 0, key = '3'}
-4 = {cd = 0, name = 'Placeholder 0 Mana', mana = 0, key = '4'}
-5 = {cd = 0, name = 'Placeholder 0 Mana', mana = 0, key = '5'}
+[SKILLS."Arcana Invoker".1]
+cd = 2.2
+name = "Anagenesis"
+mana = 0
+key = "1"
+description = "Deliver a strike with your blade of flesh. Deals physical damage based on your Attack Power and Spell Power."
+"always hits" = false
+"always crits" = false
 
-[ABILITIES.'UNKNOWN CLASS']
-1 = {cd = 0, name = 'Unknown Autoattack', mana = 0, key = '1'}
-2 = {cd = 0, name = 'Unknown Ability-2', mana = 0, key = '2'}
-3 = {cd = 0, name = 'Unknown Ability-3', mana = 0, key = '3'}
-4 = {cd = 0, name = 'Unknown Ability-4', mana = 0, key = '4'}
-5 = {cd = 0, name = 'Unknown Ability-5', mana = 0, key = '5'}
+[SKILLS."Arcana Invoker".2]
+cd = 5.0
+name = "The Beginning and the End"
+mana = 0
+key = "2"
+description = "Begin the cycle anew by summoning The Fool, increasing your Damage Resistance by 80% for 122 seconds. \r\n\r\nIf Judgement is active, instead summon The World for 122 seconds, increasing your Damage Resistance by 40% and changing the effects of your other skills. \r\n\r\nIf The World is active, instead deals damage based on your stacks of End of the World. \r\n\r\nUsing this skill while Judgement isn't active will reset the cycle. Can't miss."
+"always hits" = true
+"always crits" = false
 
-['COMBOS']
-ARCHFIEND = [['4', '2', '3']]
-'LEGION REVENANT' = [['4', '5', '2', '3']]
-'VOID HIGHLORD' = [['2'], ['4'], ['5'], ['3'], ['2'], ['4'], ['3'], ['2'], ['4'], ['3']]
-'TEST CLASS' = [['1', '2', '3', '4', '5']]
+[SKILLS."Arcana Invoker".3]
+cd = 3.0
+name = "Arcana Invocation"
+mana = -15
+key = "3"
+description = "If The Fool is present, summon an Arcana. Arcana are summoned in a set order, with each one granting you a new effect and the effects of all previously summoned Arcana. Each time an Arcana is summoned, your Damage Resistance is reduced by 2% until The World is summoned. \r\n\r\nIf The World is active, instead applies End of the World for 8 seconds, increasing the damage of this skill, but reducing your Damage Resistance by 4% for each stack. Recovers 15 mana on hit. Can't miss."
+"always hits" = true
+"always crits" = false
 
+[SKILLS."Arcana Invoker".4]
+cd = 3.0
+name = "Arcana Revocation"
+mana = 40
+key = "4"
+description = "Channel a magical attack through your Arcana, applying a Reversed effect to your target based on your currently summoned Arcana. All effects last 22 seconds unless otherwise specified.\r\n\r\nIf The Fool is your only active Arcana, applies The Fool (Reversed).\r\n\r\nIf Judgement is active, deals one time bonus damage to your primary target. \r\n\r\nIf The World is active, applies The World (Reversed) for 5 seconds, applying all Reversed stat debuffs and stuns at half potency. Can't miss."
+"always hits" = true
+"always crits" = false
+
+[SKILLS."Arcana Invoker".5]
+cd = 9.0
+name = "One With the Cycle"
+mana = 0
+key = "5"
+description = "Perform the Arcana's ritual, using your foe as the offering! Applies Sacrifice to your target, increasing the damage they take from each successive hit of this skill by 150%, up to 22 times. \r\n\r\nIf The World is active, applies Erasure to your target, a 3 second DoT based on your End of the World stacks. "
+"always hits" = false
+"always crits" = false
+
+[SKILLS.ArchFiend.1]
+cd = 2.0
+name = "Mark of Death"
+mana = 0
+key = "1"
+
+[SKILLS.ArchFiend.2]
+cd = 3.0
+name = "Fiendish Strike"
+mana = 15
+key = "2"
+
+[SKILLS.ArchFiend.3]
+cd = 3.0
+name = "Consumed by the Abyss"
+mana = 15
+key = "3"
+
+[SKILLS.ArchFiend.4]
+cd = 26.0
+name = "Fiend Frenzy"
+mana = 25
+key = "4"
+
+[SKILLS.ArchFiend.5]
+cd = 26.0
+name = "Abyssal Contract"
+mana = 25
+key = "5"
+
+[SKILLS.ArchMage.1]
+cd = 1.5
+name = "Incantation"
+mana = 0
+key = "1"
+
+[SKILLS.ArchMage.2]
+cd = 4.0
+name = "Immolation"
+mana = 10
+key = "2"
+
+[SKILLS.ArchMage.3]
+cd = 2.4
+name = "Glacial Impact"
+mana = -15
+key = "3"
+
+[SKILLS.ArchMage.4]
+cd = 4.0
+name = "Supernova"
+mana = 20
+key = "4"
+
+[SKILLS.ArchMage.5]
+cd = 3.0
+name = "Arcane Sigil"
+mana = 0
+key = "5"
+
+[SKILLS.ArchPaladin.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[SKILLS.ArchPaladin.2]
+cd = 5.0
+name = "Commandment"
+mana = 10
+key = "2"
+
+[SKILLS.ArchPaladin.3]
+cd = 10.0
+name = "Hymn of Light"
+mana = 40
+key = "3"
+
+[SKILLS.ArchPaladin.4]
+cd = 25.0
+name = "Righteous Seal"
+mana = 20
+key = "4"
+
+[SKILLS.ArchPaladin.5]
+cd = 25.0
+name = "Sacred Magic: Eden"
+mana = 40
+key = "5"
+
+[SKILLS."Yami no Ronin".1]
+cd = 2.0
+name = "Batto"
+mana = 0
+key = "1"
+
+[SKILLS."Yami no Ronin".2]
+cd = 3.0
+name = "Tachi"
+mana = 3
+key = "2"
+
+[SKILLS."Yami no Ronin".3]
+cd = 14.0
+name = "Yami no Maku"
+mana = 20
+key = "3"
+
+[SKILLS."Yami no Ronin".4]
+cd = 3.0
+name = "Kettou"
+mana = 3
+key = "4"
+
+[SKILLS."Yami no Ronin".5]
+cd = 6.0
+name = "Jigen Kogeki"
+mana = 20
+key = "5"
+
+[SKILLS."Exalted Soul Cleaver".1]
+cd = 3.0
+name = "Soul Breaker"
+mana = 0
+key = "1"
+
+[SKILLS."Exalted Soul Cleaver".2]
+cd = 6.0
+name = "Soul Rend"
+mana = 15
+key = "2"
+
+[SKILLS."Exalted Soul Cleaver".3]
+cd = 6.0
+name = "Soul Leech"
+mana = 30
+key = "3"
+
+[SKILLS."Exalted Soul Cleaver".4]
+cd = 12.0
+name = "Soul Pact"
+mana = 50
+key = "4"
+
+[SKILLS."Exalted Soul Cleaver".5]
+cd = 3.0
+name = "Blood Price"
+mana = 0
+key = "5"
+
+[SKILLS."Dragon of Time".1]
+cd = 2.0
+name = "Rend Time"
+mana = 0
+key = "1"
+
+[SKILLS."Dragon of Time".2]
+cd = 6.0
+name = "Confluence of Fates"
+mana = 0
+key = "2"
+
+[SKILLS."Dragon of Time".3]
+cd = 3.0
+name = "Dragon's Will"
+mana = 15
+key = "3"
+
+[SKILLS."Dragon of Time".4]
+cd = 6.0
+name = "Burning Fates"
+mana = 0
+key = "4"
+
+[SKILLS."Dragon of Time".5]
+cd = 8.0
+name = "Hero's Heartbeat"
+mana = 25
+key = "5"
+
+[SKILLS."Chaos Avenger".1]
+cd = 3.0
+name = "Chaos Greatsword"
+mana = -60
+key = "1"
+
+[SKILLS."Chaos Avenger".2]
+cd = 6.0
+name = "Chaos Siphon"
+mana = 50
+key = "2"
+
+[SKILLS."Chaos Avenger".3]
+cd = 15.0
+name = "Flux"
+mana = 50
+key = "3"
+
+[SKILLS."Chaos Avenger".4]
+cd = 6.0
+name = "Chaos Bulwark"
+mana = 50
+key = "4"
+
+[SKILLS."Chaos Avenger".5]
+cd = 35.0
+name = "Fury Unleashed"
+mana = 50
+key = "5"
+
+[SKILLS."Chrono ShadowHunter".1]
+cd = 0.2
+name = "Fire!"
+mana = 15
+key = "1"
+
+[SKILLS."Chrono ShadowHunter".2]
+cd = 6.0
+name = "Reload"
+mana = -1000
+key = "2"
+
+[SKILLS."Chrono ShadowHunter".3]
+cd = 3.0
+name = "Tracer Rounds"
+mana = 5
+key = "3"
+
+[SKILLS."Chrono ShadowHunter".4]
+cd = 1.5
+name = "FMJ Rounds"
+mana = 5
+key = "4"
+
+[SKILLS."Chrono ShadowHunter".5]
+cd = 6.0
+name = "Silver Bullet"
+mana = 0
+key = "5"
+
+[SKILLS."Neo Metal Necro".1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[SKILLS."Neo Metal Necro".2]
+cd = 6.0
+name = "Shocking Soundwave"
+mana = 10
+key = "2"
+
+[SKILLS."Neo Metal Necro".3]
+cd = 8.0
+name = "Mental Breakdown"
+mana = 15
+key = "3"
+
+[SKILLS."Neo Metal Necro".4]
+cd = 6.0
+name = "Subsuming Scream"
+mana = 10
+key = "4"
+
+[SKILLS."Neo Metal Necro".5]
+cd = 3.0
+name = "Enraging Pain"
+mana = 0
+key = "5"
+
+[SKILLS.LightCaster.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[SKILLS.LightCaster.2]
+cd = 4.0
+name = "Lingering Light"
+mana = 10
+key = "2"
+
+[SKILLS.LightCaster.3]
+cd = 4.0
+name = "Light Blast"
+mana = 15
+key = "3"
+
+[SKILLS.LightCaster.4]
+cd = 12.0
+name = "Illuminate"
+mana = 20
+key = "4"
+
+[SKILLS.LightCaster.5]
+cd = 15.0
+name = "Burned by Light"
+mana = 35
+key = "5"
+
+[SKILLS."Lord Of Order".1]
+cd = 2.0
+name = "Strike of Order"
+mana = 0
+key = "1"
+description = "Attack with an enchanted weapon, dealing damage based on both attack power and spell power."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Lord Of Order".2]
+cd = 8.0
+name = "Harmony"
+mana = 20
+key = "2"
+description = "Heighten the inner peace within you and up to 6 allies, strengthening the foundations of your combat style. Applies Empowerment to all targets for 10 seconds, increasing Strength, Intellect, Endurance, Dexterity, Wisdom, and Luck by 20%."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Lord Of Order".3]
+cd = 12.0
+name = "Ordinance"
+mana = 20
+key = "3"
+description = "Purge corruption from yourself and up to 6 allies, healing everyone for a small amount. You return to battle with new strength-- applies Resurgence, which increases all outgoing damage and reduces all incoming damage by 30% for 12 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Lord Of Order".4]
+cd = 8.0
+name = "Axiom"
+mana = 20
+key = "4"
+description = "Cast a veil of magic that greatly heightens focus in yourself and up to 6 allies. Applies Clarity, which increases haste by 30%, and hit chance and critical hit damage by 40% for up to 6 friendly targets for 8 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Lord Of Order".5]
+cd = 8.0
+name = "Blessing of Order"
+mana = 30
+key = "5"
+description = "Bestow the unrestrained power of order onto your target. Applies Quixotic for 4 seconds, reducing your target's outgoing physical and magical damage by 105%, and Stability for 25 seconds, which prevents Quixotic from applying. Also applies Order, which reduces your target's outgoing damage by 8% for 15 seconds, stacks to 5."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Verus DoomKnight".1]
+cd = 2.0
+name = "Necrotic Blade"
+mana = 0
+key = "1"
+
+[SKILLS."Verus DoomKnight".2]
+cd = 5.0
+name = "Soul Fracture"
+mana = 5
+key = "2"
+
+[SKILLS."Verus DoomKnight".3]
+cd = 5.0
+name = "Life Carve"
+mana = 5
+key = "3"
+
+[SKILLS."Verus DoomKnight".4]
+cd = 5.0
+name = "Doom Spikes"
+mana = 5
+key = "4"
+
+[SKILLS."Verus DoomKnight".5]
+cd = 10.0
+name = "Unleash Doom"
+mana = 8
+key = "5"
+
+[SKILLS.StoneCrusher.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[SKILLS.StoneCrusher.2]
+cd = 6.0
+name = "Stalagmite"
+mana = 15
+key = "2"
+
+[SKILLS.StoneCrusher.3]
+cd = 18.0
+name = "Echoing Earth"
+mana = 25
+key = "3"
+
+[SKILLS.StoneCrusher.4]
+cd = 12.0
+name = "Land's Embrace"
+mana = 25
+key = "4"
+
+[SKILLS.StoneCrusher.5]
+cd = 30.0
+name = "Endless Fissure"
+mana = 35
+key = "5"
+
+[SKILLS.SwordMaster.1]
+cd = 1.75
+name = "Nukitsuke"
+mana = 0
+key = "1"
+
+[SKILLS.SwordMaster.2]
+cd = 5.0
+name = "Bladefury"
+mana = 0
+key = "2"
+
+[SKILLS.SwordMaster.3]
+cd = 25.0
+name = "Uke Negashi"
+mana = 10
+key = "3"
+
+[SKILLS.SwordMaster.4]
+cd = 9.0
+name = "Sever"
+mana = 15
+key = "4"
+
+[SKILLS.SwordMaster.5]
+cd = 10.0
+name = "Nukiuchi"
+mana = 20
+key = "5"
+
+[SKILLS.Shaman.1]
+cd = 2.0
+name = "Auto Attack"
+mana = 0
+key = "1"
+
+[SKILLS.Shaman.2]
+cd = 4.0
+name = "Ancestor's Flame"
+mana = 15
+key = "2"
+
+[SKILLS.Shaman.3]
+cd = 4.0
+name = "Hydrophobia"
+mana = 15
+key = "3"
+
+[SKILLS.Shaman.4]
+cd = 16.0
+name = "Dry Lightning"
+mana = 30
+key = "4"
+
+[SKILLS.Shaman.5]
+cd = 16.0
+name = "Elemental Embrace"
+mana = 30
+key = "5"
+
+[SKILLS."Legion Revenant".1]
+cd = 1.5
+name = "Malevolent Burst"
+mana = -15
+key = "1"
+description = "A sinister spell of powerful dark energy. Deals moderate damage to one target and light damage to two additional targets. Recovers 15 mana on hit."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion Revenant".2]
+cd = 6.0
+name = "Atramentous Shade"
+mana = 10
+key = "2"
+description = "Summon a malicious pitch black fog, applying Decay for 2 seconds. The darkness traps your enemy, decreasing their Dodge by 25% while damaging them over time for 12 seconds. Always crits and can't miss."
+"always hits" = true
+"always crits" = true
+
+[SKILLS."Legion Revenant".3]
+cd = 6.0
+name = "Wicked Purgatory"
+mana = 15
+key = "3"
+description = "Conjure otherworldly flames to sear your opponents for moderate damage, reducing their Crit Chance by 15%, plus an additional 3% per stack (up to 30% total). The flames protect you, decreasing your incoming damage by 20%, plus an additional 4% per stack (up to 40% total). Both effects last 12 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion Revenant".4]
+cd = 6.0
+name = "Depraved Empowerment"
+mana = 15
+key = "4"
+description = "Touch the darkness within yourself and your allies by drawing out their twisted inclinations, increasing their Dodge, Crit Chance, and outgoing damage by 30% for 12 seconds. Immorality strengthens your magic, increasing your Haste by 10%, Crit Damage by 30%, and applying a strong heal over time effect and mana shield for 12 seconds."
+"always hits" = false
+"always crits" = false
+
+[SKILLS."Legion Revenant".5]
+cd = 12.0
+name = "Anathema"
+mana = 20
+key = "5"
+description = "Focus all your energy and unleash a massive burst of dark magic, dealing high damage."
+"always hits" = false
+"always crits" = false

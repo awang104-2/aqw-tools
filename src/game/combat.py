@@ -4,14 +4,28 @@ import math
 import time
 
 
-_config = get_config('classes.toml')
-CLASS_ACRONYMS = SafeDict(_config.get('ACRONYMS'))
-CLASS_NAMES = tuple(CLASS_ACRONYMS.values())
-CLASS_ABILITIES = SafeDict(_config.get('ABILITIES'))
-ALL_ABILITY_KEYS = ('1', '2', '3', '4', '5', '6')
-SPECIAL_ABILITY_KEYS = ('2', '3', '4', '5')
-MAIN_ABILITY_KEYS = ('1', '2', '3', '4', '5')
+_config_classes = get_config('classes.toml')
+_config_new_classes = get_config('new_classes.toml')
+
+CLASS_ACRONYMS = SafeDict(_config_classes['ACRONYMS'])
+CLASS_NAMES = CLASS_ACRONYMS.values()
+CLASS_SKILLS = SafeDict(_config_classes['SKILLS'])
+NEW_CLASSES = SafeDict(_config_new_classes)
+ALL_SKILL_KEYS = ('1', '2', '3', '4', '5', '6')
+SPECIAL_SKILL_KEYS = ('2', '3', '4', '5')
+MAIN_SKILL_KEYS = ('1', '2', '3', '4', '5')
 POTION_KEY = '6'
+
+
+def _in_string(string, substrings):
+    results = []
+    for substring in substrings:
+        try:
+            string.index(substring)
+            results.append(True)
+        except ValueError:
+            results.append(False)
+    return results
 
 
 def from_acronym(class_acronym, upper=True):
@@ -27,8 +41,8 @@ def from_acronym(class_acronym, upper=True):
 
 def loads(class_name=None):
     class_name = from_acronym(class_name)
-    abilities = CLASS_ABILITIES.get(class_name, {})
-    return class_name, abilities
+    skills = CLASS_SKILLS.get(class_name, {})
+    return class_name, skills
 
 
 def timeout_condition(t, start_time, timeout):
@@ -38,69 +52,104 @@ def timeout_condition(t, start_time, timeout):
         return True
 
 
-def _del_time(abilities):
-    abilities_copy = copy.deepcopy(abilities)
-    for ability in abilities_copy.values():
-        del ability['_time']
-    return abilities_copy
+def _delete_keys(skills, keys):
+    skills_copy = copy.deepcopy(skills)
+    for skill in skills_copy.values():
+        for key in keys:
+            del skill[key]
+    return skills_copy
 
 
-def get_ability(cd: float, name: str, mana: int, key: str):
-    return {'cd': cd, 'name': name, 'mana': mana, 'key': key}
+def _get_core_info(skills):
+    skills_copy = {}
+    for skill in skills.values():
+        cd, name, mana, key = skill['cd'], skill['name'], skill['mana'], skill['key']
+        skills_copy[key] = get_skill(cd, name, mana, key)
+    return skills_copy
 
 
-def _get_ability(cd: float, name: str, mana: int, key: str):
+def get_skill(cd: float, name: str, mana: int, key: str, **kwargs):
+    skill = {'cd': cd, 'name': name, 'mana': mana, 'key': key}
+    skill.update(kwargs)
+    description = kwargs.get('description')
+    if description:
+        description = description.lower()
+        skill['always hits'] = any(_in_string(description, ['can\'t miss', 'always hits']))
+        skill['always crits'] = any(_in_string(description, ['can\'t crit', 'always crits']))
+    return skill
+
+
+def _get_skill(cd: float, name: str, mana: int, key: str):
     return {'cd': cd, 'name': name, 'mana': mana, 'key': key, '_time': None}
 
 
-def is_valid_ability(ability):
-    return ability == get_ability(**ability)
+def valid_skill(skill):
+    return skill == get_skill(**skill)
 
 
-def are_valid_abilities(abilities):
-    if tuple(abilities.keys()) != MAIN_ABILITY_KEYS:
+def valid_skills(skills):
+    if tuple(skills.keys()) != MAIN_SKILL_KEYS:
         return False
-    for ability in abilities.values():
-        if ability == get_ability(**ability):
+    for skill in skills.values():
+        if skill == get_skill(**skill):
             continue
         return False
     return True
 
 
-def save_new_classes(abilities):
-    write_to_config(abilities, 'new_classes.toml')
+def save(config_type):
+    new_classes = NEW_CLASSES
+    old_classes = _config_classes
+    match config_type:
+        case 'new':
+            write_to_config(new_classes, 'new_classes.toml')
+        case 'old':
+            write_to_config(old_classes, 'classes.toml')
+        case 'both':
+            write_to_config(new_classes, 'new_classes.toml')
+            write_to_config(old_classes, 'classes.toml')
+        case _:
+            raise ValueError('config_type must be \'new\', \'old\', or \'both\'.')
+
+
+def merge(force=False):
+    if force:
+        CLASS_SKILLS.update(NEW_CLASSES)
+    else:
+        for class_name, class_skills in NEW_CLASSES.items():
+            if class_name not in CLASS_NAMES:
+                CLASS_SKILLS[class_name] = class_skills
 
 
 class InvalidClassError(TypeError):
 
     def __init__(self, class_name):
-        valid_classes = CLASS_NAMES
+        valid_classes = list(CLASS_NAMES)
         string = f'\'{class_name}\' is not a valid class name. Use one from {valid_classes}.'
         super().__init__(string)
 
 
 class CombatKit:
 
-    _new_classes = get_config('new_classes.toml')
-
     @staticmethod
     def save():
-        write_to_config(CombatKit._new_classes, 'new_classes.toml')
+        write_to_config(NEW_CLASSES, 'new_classes.toml')
 
     @classmethod
     def load(cls, class_name=None, haste=0) -> Self:
-        abilities = None
+        skills = None
         if class_name:
-            class_name, abilities = loads(class_name)
-        return CombatKit(class_name, abilities=abilities, haste=haste)
+            class_name, skills = loads(class_name)
+        return CombatKit(class_name, skills=skills, haste=haste)
 
-    def __init__(self, class_name: str | None = None, *, abilities: dict | None = None, haste: float = 0):
+    def __init__(self, class_name: str | None = None, *, skills: dict | None = None, haste: float = 0):
         self._class = class_name
-        if abilities:
-            self._abilities = abilities
+        self.passives = {}
+        if skills:
+            self._skills = skills
         else:
-            self._abilities = {}
-        self.initialize_abilities()
+            self._skills = {}
+        self.initialize_skills()
         self._haste = min(haste, 0.5)
         self._mana = 100
         self._gcd = 1.5
@@ -108,16 +157,18 @@ class CombatKit:
         self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
         self._polling_delay = 0.01
 
-    def reinitialize(self, *, class_name: str = None, abilities: dict = None, haste: float = None, deep: bool = False):
+    def reinitialize(self, *, class_name: str = None, skills: dict = None, haste: float = None, passives: dict = None, deep: bool = False):
         if class_name:
             self._class = class_name
-        if abilities:
-            if not are_valid_abilities(abilities):
-                raise ValueError("Parameter \'abilities\' must be in the following format: {'1': {'cd': cd1, 'name': name1, 'mana': mana1, 'key': key1}, '2': {'cd': cd2, 'name': name2, 'mana': mana2, 'key': key2}, '3': {'cd': cd3, 'name': name3, 'mana': mana3, 'key': key3}, '4': {'cd': cd4, 'name': name4, 'mana': mana4, 'key': key4}, '5': {'cd': cd5, 'name': name5, 'mana': mana5, 'key': key5}}")
-            self._abilities = abilities
-            self.initialize_abilities()
+        if skills:
+            if not valid_skills(skills):
+                raise ValueError("Parameter \'skills\' must be in the following format: {'1': {'cd': cd1, 'name': name1, 'mana': mana1, 'key': key1}, '2': {'cd': cd2, 'name': name2, 'mana': mana2, 'key': key2}, '3': {'cd': cd3, 'name': name3, 'mana': mana3, 'key': key3}, '4': {'cd': cd4, 'name': name4, 'mana': mana4, 'key': key4}, '5': {'cd': cd5, 'name': name5, 'mana': mana5, 'key': key5}}")
+            self._skills = skills
+            self.initialize_skills()
         if haste:
             self._haste = min(haste, 0.5)
+        if passives:
+            self.passives = passives
         if deep:
             self._mana = 100
             self._gcd = 1.5
@@ -125,13 +176,17 @@ class CombatKit:
             self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
             self._polling_delay = 0.01
 
-    def initialize_abilities(self):
-        for ability in self._abilities.values():
-            ability.update({'_time': None})
+    def initialize_skills(self):
+        for skill in self._skills.values():
+            skill.update({'_time': None})
 
     @property
-    def abilities(self):
-        return self._abilities
+    def name(self):
+        return self._class
+
+    @property
+    def skills(self):
+        return self._skills
 
     @property
     def total(self):
@@ -188,12 +243,12 @@ class CombatKit:
         current_time = start_time
         while timeout_condition(current_time, start_time, timeout):
             for key in keys:
-                ability = self._abilities.get(key)
-                if ability.get('_time'):
+                skill = self._skills.get(key)
+                if skill.get('_time'):
                     time.sleep(self._polling_delay)
                     current_time = time.time()
-                    if current_time - ability.get('_time') > self.adjust_for_haste(ability.get('cd')):
-                        ability['_time'] = None
+                    if current_time - skill.get('_time') > self.adjust_for_haste(skill.get('cd')):
+                        skill['_time'] = None
                         return key
                 else:
                     return key
@@ -210,34 +265,32 @@ class CombatKit:
             current_time = time.time()
 
     def attack(self, key=None):
-        ability = self._abilities.get(key)
+        skill = self._skills.get(key)
         current_time = time.time()
-        if ability is None  :
+        if skill is None  :
             raise ValueError('Invalid key.')
-        elif ability.get('_time'):
-            if current_time - ability.get('_time') > self.adjust_for_haste(ability.get('cd')):
-                ability['_time'] = current_time
-                self._mana = max(0, self._mana - ability.get('mana'))
+        elif skill.get('_time'):
+            if current_time - skill.get('_time') > self.adjust_for_haste(skill.get('cd')):
+                skill['_time'] = current_time
+                self._mana = max(0, self._mana - skill.get('mana'))
             else:
-                raise RuntimeError(f'Ability-{key}: \'{ability.get('name')}\' is not ready.')
+                raise RuntimeError(f'Skill-{key}: \'{skill.get('name')}\' is not ready.')
         else:
-            ability['_time'] = current_time
-            self._mana = max(0, self._mana - ability.get('mana'))
+            skill['_time'] = current_time
+            self._mana = max(0, self._mana - skill.get('mana'))
 
     def __str__(self):
         string = f'Class Name: {self._class}'
-        for key in MAIN_ABILITY_KEYS:
-            dictionary = copy.deepcopy(self._abilities.get(key))
-            if dictionary:
-                dictionary.pop('_time')
-            string += f'\nAbility-{key}: {dictionary}'
+        skills = _get_core_info(self._skills)
+        for key, skill in skills.items():
+            string += f'\nSkill-{key}: {skill}'
         string += f'\nHaste: {self._haste}\nKills: {self._kills}\nCombat Data: {self._combat_data}'
         return string
 
     def store(self, force):
-        if self._class and self._abilities:
-            if not force and CombatKit._new_classes.get(self._class):
+        if self._class and self._skills:
+            if not force and NEW_CLASSES.get(self._class):
                 return
-            abilities = _del_time(self._abilities)
-            CombatKit._new_classes[self._class] = abilities
+            skills = _delete_keys(self._skills, ['_time'])
+            NEW_CLASSES[self._class] = skills
 
