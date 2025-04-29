@@ -1,4 +1,4 @@
-from pywinauto import Application
+from pywinauto import Application, ElementNotFoundError
 from threading import Lock
 import time
 
@@ -16,9 +16,15 @@ class AutoClicker:
         self.ctrl = self.client.window(found_index=0)
 
     def disconnect(self):
-        self._clear()
         self.client = None
         self.ctrl = None
+
+    def connected(self):
+        try:
+            return self.ctrl and self.ctrl.exists()
+        except (RuntimeError, ElementNotFoundError):
+            self.disconnect()
+            return False
 
     def click(self, coordinates):
         with self._mouse_lock:
@@ -40,38 +46,6 @@ class AutoClicker:
 
     def wait(self, t):
         time.sleep(t)
-
-    def _clear(self):
-        """
-        Releases all commonly stuck keys to reset the keyboard state.
-        """
-        keys_to_release = [
-            "{VK_SHIFT up}",
-            "{VK_CONTROL up}",
-            "{VK_MENU up}",  # Alt key
-            "{VK_LWIN up}",  # Windows key
-            "{VK_TAB up}",
-            "{VK_CAPITAL up}",  # Caps Lock
-            "{VK_NUMLOCK up}",  # Num Lock
-            "{VK_SCROLL up}",  # Scroll Lock
-        ]
-
-        # Add alphanumeric keys
-        for char in "abcdefghijklmnopqrstuvwxyz0123456789":
-            keys_to_release.append(f"{{{char} up}}")
-
-        # Release all keys
-        with self._keyboard_lock:
-            for key in keys_to_release:
-                self.ctrl.send_keystrokes(key)
-
-        print("All keys released.")
-
-    def clear(self):
-        """
-        Releases all commonly stuck keys to reset the keyboard state.
-        """
-        self._clear()
 
     def exit(self):
         self.disconnect()

@@ -1,19 +1,24 @@
 from threading import Thread, Lock
-from multiprocessing import Event, Process, Queue
+from multiprocessing import Event, Process, Queue, active_children
 from queue import Empty
 from network import layers
 from json import loads, decoder
 from debug.logger import Logger
 
 
-MAX_STRING_SIZE = 5000
-SENTINEL = 'STOP COMMAND PROCESSING'
+def print_all_processes():
+    for child in active_children():
+        print(f'Name: {child.name}, PID: {child.pid}')
+
+
+MAX_STRING_SIZE = 999999
+SENTINEL = b'STOP PROCESSING'
 
 
 def decode(bytes_list, code='utf-8'):
     str_list = []
     for b in bytes_list:
-        str_list.append(b.decode(code, errors='ignore'))
+        str_list.append(b.decode(encoding=code, errors='ignore'))
     return str_list
 
 
@@ -26,7 +31,7 @@ def get_raw(packet):
 
 def parse_bytes(bytes_obj):
     bytes_obj = bytes_obj.replace(b"\x00", b"")
-    if bytes_obj == '':
+    if bytes_obj == b'':
         return []
     if len(bytes_obj) < MAX_STRING_SIZE:
         return [bytes_obj]
@@ -44,13 +49,14 @@ class ProcessorRunningError(RuntimeError):
 
 class ProcessPackets(Process):
 
-    def __init__(self, packets, jsons, flag, *, daemon=False):
+    def __init__(self, packets, jsons, *, daemon=False, log=None):
         self.buffer = ''
         self.buffer_changed = Event()
         self.packets = packets
         self.jsons = jsons
-        self.flag = flag
+        self.flag = Event()
         self.return_value = Queue()
+        self.log = log
         super().__init__(name='Process Packets Process', daemon=daemon)
 
     def update_buffer(self, buffer_lock, logger=None):
@@ -60,6 +66,7 @@ class ProcessPackets(Process):
         while self.flag.is_set():
             packet = self.packets.get()
             if packet == SENTINEL:
+                self.flag.clear()
                 self.buffer_changed.set()
                 if logger:
                     logger.info('Stopped update buffer thread.')
@@ -70,18 +77,13 @@ class ProcessPackets(Process):
             raw = get_raw(packet)
             blist = parse_bytes(raw)
             slist = decode(blist)
-            for i, s in enumerate(slist):
-                with buffer_lock:
-                    self.buffer += s
-                    if logger:
-                        try:
-                            self.buffer.index('updateClass')
-                            logger.info('Class Update Detected.')
-                        except ValueError:
-                            pass
-                if logger and slist:
-                    logger.info(f'Added to buffer {i + 1} time(s).')
-                    self.buffer_changed.set()
+            if slist:
+                for i, s in enumerate(slist):
+                    with buffer_lock:
+                        self.buffer += s
+                    if logger and slist:
+                        logger.info(f'Added to buffer {i + 1} time(s).')
+                self.buffer_changed.set()
 
     def parse_buffer(self, buffer_lock, logger=None):
         if logger:
@@ -109,9 +111,8 @@ class ProcessPackets(Process):
                                     end = i + 1
                                     try:
                                         result = self.buffer[start:end]
-                                        self.jsons.put(loads(result))
-                                        if logger:
-                                            logger.info(f'Recorded JSON: {result}')
+                                        json = loads(result)
+                                        self.jsons.put(json)
                                     except decoder.JSONDecodeError:
                                         if logger:
                                             logger.error(f'Broken JSON: {result}')
@@ -124,63 +125,73 @@ class ProcessPackets(Process):
             logger.info('Stopped parse buffer thread.')
 
     def run(self):
+        self.flag.set()
         buffer_lock = Lock()
-        update_logger = Logger('buffer_update.txt', 'updater')
+        update_logger = Logger(self.log, 'buffer updater')
         update_logger.clear()
-        parse_logger = Logger('parse_buffer.txt', 'parser')
+        parse_logger = Logger(self.log, 'buffer parser')
         parse_logger.clear()
         update_thread = Thread(target=self.update_buffer, name='Update Thread', args=[buffer_lock, update_logger])
         parse_thread = Thread(target=self.parse_buffer, name='Parse Thread', args=[buffer_lock, parse_logger])
         update_thread.start()
-        parse_thread.start()
+        parse_thread.run()
         update_thread.join()
-        parse_thread.join()
 
 
 class Processor:
 
-    def __init__(self, sniffer, *, daemon=False):
+    def __init__(self, sniffer, *, daemon=False, log=None):
         self.jsons = Queue()
-        self._flag = Event()
-        self._process = ProcessPackets(sniffer.packets, self.jsons, self._flag, daemon=daemon)
+        self.packets = sniffer.packets
+        self._process = ProcessPackets(sniffer.packets, self.jsons, daemon=daemon, log=log)
+        self._lock = Lock()
+        self.logger = Logger(log, 'processor')
 
     @property
     def daemon(self):
-        return self._process.daemon
+        with self._lock:
+            return self._process.daemon
 
     @daemon.setter
     def daemon(self, daemon):
-        self._process.daemon = daemon
+        with self._lock:
+            self._process.daemon = daemon
 
     @property
     def running(self):
-        return self._process.is_alive()
+        with self._lock:
+            return self._process.is_alive()
 
     def start(self):
-        self._flag.set()
-        self._process.start()
+        with self._lock:
+            self._process.start()
 
-    def stop(self, force=True):
-        self._flag.clear()
-        self._process.packets.put(SENTINEL)
-        self._process.join(0.5)
-        if self._process.is_alive():
-            if force:
+    def stop(self, timeout=None):
+        if self.running:
+            with self._lock:
+                self.logger.info('Stopping Processor.')
+                self._process.packets.put(SENTINEL)
+                self._process.join(timeout)
+                self.logger.info('Processor stopped.')
+
+    def force_quit(self):
+        with self._lock:
+            try:
                 self._process.terminate()
                 self._process.join()
-            else:
-                raise RuntimeError('Processor shutdown failed.')
+            except RuntimeError:
+                self.logger.error('Processor forced shutdown failed.')
 
     def reset(self):
-        if self._process.is_alive():
-            raise ProcessorRunningError('Cannot reset while Sniffer is running.')
-        self.jsons = Queue()
-        self._flag.clear()
-        packets, daemon = self._process.packets, self._process.daemon
-        self._process = ProcessPackets(packets, self.jsons, self._flag, daemon=daemon)
-
-    def join(self, timeout=None):
-        self._process.join(timeout)
+        self.logger.info('Resetting Processor.')
+        if not self.running:
+            with self._lock:
+                self.jsons = Queue()
+                packets, daemon, log = self._process.packets, self._process.daemon, self._process.log
+                self._process = ProcessPackets(packets, self.jsons, daemon=daemon, log=log)
+                self.logger.info('Processor reset.')
+        else:
+            self.logger.error('Processor reset failed: Processor was still running.')
 
     def get(self, timeout=None):
         try:
@@ -190,5 +201,3 @@ class Processor:
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]
-
-

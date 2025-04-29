@@ -1,18 +1,49 @@
-from scapy.all import send
-from scapy.layers.inet import IP, TCP
+from scapy.layers.inet import IP, TCP, UDP, Ether
+from scapy.all import conf, send, Raw, get_if_list, get_if_hwaddr, get_working_if, sendp
 import numpy as np
+import socket
+import types
 
 
-PRIVATE_PORT = 51272
+
+DEFAULT_PORT = 51272
+LOOPBACK_IP = "127.0.0.1"
 
 
-def send_dummy_packet(verbose=False):
-    pkt = IP(dst="127.0.0.1") / TCP(dport=51272, flags="S")
-    send(pkt, verbose=verbose)
+def send_dummy_packet(local, port=DEFAULT_PORT, payload=None, verbose=False):
+    if local:
+        ip_address = LOOPBACK_IP
+        pkt = IP(dst=ip_address) / UDP(dport=port, flags="S")
+        if payload:
+            pkt = pkt / Raw(load=payload)
+        send(pkt, verbose=verbose)
+    else:
+        iface = get_working_iface()
+        ip_address = get_host()[1]
+        mac = get_mac(iface)
+        pkt = Ether(dst=mac) / IP(dst=ip_address, ttl=1) / UDP(dport=port, sport=port)
+        if payload:
+            pkt = pkt / Raw(load=payload)
+        sendp(pkt, iface=iface, verbose=verbose)
 
 
-def get_random_private_port():
-    return int(np.random.rand() * 20000 + 40000)
+def get_random_port():
+    return np.random.randint(40000, 60000)
 
 
-__all__ = [name for name in globals() if not name.startswith('-')]
+def get_host():
+    host_name = socket.gethostname()
+    ip_address = socket.gethostbyname(host_name)
+    return host_name, ip_address
+
+
+def get_mac(iface):
+    dst_mac = get_if_hwaddr(iface)
+    return dst_mac
+
+
+def get_working_iface():
+    return get_working_if()
+
+
+__all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]

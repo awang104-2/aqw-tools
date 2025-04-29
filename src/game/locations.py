@@ -13,7 +13,7 @@ class Location:
         return map_name.lower(), int(lobby_num)
 
     @classmethod
-    def load(cls, location, with_lobby):
+    def load(cls, location, with_lobby=True):
         if location:
             if with_lobby:
                 map_name, lobby_num = Location.parse_location(location)

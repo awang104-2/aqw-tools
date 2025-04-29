@@ -16,7 +16,7 @@ SPECIAL_SKILL_KEYS = ('2', '3', '4', '5')
 MAIN_SKILL_KEYS = ('1', '2', '3', '4', '5')
 POTION_KEY = '6'
 
-
+'''
 def _in_string(string, substrings):
     results = []
     for substring in substrings:
@@ -60,43 +60,6 @@ def _delete_keys(skills, keys):
     return skills_copy
 
 
-def _get_core_info(skills):
-    skills_copy = {}
-    for skill in skills.values():
-        cd, name, mana, key = skill['cd'], skill['name'], skill['mana'], skill['key']
-        skills_copy[key] = get_skill(cd, name, mana, key)
-    return skills_copy
-
-
-def get_skill(cd: float, name: str, mana: int, key: str, **kwargs):
-    skill = {'cd': cd, 'name': name, 'mana': mana, 'key': key}
-    skill.update(kwargs)
-    description = kwargs.get('description')
-    if description:
-        description = description.lower()
-        skill['always hits'] = any(_in_string(description, ['can\'t miss', 'always hits']))
-        skill['always crits'] = any(_in_string(description, ['can\'t crit', 'always crits']))
-    return skill
-
-
-def _get_skill(cd: float, name: str, mana: int, key: str):
-    return {'cd': cd, 'name': name, 'mana': mana, 'key': key, '_time': None}
-
-
-def valid_skill(skill):
-    return skill == get_skill(**skill)
-
-
-def valid_skills(skills):
-    if tuple(skills.keys()) != MAIN_SKILL_KEYS:
-        return False
-    for skill in skills.values():
-        if skill == get_skill(**skill):
-            continue
-        return False
-    return True
-
-
 def save(config_type):
     new_classes = NEW_CLASSES
     old_classes = _config_classes
@@ -105,11 +68,11 @@ def save(config_type):
             write_to_config(new_classes, 'new_classes.toml')
         case 'old':
             write_to_config(old_classes, 'classes.toml')
-        case 'both':
+        case 'all':
             write_to_config(new_classes, 'new_classes.toml')
             write_to_config(old_classes, 'classes.toml')
         case _:
-            raise ValueError('config_type must be \'new\', \'old\', or \'both\'.')
+            raise ValueError('config_type must be \'new\', \'old\', or \'all\'.')
 
 
 def merge(force=False):
@@ -119,6 +82,7 @@ def merge(force=False):
         for class_name, class_skills in NEW_CLASSES.items():
             if class_name not in CLASS_NAMES:
                 CLASS_SKILLS[class_name] = class_skills
+'''
 
 
 class InvalidClassError(TypeError):
@@ -129,21 +93,133 @@ class InvalidClassError(TypeError):
         super().__init__(string)
 
 
+class Passive:
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+    def __str__(self):
+        return f'{self.name}: {self.description}'
+
+
+class Skill:
+
+    def __init__(self, *, name, mp, cd, reference, force=None, description=None, damage=None, targets=None, **kwargs):
+        self.name = name
+        self.mp = mp
+        self.cd = cd
+        self.reference = reference
+        self.force = force
+        self.description = description
+        self.damage = damage
+        self.data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
+        self.targets = targets
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    @property
+    def key(self):
+        match self.reference:
+            case 'aa':
+                return '1'
+            case 'a1':
+                return '2'
+            case 'a2':
+                return '3'
+            case 'a3':
+                return '4'
+            case 'a4':
+                return '5'
+
+    def __str__(self):
+        return f'Name: {self.name} | MP: {self.mp} | CD: {self.cd}'
+
+    def to_dict(self):
+        return {'name': self.name, 'cd': self.cd, 'mp': self.mp, 'key': self.key, 'force result': self.force}
+
+    def total(self):
+        values = list(self.data.values())
+        return sum(values)
+
+    def register(self, attk_type):
+        self.data[attk_type] += 1
+
+    def get_core_info(self):
+        return {'name': self.name, 'mp': self.mp, 'cd': self.cd, 'force': self.force, 'key': self.key}
+
+
+class Stats:
+
+    def __init__(self, haste=None, hp=None, mp=None, gcd=1.5):
+        self.haste = min(haste, 0.5)
+        self.hp = hp
+        self.mp = mp
+        self.gcd = gcd
+
+    def update(self, haste=None, hp=None, mp=None, gcd=None):
+        if haste:
+            self.haste = haste
+        if hp:
+            self.hp = hp
+        if mp:
+            self.mp = mp
+        if gcd:
+            self.gcd = gcd
+
+    @property
+    def cd_reduction(self):
+        return 1 - self.haste
+
+
+class Class:
+
+    def __init__(self, name='No Class', description=None, skills: dict = None, passives: list = None):
+        if not skills:
+            skills = {}
+        if not passives:
+            passives = {}
+        self.name = name
+        self.description = description
+        self.skills = skills
+        self.passives = passives
+
+    def get_skill(self, reference):
+        return self.skills.get(reference)
+
+    def get_passive(self, i):
+        try:
+            return self.passives[i]
+        except IndexError:
+            return None
+
+    def defined(self):
+        return self.name and self.skills
+
+    def add_skill(self, skill):
+        key = skill.reference
+        self.skills[key] = skill
+
+    def update(self, name=None, skills=(), passives=()):
+        if name:
+            self.name = name
+        if skills:
+            for skill in skills:
+                self.add_skill(skill)
+
+    def store(self, force=False):
+        if force:
+            NEW_CLASSES.update({self.name: self.skills})
+        else:
+            if not NEW_CLASSES.get(self.name):
+                NEW_CLASSES.update({self.name: self.skills})
+
+
+'''
 class CombatKit:
 
-    @staticmethod
-    def save():
-        write_to_config(NEW_CLASSES, 'new_classes.toml')
-
-    @classmethod
-    def load(cls, class_name=None, haste=0) -> Self:
-        skills = None
-        if class_name:
-            class_name, skills = loads(class_name)
-        return CombatKit(class_name, skills=skills, haste=haste)
-
-    def __init__(self, class_name: str | None = None, *, skills: dict | None = None, haste: float = 0):
-        self._class = class_name
+    def __init__(self, name: str = None, *, skills: dict | None = None, haste: float = 0):
+        self._class = name
         self.passives = {}
         if skills:
             self._skills = skills
@@ -173,12 +249,36 @@ class CombatKit:
             self._mana = 100
             self._gcd = 1.5
             self._kills = {}
-            self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0}
+            self._combat_data = {'hit': 0, 'crit': 0, 'miss': 0, 'dodge': 0, 'force hit': 0, 'force crit': 0, 'never miss': 0}
             self._polling_delay = 0.01
 
     def initialize_skills(self):
         for skill in self._skills.values():
             skill.update({'_time': None})
+
+    @property
+    def hits(self):
+        return self._combat_data['hit']
+
+    @property
+    def dodges(self):
+        return self._combat_data['dodge']
+
+    @property
+    def crits(self):
+        return self._combat_data['crit']
+
+    @property
+    def misses(self):
+        return self._combat_data['miss']
+
+    @property
+    def total(self):
+        return self._combat_data['hit'] + self._combat_data['dodge'] + self._combat_data['crit'] + self._combat_data['miss']
+
+    @property
+    def kills(self):
+        return copy.deepcopy(self._kills)
 
     @property
     def name(self):
@@ -187,10 +287,6 @@ class CombatKit:
     @property
     def skills(self):
         return self._skills
-
-    @property
-    def total(self):
-        return self._combat_data.get('hit')
 
     @property
     def enemy_total(self):
@@ -293,4 +389,4 @@ class CombatKit:
                 return
             skills = _delete_keys(self._skills, ['_time'])
             NEW_CLASSES[self._class] = skills
-
+'''

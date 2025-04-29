@@ -7,61 +7,102 @@ _config = get_config('drops.toml')
 ITEM_INFO = SafeDict(_config)
 
 
-class Inventory:
+class Item:
 
-    def __init__(self, sampling_path=None):
-        self.inventory = {}
-        self.drops = {}
-        if sampling_path:
-            self.sampling_path = sampling_path
-        else:
-            self.sampling_path = get_config_path('sampling.toml')
+    def __init__(self, item_id: str | int, count: int, *, name: str = None, level: int = None, cap: int = None, description: str = None, **kwargs):
+        self.item_id = str(item_id)
+        self.name = name
+        self.level = level
+        self.cap = cap
+        self.description = description
+        self.count = count
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __str__(self):
-        return f'Drops: {self.drops}\nInventory: {self.inventory}'
+        return f'Item ID: {self.item_id} | Name: {self.name} | Count: {self.count}'
 
-    def set_inventory(self, item_id, inventory_quantity):
-        self.inventory[item_id]['count'] = inventory_quantity
+    def __eq__(self, other):
+        equals = True
+        if self.name and other.name:
+            equals = equals and self.name == other.name
+        if self.item_id and other.item_id:
+            equals = equals and self.item_id == other.item_id
+        if self.level and other.level:
+            equals = equals and self.level == other.level
+        if self.cap and other.cap:
+            equals = equals and self.cap == other.cap
+        if self.description and other.description:
+            equals = equals and self.description == other.descriptioin
+        return equals
 
-    def add(self, item_id, name, quantity):
-        if isinstance(item_id, int):
-            item_id = str(item_id)
-        drops = self.drops.get(item_id)
-        inventory = self.inventory.get(item_id)
-        if not name:
-            name = ITEM_INFO.get(item_id)
-        if drops:
-            drops['count'] += quantity
-            inventory['count'] += quantity
-            if not drops.get('name') and name:
-                drops['name'] = name
+    def add(self, *, n=None, other=None):
+        if n:
+            self.count += n
+        if other:
+            self.count += other.count
+        if self.cap:
+            self.count = min(self.count, self.cap)
+
+    def __add__(self, other):
+        new_item = self.copy()
+        new_item.add(other=other)
+        return new_item
+
+    def __iadd__(self, other):
+        if self != other:
+            raise ValueError('Must be the same kind of items.')
+        new_item = self + other
+        return new_item
+
+    def to_dict(self):
+        return vars(self)
+
+    def store(self):
+        dictionary = {self.item_id: {'name': self.name, 'level': self.level, 'cap': self.cap, 'description': self.description}}
+        ITEM_INFO.update(dictionary)
+
+    def copy(self):
+        return Item(**vars(self))
+
+
+class Inventory:
+
+    def __init__(self, *items):
+        self.drops = {}
+        for item in items:
+            item_id = item.item_id
+            if self.drops.get(item_id):
+                self.drops.get(item_id).add(other=item)
+            else:
+                self.drops[item_id] = item
+
+    def __str__(self):
+        string = ''
+        for drop in self.drops.values():
+            if drop.name:
+                string += f'{drop.name}: {drop.count} | '
+            else:
+                string += f'{drop.item_id}: {drop.count} | '
+        return string[:-3]
+
+    def add(self, other):
+        item = self.drops.get(other.item_id)
+        if item:
+            item += other
         else:
-            self.drops[item_id] = {'name': name, 'count': quantity}
-            self.inventory[item_id] = {'name': name, 'count': quantity}
-
-    def subtract(self, item_id, quantity):
-        self.drops[item_id] -= quantity
+            self.drops[other.item_id] = other
 
     def reset(self):
-        for key in self.inventory.keys():
-            self.inventory[key]['count'] = 0
-        for key in self.drops.keys():
-            self.drops[key]['count'] = 0
+        for item in self.drops.values():
+            item.count = 0
 
     def save(self):
         for item_id in self.drops.keys():
             if not self.drops.get(item_id).get('name'):
                 self.drops[item_id]['name'] = 'Unknown'
-        write_to_file(self.drops, self.sampling_path)
-
-    def merge_config(self):
-        sample = toml.load(self.sampling_path)
-        for item in sample.values():
-            item.pop('count')
-        ITEM_INFO.update(sample)
-        write_to_config(ITEM_INFO, 'drops.toml')
+        write_to_file(self.drops, _config_path)
 
 
 __all__ = [name for name in globals() if not name.startswith('-')]
-
 

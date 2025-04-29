@@ -1,7 +1,29 @@
+from network.sending import send_dummy_packet, get_host, get_random_port
+from multiprocessing import Process, Queue, Event
+from network.layers import Raw
+from functools import partial
 from scapy.all import sniff
-from multiprocessing import Process, Queue
+from threading import Lock
 from queue import Empty
-from debug.logger import Logger
+import types
+
+
+SENTINEL = b'STOP SNIFFING'
+
+
+def stop_dummy(packet):
+    if packet.haslayer(Raw):
+        packet = packet[Raw].load
+        if packet == SENTINEL:
+            return True
+        else:
+            print('Recorded a JSON')
+            return False
+    else:
+        return False
+
+def stop_event(packet, event):
+    return event.is_set()
 
 
 class SnifferRunningError(RuntimeError):
@@ -12,80 +34,105 @@ class SnifferRunningError(RuntimeError):
 
 class Sniff(Process):
 
-    def __init__(self, bpf_filter, layers, queue, *, daemon=False, log=False):
-        self.bpf_filter = bpf_filter
+    def __init__(self, bpf_filter, stop_filter, layers, queue, *, daemon=False):
         self.layers = layers
         self.packets = queue
+        self.bpf_filter = bpf_filter
         self.packet_count = 0
-        self.log = log
+        self.stop_event = None
+        self.stop_filter = stop_filter
+        if not self.stop_filter:
+            self.stop_event = Event()
+            self.stop_filter = partial(stop_event, event=self.stop_event)
         super().__init__(name='Sniff Process', daemon=daemon)
 
     def run(self):
-        logger = None
-        if self.log:
-            logger = Logger('sniffer.txt')
-            logger.clear()
-            logger.info('Started sniffing.')
-        sniff(filter=self.bpf_filter, prn=lambda packet: self.log_packets(packet, logger), store=0)
+        print('running')
+        sniff(filter=self.bpf_filter, prn=lambda packet: self.log_packets(packet), store=0, stop_filter=self.stop_filter)
+        print('ran')
 
-    def log_packets(self, packet, logger):
+    def log_packets(self, packet):
         if self.layers:
-            if len(self.layers) == 1 and packet.haslayer(self.layers[0]):
+            if any(packet.haslayer(layer) for layer in self.layers):
                 self.packet_count += 1
                 self.packets.put(packet)
-                if logger:
-                    logger.info(f'Received Packet-{self.packet_count}: {packet}')
-            elif any(packet.haslayer(layer) for layer in self.layers):
-                self.packet_count += 1
-                self.packets.put(packet)
-                if logger:
-                    logger.info(f'Received Packet-{self.packet_count}: {packet}')
         else:
             self.packet_count += 1
             self.packets.put(packet)
-            if logger:
-                logger.info(f'Received Packet-{self.packet_count}: {packet}')
 
 
 class Sniffer:
 
-    def __init__(self, bpf_filter, layers: list | tuple = (), *, daemon=False):
+    def __init__(self, bpf_filter, stop_filter, layers: list | tuple = (), *, daemon=False, log=None):
+        match stop_filter:
+            case 'dummy':
+                stop_filter = stop_dummy
+            case 'event':
+                stop_filter = None
+        self._ip_host = get_host()[1]
+        self._port = get_random_port()
+        bpf_filter = f'({bpf_filter}) or (udp and dst host {self._ip_host} and dst port {self._port})'
         self.packets = Queue()
-        self._process = Sniff(bpf_filter, layers, self.packets, daemon=daemon, log=True)
+        self._process = Sniff(bpf_filter, stop_filter, layers, self.packets, daemon=daemon)
+        self._lock = Lock()
 
     @property
     def filter(self):
-        return self._process.bpf_filter
+        with self._lock:
+            return self._process.bpf_filter
 
     @property
     def layers(self):
-        return self._process.layers
+        with self._lock:
+            return self._process.layers
 
     @property
     def daemon(self):
-        return self._process.daemon
+        with self._lock:
+            return self._process.daemon
 
     @daemon.setter
     def daemon(self, daemon):
-        self._process.daemon = daemon
+        with self._lock:
+            self._process.daemon = daemon
 
     @property
     def running(self):
-        return self._process.is_alive()
+        with self._lock:
+            return self._process.is_alive()
 
     def start(self):
-        self._process.start()
+        with self._lock:
+            self._process.start()
 
-    def stop(self):
-        self._process.terminate()
-        self._process.join()
+    def stop(self, timeout=None):
+        if self.running:
+            with self._lock:
+                if self._process.stop_event:
+                    self._process.stop_event.set()
+                else:
+                    send_dummy_packet(local=False, payload=SENTINEL, port=self._port, verbose=False)
+                    print('Sent Dummy')
+                print('Joining')
+                self._process.join(timeout)
+                print('Joined.')
+
+    def force_quit(self):
+        with self._lock:
+            try:
+                self._process.terminate()
+                self._process.join()
+            except Exception as e:
+                raise e
 
     def reset(self):
-        if self._process.is_alive():
-            raise SnifferRunningError('Cannot reset while Sniffer is running.')
-        bpf_filter, layers = self._process.bpf_filter, self._process.layers
-        self.packets = Queue()
-        self._process = Sniff(bpf_filter, layers, self.packets, daemon=self._process.daemon, log=self._process.log)
+        if not self.running:
+            with self._lock:
+                layers =  self._process.layers
+                bpf_filter, stop_filter = self._process.bpf_filter, self._process.stop_filter
+                daemon = self._process.daemon
+                self.packets = Queue()
+                self._process = Sniff(bpf_filter, stop_filter, layers, self.packets, daemon=daemon)
 
     def get(self, timeout=None):
         try:
@@ -93,8 +140,5 @@ class Sniffer:
         except Empty:
             return None
 
-    def join(self, timeout=None):
-        self._process.join(timeout)
 
-
-__all__ = [name for name in globals() if not name.startswith('-')]
+__all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]

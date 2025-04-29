@@ -1,7 +1,6 @@
 from bot.autoclicker import AutoClicker
 from game.character import Character
-from game.game_sniffer import GameSniffer
-from game.interpreter import Interpreter
+from game.updater import Updater
 import toml
 import os
 
@@ -38,7 +37,7 @@ class Player:
         self.autoclicker = AutoClicker()
         self.character = Character()
         self.sniffer = GameSniffer(server=server)
-        self.interpreter = Interpreter(character=self.character, sniffer=self.sniffer)
+        self.interpreter = Updater(character=self.character, sniffer=self.sniffer)
 
     def connect(self):
         self.sniffer.start()
@@ -58,9 +57,6 @@ class Player:
     def print(self):
         print(self.character)
 
-    def packet_count(self):
-        return self.sniffer._packet_count
-
     def save(self):
-        self.character.save()
+        self.character.save('all')
 

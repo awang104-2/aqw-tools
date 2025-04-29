@@ -58,5 +58,12 @@ def add_data_to_csv(filename: str, location: str, data: dict):
     df.to_csv(path, index=False)
 
 
+def add_to_csv(filepath: str, data: dict):
+    df = pd.read_csv(filepath)
+    data = pd.DataFrame(data)
+    df = pd.concat([df, data], ignore_index=True)
+    df.to_csv(filepath, index=False)
+
+
 if __name__ == '__main__':
     add_to_csv_column('combat_sample_data.csv', 'SC-52', tuple([1, 2]), '../../tests/tests/')

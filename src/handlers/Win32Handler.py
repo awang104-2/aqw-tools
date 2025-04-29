@@ -63,6 +63,6 @@ def get_client_hwnd(name='GameLauncher on Artix Entertainment v.212'):
 def list_windows():
     elements = find_elements()
     for element in elements:
-        print(f"Title: {element.name}, Process ID: {element.process_id}, Class Name: {element.class_name}")
+        print(f"Title: {element.name}, Process ID: {element.process_id}, Class Name: {element.name}")
 
 
