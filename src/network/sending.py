@@ -10,7 +10,7 @@ DEFAULT_PORT = 51272
 LOOPBACK_IP = "127.0.0.1"
 
 
-def send_dummy_packet(local, port=DEFAULT_PORT, payload=None, verbose=False):
+def send_dummy(local, port=DEFAULT_PORT, payload=None, verbose=False):
     if local:
         ip_address = LOOPBACK_IP
         pkt = IP(dst=ip_address) / UDP(dport=port, flags="S")

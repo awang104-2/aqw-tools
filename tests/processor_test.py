@@ -1,179 +1,62 @@
-from game.updater import GameSniffer
+import multiprocessing
 from network.processing import Processor
+from game.updater import GameSniffer
+from tkinter import Tk, Label, Button
+import datetime
+import time
 
 
-game_sniffer = GameSniffer(server='twig', stop_filter='dummy')
-processor = Processor(game_sniffer)
-undistorted = []
-distorted = []
+_last_after_id = None
 
 
-def start_processor():
-    game_sniffer.start()
+def increment_clock(starting_time, label):
+    global _last_after_id
+    current_time = time.time() - starting_time
+    current_time = datetime.timedelta(seconds=int(current_time))
+    label.config(text=current_time)
+    _last_after_id = label.after(100, increment_clock, starting_time, label)
+
+
+def start(sniffer, processor, button, label):
+    global _last_after_id
+    sniffer.start()
     processor.start()
+    button.config(text='STOP', command=lambda: stop(sniffer, processor, button, label))
+    start_time = time.time()
+    _last_after_id = label.after(100, increment_clock, start_time, label)
 
 
-def stop_processor():
-    game_sniffer.stop()
+def stop(sniffer, processor, button, label):
+    label.after_cancel(_last_after_id)
+    print('Stopping sniffer.')
+    sniffer.stop()
+    print('Sniffer stopped.')
+    # print(sniffer.packets)
+    print('Stopping processor.')
     processor.stop()
+    print('Processor stopped.')
+    print(multiprocessing.active_children())
+    button.config(text='START', command=lambda: start(sniffer, processor, button, label))
 
 
-
-def print_live():
-    start_processor()
-    num = 0
-    try:
-        while num < 15:
-            json = processor.get()
-            if json:
-                num += 1
-                try:
-                    extracted_json = json['b']['o']
-                    undistorted.append(extracted_json)
-                    print(f'{num} - {extracted_json}')
-                except KeyError:
-                    distorted.append(json)
-    finally:
-        processor.stop()
-        processor.join()
-        game_sniffer.stop()
+def create_clock(sniffer, processor):
+    window = Tk()
+    window.attributes('-topmost', True)
+    window.geometry('300x150+0+0')
+    label = Label(window, text='Clock', font=('Helvetica', 50))
+    button = Button(window, text='START', font=('Arial', 20))
+    button.config(command=lambda: start(sniffer, processor, button, label))
+    label.pack()
+    button.pack()
+    window.mainloop()
 
 
-def print_():
-    start_processor()
-    num = 0
-    try:
-        while num < 15:
-            json = processor.get()
-            if json:
-                num += 1
-                try:
-                    extracted_json = json['b']['o']
-                    undistorted.append(extracted_json)
-                    # print(f'{num} - {extracted_json}')
-                except KeyError:
-                    distorted.append(json)
-    finally:
-        processor.stop()
-        processor.join()
-        game_sniffer.stop()
-
-
-def record_and_print():
-    start_processor()
-    num = 0
-    for i in range(300):
-        json = processor.get(0.1)
-        if json:
-            num += 1
-            print(f'json recorded #{num}')
-            try:
-                extracted_json = json['b']['o']
-                undistorted.append(extracted_json)
-            except KeyError:
-                distorted.append(json)
-    processor.stop()
-    processor.join()
-    game_sniffer.stop()
-    print('\n\nUndistorted:')
-    for i, json in enumerate(undistorted):
-        print(f'{i + 1} - {json}')
-    print('\nDistorted:')
-    for i, json in enumerate(distorted):
-        print(f'{i + 1} - {json}')
-
-
-def print_skills():
-    start_processor()
-    try:
-        while True:
-            json = processor.get()
-            json = json['b']['o']
-            if json.get('cmd') == 'sAct':
-                print('-----------Active-----------')
-                for i, skill in enumerate(json['actions']['active']):
-                    print(f'Skill #{i + 1}')
-                    for key, value in skill.items():
-                        print(f'{key}: {value}')
-                    print()
-                print('-----------Passive-----------')
-                for i, skill in enumerate(json['actions']['passive']):
-                    print(f'Passives #{i + 1}')
-                    for key, value in skill.items():
-                        print(f'{key}: {value}')
-                    print()
-                print(list(json['actions']['active'][0].keys()))
-                print(list(json['actions']['passive'][0].keys()))
-                break
-    finally:
-        stop_processor()
-
-
-def print_skill(n):
-    start_processor()
-    try:
-        while True:
-            json = processor.get()
-            json = json['b']['o']
-            if json.get('cmd') == 'sAct':
-                for i, skill in enumerate(json['actions']['active']):
-                    if i == n - 1:
-                        for key, value in skill.items():
-                            print(f'{key}: {value}')
-                break
-    finally:
-        stop_processor()
-
-
-def print_ct():
-    start_processor()
-    try:
-        n = 0
-        while n < 5:
-            json = processor.get()
-            json = json['b']['o']
-            if json.get('cmd') == 'ct':
-                n += 1
-                for key, value in json.items():
-                    print(f'{key} - {value}')
-                print()
-    finally:
-        stop_processor()
-
-
-def print_drops():
-    start_processor()
-    num = 0
-    for i in range(300):
-        json = processor.get(0.1)
-        if json:
-            try:
-                extracted_json = json['b']['o']
-                if extracted_json['cmd'] in ['dropItem', 'addItems', 'getDrop']:
-                    num += 1
-                    print(f'{num} - {extracted_json}')
-            except KeyError:
-                pass
-    processor.stop()
-    processor.join()
-    game_sniffer.stop()
-
-
-def get_inventory():
-    start_processor()
-    try:
-        while True:
-            json = processor.get()
-            json = json['b']['o']
-            if json.get('cmd') == 'loadInventoryBig':
-                for item in json['items']:
-                    print(item['sName'], item['iRng'], item.get('EnhRng'))
-                break
-    finally:
-        stop_processor()
+def create_sniffer_processor(server):
+    sniffer = GameSniffer(server)
+    processor = Processor(sniffer)
+    return sniffer, processor
 
 
 if __name__ == '__main__':
-    print('Test started.\n')
-    print_live()
-    print('\nTest finished.')
+    args = create_sniffer_processor('any')
+    create_clock(*args)

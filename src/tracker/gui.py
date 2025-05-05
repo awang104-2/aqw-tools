@@ -1,5 +1,5 @@
 from tkinter import *
-from debug.logger import Logger
+from debug.logging import Logger
 from threading import Thread, Event, Lock
 from bot.autoclicker import AutoClicker
 from game.updater import Updater

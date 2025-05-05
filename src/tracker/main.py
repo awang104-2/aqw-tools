@@ -5,16 +5,11 @@ from threading import Thread, Event
 
 
 def main():
-    flag = Event()
-    flag.set()
-    file_names = get_file_names()
-    filename = 'log.txt'
-    filename = get_unique_filename(filename, file_names)
-    main_window = MainWindow(filename)
-    main_window.run()
-    print('finished running')
-    updater.stop()
-    updater.disconnect()
+    children = active_children()
+    for child in children:
+        print(f'Terminating {child}.')
+        child.terminate()
+        child.join()
 
 
 if __name__ == '__main__':

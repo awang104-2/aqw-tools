@@ -1,18 +1,21 @@
 from abc import ABC, abstractmethod
 from game.combat import Skill, Passive, Class
 from game.locations import Location
+from handlers.ConfigHandler import SafeDict, get_config
+from network.sniffing import Sniffer
+from network.layers import Raw
 
 
+_config = get_config('backend.toml')
 PACKETS = {}
 
 
-def update_character(json, character, logger=None):
+def update_character(json, character):
     cmd = json['cmd']
     packet_type = PACKETS.get(cmd)
     if packet_type:
         update_packet = packet_type(json)
         update_packet.update(character)
-        logger.info(update_packet.msg)
 
 
 class PacketConstructionError(Exception):
@@ -179,6 +182,28 @@ class CombatPacket(GamePacket):
             self.msg = f'Updated combat info: Logged \'{self.attack_type}\'.'
 
 
+AQW_SERVERS = SafeDict(_config['AQW']['SERVERS'])
+AQW_PACKETS = SafeDict(_config['AQW']['PACKETS'])
+AQW_SERVER_NAMES = list(AQW_SERVERS.keys())
+AQW_SERVER_IPS = list(AQW_SERVERS.values())
+
+
+class GameSniffer(Sniffer):
+
+    def __init__(self, server, *, daemon=False):
+        server_filter = ''
+        if server == 'any' or server == 'all':
+            for ip in AQW_SERVER_IPS:
+                server_filter += f'src host {ip} or '
+            server_filter = server_filter[:-4]
+        elif server in AQW_SERVER_NAMES or server in AQW_SERVER_IPS:
+            server = AQW_SERVERS.get(server, server).lower()
+            server_filter = f'src host {server}'
+        else:
+            raise ValueError('Not a valid server.')
+        bpf_filter = f'tcp and ({server_filter})'
+        super().__init__(bpf_filter=bpf_filter, layers=[Raw], daemon=daemon)
+        self.server = server
 
 
 
