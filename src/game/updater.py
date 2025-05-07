@@ -90,10 +90,7 @@ class Updater:
 
     def interpret(self):
         while True:
-            json = self.sniffer.get_json(False)
+            json = self.sniffer.get_json(no_wait=False)
             if json == SENTINEL:
                 break
-            if json:
-                json = json['b']['o']
-                update_character(json, self.character)
 

@@ -204,17 +204,22 @@ class GameSniffer(JsonSniffer):
         super().__init__(bpf_filter=bpf_filter, daemon=daemon)
         self.server = server
 
+
 if __name__ == '__main__':
     import time
-    sniffer = GameSniffer('any')
+    sniffer = GameSniffer('twig')
     sniffer.start()
     print('started')
-    time.sleep(20)
+    time.sleep(30)
     sniffer.stop()
     print('ended')
-    while True:
-        json = sniffer.get_json(no_wait=True)
+    total_damage = 0
+    while not sniffer.jsons.empty():
+        json = sniffer.jsons.get()
         if json:
-            print(json)
-        else:
-            break
+            json = json['b']['o']
+            if json['cmd'] == 'ct' and json.get('sarsa'):
+                datapoint = json['sarsa'][0]['a'][0]
+                print(datapoint)
+                total_damage += max(datapoint['hp'], 0)
+    print(f'total damage: {total_damage}')

@@ -23,4 +23,10 @@ def random_function(label):
     label.after(1000, random_function, label)
 
 if __name__ == '__main__':
-    pass
+    from bot.autoclicker import AutoClicker
+    autoclicker = AutoClicker()
+    autoclicker.connect()
+    for _ in range(2000):
+        for key in ['1', '2', '3', '4', '5']:
+            autoclicker.press(key)
+            time.sleep(0.1)
