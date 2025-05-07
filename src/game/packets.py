@@ -9,6 +9,14 @@ _config = get_config('backend.toml')
 PACKETS = {}
 
 
+def update_character(json, character):
+    cmd = json['cmd']
+    packet_type = PACKETS.get(cmd)
+    if packet_type:
+        update_packet = packet_type(json)
+        update_packet.update(character)
+
+
 class PacketConstructionError(Exception):
 
     def __init__(self, msg):
