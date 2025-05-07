@@ -23,9 +23,4 @@ def random_function(label):
     label.after(1000, random_function, label)
 
 if __name__ == '__main__':
-    import tkinter
-    window = tkinter.Tk()
-    label = tkinter.Label(window)
-    label.pack()
-    window.after(100, random_function, label)
-    window.mainloop()
+    pass

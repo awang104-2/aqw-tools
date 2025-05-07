@@ -29,7 +29,7 @@ def with_packets_lock(method):
 def check_running(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        if not self.running:
+        if not self.is_alive:
             raise RuntimeError(f'Cannot call \'{method.__name__}\' while {self.__class__.__name__} instance is not running.')
         return method(self, *args, **kwargs)
     return wrapper
@@ -38,7 +38,7 @@ def check_running(method):
 def check_not_running(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        if self.running:
+        if self.is_alive:
             raise RuntimeError(f'Cannot call \'{method.__name__}\' while {self.__class__.__name__} instance is running.')
         return method(self, *args, **kwargs)
     return wrapper

@@ -2,20 +2,11 @@ from abc import ABC, abstractmethod
 from game.combat import Skill, Passive, Class
 from game.locations import Location
 from handlers.ConfigHandler import SafeDict, get_config
-from network.sniffing import Sniffer
-from network.layers import Raw
+from network.sniffing import JsonSniffer
 
 
 _config = get_config('backend.toml')
 PACKETS = {}
-
-
-def update_character(json, character):
-    cmd = json['cmd']
-    packet_type = PACKETS.get(cmd)
-    if packet_type:
-        update_packet = packet_type(json)
-        update_packet.update(character)
 
 
 class PacketConstructionError(Exception):
@@ -188,7 +179,7 @@ AQW_SERVER_NAMES = list(AQW_SERVERS.keys())
 AQW_SERVER_IPS = list(AQW_SERVERS.values())
 
 
-class GameSniffer(Sniffer):
+class GameSniffer(JsonSniffer):
 
     def __init__(self, server, *, daemon=False):
         server_filter = ''
@@ -202,9 +193,20 @@ class GameSniffer(Sniffer):
         else:
             raise ValueError('Not a valid server.')
         bpf_filter = f'tcp and ({server_filter})'
-        super().__init__(bpf_filter=bpf_filter, layers=[Raw], daemon=daemon)
+        super().__init__(bpf_filter=bpf_filter, daemon=daemon)
         self.server = server
 
-
-
-
+if __name__ == '__main__':
+    import time
+    sniffer = GameSniffer('any')
+    sniffer.start()
+    print('started')
+    time.sleep(20)
+    sniffer.stop()
+    print('ended')
+    while True:
+        json = sniffer.get_json(no_wait=True)
+        if json:
+            print(json)
+        else:
+            break

@@ -35,13 +35,12 @@ class Updater:
         with self._lock:
             self._interpreter.daemon = daemon
 
-    @property
-    def running(self):
+    def is_alive(self):
         with self._lock:
             return self._interpreter.is_alive()
 
     def connect(self):
-        if self.connected('any'):
+        if self.connected():
             raise UpdaterConnectionError('Updater cannot connect if connected.')
         with self._lock:
             self.sniffer.start()
@@ -55,27 +54,27 @@ class Updater:
             self.sniffer.stop(timeout)
 
     def force_quit(self):
-        if not self.running:
+        if not self.is_alive:
             raise UpdaterRunningError('Updater cannot force quit while not running.')
         with self._lock:
             self.sniffer.force_quit()
             self.processor.force_quit()
 
     def start(self):
-        if self.running:
+        if self.is_alive:
             raise UpdaterRunningError('Updater cannot start while running.')
         with self._lock:
             self._interpreter.start()
 
     def stop(self, timeout=None):
-        if not self.running:
+        if not self.is_alive:
             raise UpdaterRunningError('Updater cannot stop while not running.')
         with self._lock:
             self.processor.jsons.put(SENTINEL)
             self._interpreter.join(timeout)
 
     def reset(self):
-        if self.running:
+        if self.is_alive:
             raise UpdaterRunningError('Updater cannot reset while running.')
         elif self.connected('any'):
             raise UpdaterConnectionError('Updater cannot reset while connected.')
@@ -87,31 +86,14 @@ class Updater:
 
     def connected(self):
         with self._lock:
-            match process:
-                case 'sniffer':
-                    return self.sniffer.running
-                case 'processor':
-                    return self.processor.running
-                case 'any':
-                    return self.sniffer.running or self.processor.running
-                case 'all':
-                    return self.sniffer.running and self.processor.running
-            raise ValueError('Argument must be \'sniffer\', \'processor\', \'any\', or \'all\'.')
+            return self.sniffer.is_alive()
 
     def interpret(self):
         while True:
-            json = self.processor.jsons.get()
+            json = self.sniffer.get_json(False)
             if json == SENTINEL:
                 break
             if json:
                 json = json['b']['o']
                 update_character(json, self.character)
 
-
-if __name__ == '__main__':
-    from game.character import Character
-    import time
-    character = Character()
-    updater = Updater(character)
-    updater.start()
-    updater.start()

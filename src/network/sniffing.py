@@ -1,15 +1,72 @@
+import multiprocessing
+import threading
 from network.sending import send_dummy, get_host, get_random_port
 from multiprocessing import Process, Event, Queue
-from threading import Thread, RLock, Lock
 from network.layers import Raw
 from scapy.all import sniff
-from json import loads
+from json import loads, decoder
 import queue
 import types
-import time
 
 
-SENTINEL = b'STOP SNIFFING'
+SENTINEL = b'STOP PROCESS'
+
+
+def drain(q, drain_q=None):
+    if not drain_q:
+        drain_q = queue.Queue()
+    try:
+        while True:
+            json = q.get_nowait()
+            drain_q.put(json)
+    except queue.Empty:
+        return drain_q
+
+
+def process(packets, jsons_queue, stop_flag):
+    buffer = ''
+    while True:
+        packet = packets.get()
+        if packet == SENTINEL:
+            break
+        buffer = update_buffer(buffer, packet)
+        jsons_list, buffer = parse_buffer(buffer)
+        for json in jsons_list:
+            jsons_queue.put(json)
+    stop_flag.set()
+
+
+def update_buffer(buffer, packet):
+    raw = get_raw(packet)
+    if raw:
+        raw = erase_padding(raw)
+        buffer += raw.decode('UTF-8', 'strict')
+    return buffer
+
+
+def parse_buffer(buffer):
+    jsons = []
+    start, end, depth, quoted, escaped, in_string = (0, 0, 0, False, False, False)
+    for i, char in enumerate(buffer):
+        match char:
+            case '"':
+                in_string = not in_string
+            case '{' if not in_string:
+                if depth == 0:
+                    print('buffer', buffer[i:])
+                    start = i
+                depth += 1
+            case '}' if not in_string:
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    result = buffer[start:end]
+                    json = loads(result)
+                    jsons.append(json)
+                elif depth < 0:
+                    print(buffer)
+                    raise RuntimeError(f'Issue with parsing buffer at index {i}.')
+    return jsons, buffer[max(start, end):]
 
 
 def get_raw(packet):
@@ -35,20 +92,37 @@ class SnifferRunningError(RuntimeError):
         super().__init__(msg)
 
 
-class Sniff(Process):
+class Sniffer:
 
-    def __init__(self, bpf_filter, layers, packet_queue, *, stop_flag=Event(), daemon=False):
+    def __init__(self, bpf_filter, layers: list | tuple = (), *, daemon=False):
+        self._ip_host = get_host()[1]
+        self._port = get_random_port()
+        self._bpf_filter = bpf_filter
+        self.daemon = daemon
         self.layers = layers
-        self.packets = packet_queue
-        self.bpf_filter = bpf_filter
-        self.stop_flag = stop_flag
-        super().__init__(name='Sniff Process', daemon=daemon)
+        self.packets = Queue()
+        self._stop_flag = Event()
+        self.packet_process = Process(name='Packet Gathering Process', target=self.sniff, daemon=self.daemon)
+
+    def is_alive(self):
+        return self.packet_process.is_alive()
+
+    @property
+    def bpf_filter(self):
+        return f'({self._bpf_filter}) or (udp and dst host {self._ip_host} and dst port {self._port})'
 
     def stop_filter(self, packet):
-        return self.stop_flag.is_set()
+        return self._stop_flag.is_set()
 
-    def run(self):
+    def sniff(self):
         sniff(filter=self.bpf_filter, prn=self.log_packets, store=False, stop_filter=self.stop_filter)
+        packets = drain(self.packets)
+        print(self.packets.empty())
+        self.packets = packets
+        print(multiprocessing.active_children(), threading.enumerate())
+
+    def start(self):
+        self.packet_process.start()
 
     def log_packets(self, packet):
         if self.layers:
@@ -57,190 +131,84 @@ class Sniff(Process):
         else:
             self.packets.put(packet)
 
-
-class ProcessPackets(Process):
-
-    def __init__(self, packets, jsons, *, daemon=False):
-        self.buffer = ''
-        self.buffer_changed = Event()
-        self.packets = packets
-        self.jsons = jsons
-        self.return_value = Queue()
-        self.stop_flag = Event()
-        super().__init__(name='Process Packets Process', daemon=daemon)
-
-    def update_buffer(self, buffer_lock):
-        while True:
-            packet = self.packets.get()
-            if packet == SENTINEL:
-                self.buffer_changed.set()
-                self.stop_flag.set()
-                break
-            raw = get_raw(packet)
-            if raw:
-                with buffer_lock:
-                    raw = erase_padding(raw)
-                    self.buffer += raw.decode('UTF-8', 'ignore')
-                    self.buffer_changed.set()
-
-    def parse_buffer(self, buffer_lock):
-        while not self.stop_flag.is_set():
-            self.buffer_changed.wait()
-            with buffer_lock:
-                start, end, depth, quoted, escaped, in_string = (0, 0, 0, False, False, False)
-                for i, char in enumerate(self.buffer):
-                    match char:
-                        case '"':
-                            in_string = not in_string
-                        case '{' if not in_string:
-                            if depth == 0:
-                                start = i
-                            depth += 1
-                        case '}' if not in_string:
-                            depth -= 1
-                            if depth == 0:
-                                end = i + 1
-                                result = self.buffer[start:end]
-                                json = loads(result)
-                                self.jsons.put(json)
-                            elif depth < 0:
-                                print(self.buffer)
-                                raise RuntimeError(f'Issue with parsing buffer at index {i}.')
-                self.buffer = self.buffer[max(start, end):]
-                self.buffer_changed.clear()
-
-    def run(self):
-        buffer_lock = Lock()
-        update_thread = Thread(target=self.update_buffer, name='Update Thread', args=[buffer_lock])
-        parse_thread = Thread(target=self.parse_buffer, name='Parse Thread', args=[buffer_lock])
-        update_thread.start()
-        parse_thread.run()
-        update_thread.join()
-
-
-class Sniffer:
-
-    def __init__(self, bpf_filter, layers: list | tuple = (), *, daemon=False):
-        self._ip_host = get_host()[1]
-        self._port = get_random_port()
-        self.stop_flag = Event()
-        self.packets = Queue()
-        bpf_filter = f'({bpf_filter}) or (udp and dst host {self._ip_host} and dst port {self._port})'
-        self._process = Sniff(bpf_filter, layers, self.packets, daemon=daemon, stop_flag=self.stop_flag)
-        self._lock = RLock()
-
-    @property
-    def filter(self):
-        with self._lock:
-            return self._process.bpf_filter
-
-    @property
-    def layers(self):
-        with self._lock:
-            return self._process.layers
-
-    @property
-    def daemon(self):
-        with self._lock:
-            return self._process.daemon
-
-    @daemon.setter
-    def daemon(self, daemon):
-        with self._lock:
-            self._process.daemon = daemon
-
-    @property
-    def running(self):
-        with self._lock:
-            return self._process.is_alive()
-
-    def start(self):
-        with self._lock:
-            if self.running:
-                raise SnifferRunningError('Stop Sniffer first.')
-            self._process.start()
-
-    def stop(self, timeout=None):
-        with self._lock:
-            if not self.running:
-                raise SnifferRunningError('Sniffer is not running.')
-            self.stop_flag.set()
-            send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
-            time.sleep(0.1)
-            drained_queue = queue.Queue()
-            while not self.packets.empty():
-                packet = self.get()
-                drained_queue.put(packet)
-            self.packets = drained_queue
-            self._process.join(timeout)
+    def stop(self):
+        if not self.packet_process.is_alive():
+            raise SnifferRunningError('packet_process is not running.')
+        self._stop_flag.set()
+        print('stop flag set')
+        send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
+        print('dummy sent')
+        self.packet_process.join()
+        print('joined')
 
     def force_quit(self):
-        with self._lock:
-            if not self.running:
-                raise SnifferRunningError('Sniffer is not running.')
-            self._process.terminate()
-            self._process.join()
+        if not self.is_alive():
+            raise SnifferRunningError('Sniffer is not running.')
+        self.packet_process.terminate()
+        self.packet_process.join()
 
     def reset(self):
-        with self._lock:
-            if self.running:
-                raise SnifferRunningError('Stop Sniffer first.')
-            bpf_filter, layers, daemon = self._process.bpf_filter, self._process.layers, self._process.daemon
-            self.packets = Queue()
-            self.stop_flag = Event()
-            self._process = Sniff(bpf_filter, layers, self.packets, daemon=daemon, stop_flag=self.stop_flag)
+        self._stop_flag.clear()
+        self.packets = Queue()
+        self.packet_process = Process(name='Sniff Process', target=self.sniff, daemon=self.daemon)
 
-    def get(self, timeout=None):
-        try:
-            return self.packets.get(timeout=timeout)
-        except queue.Empty:
-            return None
-
-    def empty(self):
-        return self.packets.empty()
+    def get_packet(self, *, timeout=None, no_wait):
+        if no_wait:
+            try:
+                return self.packets.get_nowait()
+            except queue.Empty:
+                return None
+        else:
+            return self.packets.get(timeout)
 
 
 class JsonSniffer(Sniffer):
 
-    def __init__(self, bpf_filter, layers: list | tuple = (), *, daemon=False):
-        super().__init__(bpf_filter, layers, daemon=daemon)
+    def __init__(self, bpf_filter, *, daemon=False):
+        super().__init__(bpf_filter=bpf_filter, layers=[Raw], daemon=daemon)
         self.jsons = Queue()
-        self._process = ProcessPackets(self.packets, self.jsons, daemon=daemon)
+        self.__stop_flag = Event()
+        self.json_process = Process(name='Json Extraction Process', target=process, args=(self.packets, self.jsons, self.__stop_flag), daemon=self.daemon)
 
-    @property
-    def running(self):
-        with self._lock:
-            return super().running and self._process.is_alive()
+    def log_packets(self, packet):
+        if packet.haslayer(self.layers[0]):
+            self.packets.put(packet)
 
     def start(self):
-        with self._lock:
-            super().start()
-            self._process.start()
+        self.packet_process.start()
+        self.json_process.start()
 
     def stop(self, timeout=None):
-        with self._lock:
-            self._process.packets.put(SENTINEL)
-            self._process.join(timeout)
-            super().stop()
+        if not self.json_process.is_alive():
+            raise SnifferRunningError('json_process is not running.')
+        self.packets.put(SENTINEL)
+        print('sentinel')
+        self.__stop_flag.wait()
+        print('waiting')
+        self.jsons = drain(self.jsons)
+        print('drained')
+        self.json_process.join(timeout)
+        print('joined')
+        super().stop()
 
     def force_quit(self):
-        with self._lock:
-            self._process.terminate()
-            self._process.join()
-            super().force_quit()
+        self.json_process.terminate()
+        self.json_process.join()
+        super().force_quit()
 
     def reset(self):
-        with self._lock:
-            super().reset()
-            self.jsons = Queue()
-            packets, daemon = self._process.packets, self._process.daemon
-            self._process = ProcessPackets(packets, self.jsons, daemon=daemon)
+        super().reset()
+        self.jsons = Queue()
+        self.json_process = Process(target=process, args=(self.packets, self.jsons), daemon=self.daemon)
 
-    def get(self, timeout=None):
-        try:
-            return self.jsons.get(timeout=timeout)
-        except queue.Empty:
-            return None
+    def get_json(self, *, timeout=None, no_wait):
+        if no_wait:
+            try:
+                return self.jsons.get_nowait()
+            except queue.Empty:
+                return None
+        else:
+            return self.jsons.get(timeout)
 
 
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
