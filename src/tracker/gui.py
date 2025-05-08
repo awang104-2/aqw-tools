@@ -16,7 +16,7 @@ def get_dpi_scaling(root):
 class MainWindow:
 
     width = 400
-    height = 300
+    height = 250
     x_offset = 0
     y_offset = 0
 
@@ -30,6 +30,7 @@ class MainWindow:
         self.y_offset = int(self.y_offset * self.scaling_factor)
         self.root.geometry(f'{self.width}x{self.height}-{self.x_offset}+{self.y_offset}')
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
+        self.root.attributes('-topmost', True)
 
         # Labels
         self.name = Label(self.root, font=("Arial", 16, "bold"))

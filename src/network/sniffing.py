@@ -16,7 +16,7 @@ def drain(q, drain_q=None):
         drain_q = queue.Queue()
     try:
         while True:
-            json = q.get_nowait()
+            json = q.get(block=False)
             drain_q.put(json)
     except queue.Empty:
         return drain_q
@@ -195,11 +195,9 @@ class JsonSniffer(Sniffer):
         self.packets = drain(self.packets)
         self._drain_flag.clear()
         self.packet_process.join(timeout)
-        try:
-            last_json = jsons.get_nowait()
+        while not jsons.empty():
+            last_json = jsons.get(block=False)
             self.jsons.put(last_json)
-        except queue.Empty:
-            pass
         self.json_process.join(timeout)
 
     def force_quit(self):
@@ -222,7 +220,6 @@ class JsonSniffer(Sniffer):
             return self.jsons.get(block=block, timeout=timeout)
         except queue.Empty:
             return None
-
 
 
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
