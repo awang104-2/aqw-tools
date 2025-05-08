@@ -152,34 +152,19 @@ class CombatPacket(GamePacket):
 
     def __init__(self, json):
         super().__init__()
-        if json.get('sarsa'):
-            self.type = 'player'
-            sarsa = json.get('sarsa')[0].get('a')
-            if sarsa:
-                self.reference = sarsa[0].get('actRef')
-                self.attack_type = sarsa[0].get('type')
-            else:
-                self.reference = None
-                self.attack_type = None
-        elif json.get('sara'):
-            self.type = 'enemy'
-            sara = json.get('sara')[0].get('a')
-            if sara:
-                self.reference = sara[0].get('actRef')
-                self.attack_type = sara[0].get('type')
-            else:
-                self.reference = None
-                self.attack_type = None
-        else:
-            self.type = 'other'
-            self.reference = None
+        self.combat_data = None
+        keys = json.keys()
+        if 'sarsa' in keys:
+            self.combat_data = json['sarsa']
 
     def update(self, character):
-        if self.type == 'player' and self.reference and self.attack_type != 'none':
-            skill = character.cls.get_skill(self.reference)
-            if skill:
-                skill.register(self.attack_type)
-            self.msg = f'Updated combat info: Logged \'{self.attack_type}\'.'
+        for sarsa in self.combat_data:
+            datapoints = sarsa['a']
+            for datapoint in datapoints:
+                reference = datapoint.get('actRef')
+                attack_type = datapoint.get('type')
+                skill = character.cls.get_skill(reference)
+                skill.register(attack_type)
 
 
 AQW_SERVERS = SafeDict(_config['AQW']['SERVERS'])
