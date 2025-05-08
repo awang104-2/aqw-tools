@@ -19,7 +19,7 @@ class UpdaterConnectionError(Exception):
 
 class Updater:
 
-    def __init__(self, character, server='any', *, daemon=False):
+    def __init__(self, character, server, *, daemon=False):
         self.daemon = daemon
         self.character = character
         self.sniffer = GameSniffer(server=server, daemon=True)
@@ -34,7 +34,7 @@ class Updater:
         self.sniffer.start()
         self.interpreter_thread.start()
 
-    def stop(self, timeout=None):
+    def stop(self):
         self.sniffer.jsons.put(SENTINEL)
         self.interpreter_thread.join()
         self.sniffer.stop()
@@ -45,9 +45,10 @@ class Updater:
 
     def interpret(self):
         while True:
-            json = self.sniffer.get_json(no_wait=False)
+            json = self.sniffer.get_json(block=True)
             if json == SENTINEL:
                 return
             elif json:
+                json = json['b']['o']
                 update_character(json, self.character)
 

@@ -9,6 +9,17 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 datapath = os.path.join(project_root, 'data', 'crit_chance_data.csv')
 
 
+def unit_notation(integer):
+    if integer < 1000:
+        return str(integer)
+    elif integer < 1000000:
+        integer = int(integer / 100) / 10
+        return str(integer) + 'k'
+    else:
+        integer = int(integer / 1000 / 100) / 10
+        return str(integer) + 'm'
+
+
 class Character:
 
     def __init__(self):
@@ -58,7 +69,7 @@ class Character:
         total = 0
         for value in data.values():
             total += value
-        return f'Hits: {data['hit']} | Misses: {data['miss']} | Dodges: {data['dodge']} | Crits {data['crit']} | Total {total}'
+        return f'Hits: {unit_notation(data['hit'])} | Misses: {unit_notation(data['miss'])} | Dodges: {unit_notation(data['dodge'])} | Crits {unit_notation(data['crit'])} | Total {unit_notation(total)}'
 
     def crit_data(self):
         data = {'crit': 0, 'total': 0}
