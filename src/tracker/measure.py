@@ -1,5 +1,7 @@
 from game.packets import GameSniffer
 from bot.autoclicker import AutoClicker
+import multiprocessing
+import pywinauto
 import time
 
 
@@ -18,9 +20,13 @@ def modifier_stats():
     start_time = time.time()
     while time.time() - start_time < 60 * 10:
         for i in range(60 * 10 * 10):
-            key = str(i % 5 + 1)
-            autoclicker.press(key)
-            time.sleep(0.05)
+            try:
+                key = str(i % 5 + 1)
+                autoclicker.press(key)
+                time.sleep(0.05)
+            except pywinauto.findwindows.ElementNotFoundError as e:
+                sniffer.force_quit()
+                raise e
     autoclicker.click(EXIT)
     time.sleep(5)
     sniffer.stop()
