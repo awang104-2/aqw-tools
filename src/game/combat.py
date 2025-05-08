@@ -16,74 +16,6 @@ SPECIAL_SKILL_KEYS = ('2', '3', '4', '5')
 MAIN_SKILL_KEYS = ('1', '2', '3', '4', '5')
 POTION_KEY = '6'
 
-'''
-def _in_string(string, substrings):
-    results = []
-    for substring in substrings:
-        try:
-            string.index(substring)
-            results.append(True)
-        except ValueError:
-            results.append(False)
-    return results
-
-
-def from_acronym(class_acronym, upper=True):
-    if upper:
-        uppercased = class_acronym.upper()
-        default = class_acronym.upper()
-    else:
-        uppercased = class_acronym.upper()
-        default = class_acronym
-    class_name = CLASS_ACRONYMS.get(uppercased, default)
-    return class_name
-
-
-def loads(class_name=None):
-    class_name = from_acronym(class_name)
-    skills = CLASS_SKILLS.get(class_name, {})
-    return class_name, skills
-
-
-def timeout_condition(t, start_time, timeout):
-    if timeout:
-        return t - start_time < timeout
-    else:
-        return True
-
-
-def _delete_keys(skills, keys):
-    skills_copy = copy.deepcopy(skills)
-    for skill in skills_copy.values():
-        for key in keys:
-            del skill[key]
-    return skills_copy
-
-
-def save(config_type):
-    new_classes = NEW_CLASSES
-    old_classes = _config_classes
-    match config_type:
-        case 'new':
-            write_to_config(new_classes, 'new_classes.toml')
-        case 'old':
-            write_to_config(old_classes, 'classes.toml')
-        case 'all':
-            write_to_config(new_classes, 'new_classes.toml')
-            write_to_config(old_classes, 'classes.toml')
-        case _:
-            raise ValueError('config_type must be \'new\', \'old\', or \'all\'.')
-
-
-def merge(force=False):
-    if force:
-        CLASS_SKILLS.update(NEW_CLASSES)
-    else:
-        for class_name, class_skills in NEW_CLASSES.items():
-            if class_name not in CLASS_NAMES:
-                CLASS_SKILLS[class_name] = class_skills
-'''
-
 
 class InvalidClassError(TypeError):
 
@@ -143,7 +75,8 @@ class Skill:
         return sum(values)
 
     def register(self, attk_type):
-        self.data[attk_type] += 1
+        if attk_type in self.data.keys():
+            self.data[attk_type] += 1
 
     def get_core_info(self):
         return {'name': self.name, 'mp': self.mp, 'cd': self.cd, 'force': self.force, 'key': self.key}
