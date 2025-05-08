@@ -1,8 +1,7 @@
 from tests.monitor import monitor
-from network.sniffing import Sniffer
 from game.packets import GameSniffer
+from bot.autoclicker import AutoClicker
 import time
-import random
 
 
 def measure_ram_cpu(sniffer, interval, logs):
@@ -61,10 +60,7 @@ def test_errors(sniffer):
 
 
 def json_sniffing():
-    import time
-    from bot.autoclicker import AutoClicker
     autoclicker = AutoClicker()
-    autoclicker.connect()
     sniffer = GameSniffer('any')
     sniffer.start()
     print('started')

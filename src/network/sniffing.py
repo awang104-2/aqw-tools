@@ -68,7 +68,6 @@ def parse_buffer(buffer):
                 in_string = not in_string
             case '{' if not in_string:
                 if depth == 0:
-                    print('buffer:', buffer[i:])
                     start = i
                 depth += 1
             case '}' if not in_string:
@@ -79,8 +78,7 @@ def parse_buffer(buffer):
                     json = loads(result)
                     jsons.append(json)
                 elif depth < 0:
-                    print(buffer)
-                    raise RuntimeError(f'Issue with parsing buffer at index {i}.')
+                    raise RuntimeError(f'Buffer: {buffer}\nIssue with parsing buffer at index {i}.')
     return jsons, buffer[max(start, end):]
 
 
@@ -161,14 +159,11 @@ class Sniffer:
             daemon=self.daemon
         )
 
-    def get_packet(self, *, timeout=None, no_wait):
-        if no_wait:
-            try:
-                return self.packets.get_nowait()
-            except queue.Empty:
-                return None
-        else:
-            return self.packets.get(timeout)
+    def get_packet(self, block=True, timeout=None):
+        try:
+            return self.packets.get(block=block, timeout=timeout)
+        except queue.Empty:
+            return None
 
 
 class JsonSniffer(Sniffer):
@@ -222,14 +217,12 @@ class JsonSniffer(Sniffer):
             daemon=self.daemon
         )
 
-    def get_json(self, *, timeout=None, no_wait):
-        if no_wait:
-            try:
-                return self.jsons.get_nowait()
-            except queue.Empty:
-                return None
-        else:
-            return self.jsons.get(timeout)
+    def get_json(self, block=True, timeout=None):
+        try:
+            return self.jsons.get(block=block, timeout=timeout)
+        except queue.Empty:
+            return None
+
 
 
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
