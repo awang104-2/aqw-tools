@@ -152,7 +152,7 @@ class CombatPacket(GamePacket):
 
     def __init__(self, json):
         super().__init__()
-        self.combat_data = None
+        self.combat_data = []
         keys = json.keys()
         if 'sarsa' in keys:
             self.combat_data = json['sarsa']
@@ -164,7 +164,8 @@ class CombatPacket(GamePacket):
                 reference = datapoint.get('actRef')
                 attack_type = datapoint.get('type')
                 skill = character.cls.get_skill(reference)
-                skill.register(attack_type)
+                if skill:
+                    skill.register(attack_type)
 
 
 AQW_SERVERS = SafeDict(_config['AQW']['SERVERS'])

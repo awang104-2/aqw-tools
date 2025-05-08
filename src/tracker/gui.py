@@ -31,14 +31,15 @@ class MainWindow:
         self.root.geometry(f'{self.width}x{self.height}-{self.x_offset}+{self.y_offset}')
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
         self.root.attributes('-topmost', True)
+        self.root.attributes('-resizable', False)
 
         # Labels
         self.name = Label(self.root, font=("Arial", 16, "bold"))
         self.name.pack()
         self.info = Label(self.root, font=("Arial", 12, "normal"))
         self.info.pack()
-        self.status = Label(self.root, font=("Arial", 12, "normal"))
-        self.status.pack()
+        self.player_status = Label(self.root, font=("Arial", 10, "normal"))
+        self.player_status.pack()
 
         # Buttons
         self.frame = Frame(self.root)
