@@ -3,6 +3,7 @@ from game.combat import Skill, Passive, Class
 from game.locations import Location
 from handlers.ConfigHandler import SafeDict, get_config
 from network.sniffing import JsonSniffer
+import types
 
 
 _config = get_config('backend.toml')
@@ -205,21 +206,4 @@ class GameSniffer(JsonSniffer):
         self.server = server
 
 
-if __name__ == '__main__':
-    import time
-    sniffer = GameSniffer('twig')
-    sniffer.start()
-    print('started')
-    time.sleep(30)
-    sniffer.stop()
-    print('ended')
-    total_damage = 0
-    while not sniffer.jsons.empty():
-        json = sniffer.jsons.get()
-        if json:
-            json = json['b']['o']
-            if json['cmd'] == 'ct' and json.get('sarsa'):
-                datapoint = json['sarsa'][0]['a'][0]
-                print(datapoint)
-                total_damage += max(datapoint['hp'], 0)
-    print(f'total damage: {total_damage}')
+__all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]

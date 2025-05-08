@@ -68,6 +68,7 @@ def parse_buffer(buffer):
                 in_string = not in_string
             case '{' if not in_string:
                 if depth == 0:
+                    print('buffer:', buffer[i:])
                     start = i
                 depth += 1
             case '}' if not in_string:

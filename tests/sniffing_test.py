@@ -1,10 +1,11 @@
 from tests.monitor import monitor
 from network.sniffing import Sniffer
+from game.packets import GameSniffer
 import time
 import random
 
 
-def test_ram_cpu(sniffer, interval, logs):
+def measure_ram_cpu(sniffer, interval, logs):
     sniffer.reset()
     print('Testing RAM and CPU usage.')
     print('Test started.')
@@ -59,8 +60,32 @@ def test_errors(sniffer):
     print('Test ended.')
 
 
+def json_sniffing():
+    import time
+    from bot.autoclicker import AutoClicker
+    autoclicker = AutoClicker()
+    autoclicker.connect()
+    sniffer = GameSniffer('any')
+    sniffer.start()
+    print('started')
+    for i in range(3000):
+        key = str(i % 4 + 2)
+        autoclicker.press(key)
+    sniffer.stop()
+    print('ended')
+    attack_data = {'hit': 0, 'miss': 0, 'crit': 0, 'dodge': 0, 'damage': 0}
+    while not sniffer.jsons.empty():
+        json = sniffer.jsons.get()
+        if json:
+            json = json['b']['o']
+            if json['cmd'] == 'ct' and json.get('sarsa'):
+                datapoint = json['sarsa'][0]['a'][0]
+                key = datapoint.get('type')
+                if attack_data.get(key):
+                    attack_data[key] += 1
+                attack_data['damage'] += max(datapoint['hp'], 0)
+    print(attack_data)
+
+
 if __name__ == '__main__':
-    sniffer = Sniffer('tcp')
-    test_ram_cpu(sniffer, 0.1, 5)
-    test_reset(sniffer)
-    test_errors(sniffer)
+    json_sniffing()
