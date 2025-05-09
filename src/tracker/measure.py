@@ -1,37 +1,42 @@
 from game.packets import GameSniffer
 from bot.autoclicker import AutoClicker
-import multiprocessing
 import pywinauto
 import time
 
+# 2256x1504
+# START, ENTER, EXIT, STOP, CENTER = (380, 520), (1450, 800), (1650, 1200), (380, 520), (1000, 800)
 
-START, ENTER, EXIT, STOP, CENTER = (380, 520), (1450, 800), (1650, 1200), (380, 520), (1000, 800)
+# 1920x1080
+START, ENTER, EXIT, STOP, CENTER = (200, 350), (1200, 300), (1400, 900), (200, 350), (960, 750)
 
 
-def modifier_stats():
+def modifier_stats(minutes):
     autoclicker = AutoClicker()
-    autoclicker.click(START)
     sniffer = GameSniffer('any')
     sniffer.start()
+    autoclicker.click(START)
     print('started')
-    time.sleep(3)
+    time.sleep(0.5)
+    autoclicker.click(CENTER)
+    time.sleep(0.5)
     autoclicker.click(ENTER)
-    time.sleep(5)
+    time.sleep(1.5)
+    count = 0
     start_time = time.time()
-    while time.time() - start_time < 60 * 10:
-        for i in range(60 * 10 * 10):
-            try:
-                key = str(i % 5 + 1)
-                autoclicker.press(key)
-                time.sleep(0.05)
-            except pywinauto.findwindows.ElementNotFoundError as e:
-                sniffer.force_quit()
-                raise e
+    while time.time() - start_time < 60 * minutes:
+        try:
+            key = str(count % 5 + 1)
+            autoclicker.press(key)
+            count += 1
+            time.sleep(0.05)
+        except pywinauto.findwindows.ElementNotFoundError as e:
+            sniffer.force_quit()
+            raise e
     autoclicker.click(EXIT)
-    time.sleep(5)
-    sniffer.stop()
+    time.sleep(2)
+    sniffer.stop(10)
     print('ended')
-    time.sleep(3)
+    time.sleep(0.5)
     autoclicker.click(STOP)
     time.sleep(0.5)
     autoclicker.click(CENTER)
@@ -61,14 +66,17 @@ def modifier_stats():
                         key = datapoint['actionResult'].get('type')
                         if key in enemy_data.keys():
                             enemy_data[key] += 1
-                        hp = datapoint['actionResult']['hp']
+                        hp = int(datapoint['actionResult']['hp'])
                         if hp > 0:
                             enemy_data['damage'] += hp
                         elif hp < 0:
-                            enemy_data['damage'] -= hp
+                            attack_data['healing'] -= hp
     print(f'Attack Data: {attack_data}')
     print(f'Enemy Data: {enemy_data}')
+    total = attack_data['hit'] + attack_data['miss'] + attack_data['dodge'] + attack_data['crit']
+    print(f'Enemy Dodge Chance: {attack_data['dodge'] / total}')
+    print(f'Enemy Miss Chance')
 
 
 if __name__ == '__main__':
-    modifier_stats()
+    modifier_stats(10)

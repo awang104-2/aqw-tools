@@ -3,12 +3,14 @@ from multiprocessing import Process, Event, Queue
 from functools import partial
 from network.layers import Raw
 from scapy.all import sniff
-from json import loads, decoder
+from json import loads
 import queue
 import types
+import time
 
 
 SENTINEL = b'STOP PROCESS'
+DECODED_SENTINEL = 'STOP PROCESS'
 
 
 def drain(q, drain_q=None):
@@ -24,7 +26,7 @@ def drain(q, drain_q=None):
 
 def gather_packets(bpf_filter, packets, stop_flag, drain_flag):
     prn = partial(log_packets, packets=packets)
-    stop_filter = partial(_stop_filter, stop_flag=stop_flag)
+    stop_filter = partial(_stop_filter, packets=packets, stop_flag=stop_flag)
     sniff(filter=bpf_filter, prn=prn, store=False, stop_filter=stop_filter)
     drain_flag.set()
 
@@ -34,21 +36,28 @@ def log_packets(packet, packets):
         packets.put(packet)
 
 
-def _stop_filter(packet, stop_flag):
+def _stop_filter(packet, packets, stop_flag):
+    boolean = stop_flag.is_set()
+    if boolean:
+        packets.put(packet)
     return stop_flag.is_set()
 
 
-def gather_jsons(packets, jsons, drain_flag):
+def gather_jsons(packets_queue, jsons_queue, packet_drain_flag, json_drain_flag):
     buffer = ''
-    while True:
-        packet = packets.get()
-        if packet == SENTINEL:
-            break
-        buffer = update_buffer(buffer, packet)
+    while not packet_drain_flag.is_set():
         jsons_list, buffer = parse_buffer(buffer)
-        for json in jsons_list:
-            jsons.put(json)
-    drain_flag.set()
+        add_to_queue(jsons_list, jsons_queue)
+        packet = packets_queue.get()
+        buffer = update_buffer(buffer, packet)
+    jsons_list, buffer = parse_buffer(buffer)
+    add_to_queue(jsons_list, jsons_queue)
+    json_drain_flag.set()
+
+
+def add_to_queue(jsons_list, json_queue):
+    for json in jsons_list:
+        json_queue.put(json)
 
 
 def update_buffer(buffer, packet):
@@ -113,12 +122,12 @@ class Sniffer:
         self._bpf_filter = bpf_filter
         self.daemon = daemon
         self.packets = Queue()
-        self._stop_flag = Event()
-        self._drain_flag = Event()
+        self._packet_stop_flag = Event()
+        self._packet_drain_flag = Event()
         self.packet_process = Process(
             name='Gather Packets',
             target=gather_packets,
-            args=(self.bpf_filter, self.packets, self._stop_flag, self._drain_flag),
+            args=(self.bpf_filter, self.packets, self._packet_stop_flag, self._packet_drain_flag),
             daemon=self.daemon
         )
 
@@ -129,18 +138,15 @@ class Sniffer:
     def bpf_filter(self):
         return f'({self._bpf_filter}) or (udp and dst host {self._ip_host} and dst port {self._port})'
 
-    def stop_filter(self, packet):
-        return self._stop_flag.is_set()
-
     def start(self):
         self.packet_process.start()
 
     def stop(self):
-        self._stop_flag.set()
+        self._packet_stop_flag.set()
         send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
-        self._drain_flag.wait()
+        self._packet_drain_flag.wait()
         self.packets = drain(self.packets)
-        self._drain_flag.clear()
+        self._packet_drain_flag.clear()
         self.packet_process.join()
 
     def force_quit(self):
@@ -150,12 +156,12 @@ class Sniffer:
         self.packet_process.join()
 
     def reset(self):
-        self._stop_flag.clear()
+        self._packet_stop_flag.clear()
         self.packets = Queue()
         self.packet_process = Process(
             name='Gather Packets',
             target=gather_packets,
-            args=(self.bpf_filter, self.packets, self._stop_flag, self._drain_flag),
+            args=(self.bpf_filter, self.packets, self._packet_stop_flag, self._packet_drain_flag),
             daemon=self.daemon
         )
 
@@ -171,11 +177,11 @@ class JsonSniffer(Sniffer):
     def __init__(self, bpf_filter, *, daemon=False):
         super().__init__(bpf_filter=bpf_filter, daemon=daemon)
         self.jsons = Queue()
-        self.__drain_flag = Event()
+        self._json_drain_flag = Event()
         self.json_process = Process(
             name='Gather JSONs',
             target=gather_jsons,
-            args=(self.packets, self.jsons, self.__drain_flag),
+            args=(self.packets, self.jsons, self._packet_drain_flag, self._json_drain_flag),
             daemon=self.daemon
         )
 
@@ -184,21 +190,22 @@ class JsonSniffer(Sniffer):
         self.json_process.start()
 
     def stop(self, timeout=None):
-        self._stop_flag.set()
+        self._packet_stop_flag.set()
         send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
-        self.packets.put(SENTINEL)
-        self.__drain_flag.wait()
+        self._json_drain_flag.wait()
+        packets = self.packets
+        self.packets = drain(self.packets)
+        time.sleep(timeout)
         jsons = self.jsons
         self.jsons = drain(self.jsons)
-        self.__drain_flag.clear()
-        self._drain_flag.wait()
-        self.packets = drain(self.packets)
-        self._drain_flag.clear()
         self.packet_process.join(timeout)
-        while not jsons.empty():
-            last_json = jsons.get(block=False)
-            self.jsons.put(last_json)
         self.json_process.join(timeout)
+        for q in [jsons, packets]:
+            try:
+                while True:
+                    print('undrained:', q.get(block=False))
+            except queue.Empty:
+                pass
 
     def force_quit(self):
         self.json_process.terminate()
@@ -211,7 +218,7 @@ class JsonSniffer(Sniffer):
         self.json_process = Process(
             name='Gather JSONs',
             target=gather_jsons,
-            args=(self.packets, self.jsons, self.__drain_flag),
+            args=(self.packets, self.jsons, self._json_drain_flag),
             daemon=self.daemon
         )
 
@@ -225,3 +232,9 @@ class JsonSniffer(Sniffer):
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
 
 
+if __name__ == '__main__':
+    sniffer = Sniffer('tcp')
+    sniffer.start()
+    import time
+    time.sleep(3)
+    sniffer.stop()
