@@ -50,7 +50,9 @@ def gather_jsons(packets_queue, jsons_queue, packet_drain_flag, json_drain_flag)
         add_to_queue(jsons_list, jsons_queue)
         packet = packets_queue.get()
         buffer = update_buffer(buffer, packet)
+    print(f'buffer: {buffer}')
     jsons_list, buffer = parse_buffer(buffer)
+    print(f'buffer: {buffer}')
     add_to_queue(jsons_list, jsons_queue)
     json_drain_flag.set()
 
@@ -64,7 +66,11 @@ def update_buffer(buffer, packet):
     raw = get_raw(packet)
     if raw:
         raw = erase_padding(raw)
-        buffer += raw.decode('UTF-8', 'strict')
+        try:
+            buffer += raw.decode('UTF-8', 'strict')
+        except Exception as e:
+            print(f'Error: {e}')
+            raise e
     return buffer
 
 
@@ -200,12 +206,19 @@ class JsonSniffer(Sniffer):
         self.jsons = drain(self.jsons)
         self.packet_process.join(timeout)
         self.json_process.join(timeout)
-        for q in [jsons, packets]:
-            try:
-                while True:
-                    print('undrained:', q.get(block=False))
-            except queue.Empty:
-                pass
+        try:
+            while True:
+                packet = packets.get(block=False)
+                print('undrained packet:', packet.summary())
+        except queue.Empty:
+            pass
+        try:
+            while True:
+                json = jsons.get(block=False)
+                print('undrained json:', json)
+                self.jsons.put(json)
+        except queue.Empty:
+            pass
 
     def force_quit(self):
         self.json_process.terminate()
