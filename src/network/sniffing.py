@@ -9,8 +9,8 @@ import types
 import time
 
 
-SENTINEL = b'STOP PROCESS'
-DECODED_SENTINEL = 'STOP PROCESS'
+SENTINEL = b'stop process'
+DECODED_SENTINEL = 'stop process'
 
 
 def drain(q, drain_q=None):
@@ -50,9 +50,7 @@ def gather_jsons(packets_queue, jsons_queue, packet_drain_flag, json_drain_flag)
         add_to_queue(jsons_list, jsons_queue)
         packet = packets_queue.get()
         buffer = update_buffer(buffer, packet)
-    print(f'buffer: {buffer}')
     jsons_list, buffer = parse_buffer(buffer)
-    print(f'buffer: {buffer}')
     add_to_queue(jsons_list, jsons_queue)
     json_drain_flag.set()
 

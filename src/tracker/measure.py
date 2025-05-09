@@ -46,9 +46,9 @@ def modifier_stats(minutes):
     while not sniffer.jsons.empty():
         json = sniffer.jsons.get()
         if json:
-            string += f'json: {json}\n'
             json = json['b']['o']
             if json['cmd'] == 'ct':
+                string += f'json: {json}\n'
                 if json.get('sarsa'):
                     sarsas = json['sarsa']
                     for sarsa in sarsas:
@@ -82,13 +82,13 @@ def modifier_stats(minutes):
         file.write(string)
     total = attack_data['hit'] + attack_data['miss'] + attack_data['dodge'] + attack_data['crit']
     enemy_total = enemy_data['hit'] + enemy_data['miss'] + enemy_data['dodge'] + enemy_data['crit']
-    string = f'\nPlayer Crit Chance: {round(attack_data['crit'] / total * 100, 2)}%\n'
+    string = f'Test:\nPlayer Crit Chance: {round(attack_data['crit'] / total * 100, 2)}%\n'
     string += f'Player Miss Chance: {round(attack_data['miss'] / total * 100, 2)}%\n'
     string += f'Player Dodge Chance: {round(enemy_data['dodge'] / enemy_total * 100, 2)}%\n'
     string += f'Player Damage: {attack_data['damage']}\n'
     string += f'Player Healing: {attack_data['healing']}\n'
     string += f'Player Total: {total}\n'
-    string += f'\nEnemy Crit Chance: {round(enemy_data['crit'] / enemy_total * 100, 2)}%\n'
+    string += f'Enemy Crit Chance: {round(enemy_data['crit'] / enemy_total * 100, 2)}%\n'
     string += f'Enemy Miss Chance: {round(enemy_data['miss'] / enemy_total * 100, 2)}%\n'
     string += f'Enemy Dodge Chance: {round(attack_data['dodge'] / total * 100, 2)}%\n'
     string += f'Enemy Damage: {enemy_data['damage']}\n'
@@ -99,4 +99,4 @@ def modifier_stats(minutes):
 
 
 if __name__ == '__main__':
-    modifier_stats(1)
+    modifier_stats(20)
