@@ -1,0 +1,14 @@
+Test:
+Player Crit Chance: 51.62%
+Player Miss Chance: 2.36%
+Player Dodge Chance: 32.84%
+Player Damage: 424864
+Player Healing: 0
+Player Total: 1143
+Enemy Crit Chance: 17.48%
+Enemy Miss Chance: 10.13%
+Enemy Dodge Chance: 7.96%
+Enemy Damage: 4209
+Enemy Healing: 0
+Enemy Total: 612
+

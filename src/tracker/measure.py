@@ -26,7 +26,7 @@ def modifier_stats(minutes):
     while time.time() - start_time < 60 * minutes:
         try:
             key = str(count % 5 + 1)
-            autoclicker.press(key)
+            autoclicker.press('51')
             count += 1
             time.sleep(0.05)
         except pywinauto.findwindows.ElementNotFoundError as e:

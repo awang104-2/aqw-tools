@@ -1,7 +1,7 @@
 from network.sending import send_dummy, get_host, get_random_port
-from multiprocessing import Process, Event, Queue
-from functools import partial
+from multiprocessing import Queue, Event, Process, set_start_method
 from network.layers import Raw
+from functools import partial
 from scapy.all import sniff
 from json import loads
 import queue
@@ -9,8 +9,14 @@ import types
 import time
 
 
-SENTINEL = b'stop process'
-DECODED_SENTINEL = 'stop process'
+try:
+    set_start_method('spawn')
+except RuntimeError:
+    pass
+
+
+SENTINEL = b'STOP'
+DECODED_SENTINEL = 'STOP'
 
 
 def drain(q, drain_q=None):
@@ -243,9 +249,3 @@ class JsonSniffer(Sniffer):
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
 
 
-if __name__ == '__main__':
-    sniffer = Sniffer('tcp')
-    sniffer.start()
-    import time
-    time.sleep(3)
-    sniffer.stop()
