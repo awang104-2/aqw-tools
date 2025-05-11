@@ -1,16 +1,17 @@
 from network.sending import send_dummy, get_host, get_random_port
-from multiprocessing import Queue, Event, Process, set_start_method
 from network.layers import Raw
 from functools import partial
 from scapy.all import sniff
 from json import loads
+import threading
+import multiprocessing
 import queue
 import types
 import time
 
 
 try:
-    set_start_method('spawn')
+    multiprocessing.set_start_method('spawn')
 except RuntimeError:
     pass
 
@@ -19,22 +20,16 @@ SENTINEL = b'STOP'
 DECODED_SENTINEL = 'STOP'
 
 
-def drain(q, drain_q=None):
-    if not drain_q:
-        drain_q = queue.Queue()
-    try:
-        while True:
-            json = q.get(block=False)
-            drain_q.put(json)
-    except queue.Empty:
-        return drain_q
+def check_threads(t):
+    time.sleep(t)
+    for thread in threading.enumerate():
+        print(f'{thread} | {thread.name} | {thread.is_alive()} | {thread.daemon}')
 
 
-def gather_packets(bpf_filter, packets, stop_flag, drain_flag):
-    prn = partial(log_packets, packets=packets)
-    stop_filter = partial(_stop_filter, packets=packets, stop_flag=stop_flag)
+def gather_packets(bpf_filter, packets_queue, stop_flag):
+    prn = partial(log_packets, packets=packets_queue)
+    stop_filter = partial(_stop_filter, stop_flag=stop_flag)
     sniff(filter=bpf_filter, prn=prn, store=False, stop_filter=stop_filter)
-    drain_flag.set()
 
 
 def log_packets(packet, packets):
@@ -42,23 +37,21 @@ def log_packets(packet, packets):
         packets.put(packet)
 
 
-def _stop_filter(packet, packets, stop_flag):
-    boolean = stop_flag.is_set()
-    if boolean:
-        packets.put(packet)
+def _stop_filter(packet, stop_flag):
     return stop_flag.is_set()
 
 
-def gather_jsons(packets_queue, jsons_queue, packet_drain_flag, json_drain_flag):
+def gather_jsons(packets_queue, jsons_queue, stop_flag):
     buffer = ''
-    while not packet_drain_flag.is_set():
-        jsons_list, buffer = parse_buffer(buffer)
-        add_to_queue(jsons_list, jsons_queue)
-        packet = packets_queue.get()
-        buffer = update_buffer(buffer, packet)
-    jsons_list, buffer = parse_buffer(buffer)
-    add_to_queue(jsons_list, jsons_queue)
-    json_drain_flag.set()
+    while True:
+        try:
+            packet = packets_queue.get(timeout=0.1)
+            buffer = update_buffer(buffer, packet)
+            jsons_list, buffer = parse_buffer(buffer)
+            add_to_queue(jsons_list, jsons_queue)
+        except queue.Empty:
+            if stop_flag.is_set():
+                break
 
 
 def add_to_queue(jsons_list, json_queue):
@@ -97,7 +90,7 @@ def parse_buffer(buffer):
                     json = loads(result)
                     jsons.append(json)
                 elif depth < 0:
-                    raise RuntimeError(f'Buffer: {buffer}\nIssue with parsing buffer at index {i}.')
+                    raise RuntimeError(f'Buffer: {buffer}\nIssue with parsing buffer at index {i}, substring "{buffer[max(i - 5, 0):min(i + 5, len(buffer) - 1)]}".')
     return jsons, buffer[max(start, end):]
 
 
@@ -131,47 +124,41 @@ class Sniffer:
         self._port = get_random_port()
         self._bpf_filter = bpf_filter
         self.daemon = daemon
-        self.packets = Queue()
-        self._packet_stop_flag = Event()
-        self._packet_drain_flag = Event()
-        self.packet_process = Process(
+        self.packets = multiprocessing.Queue()
+        self._stop_flag = multiprocessing.Event()
+        self._packet_process = multiprocessing.Process(
             name='Gather Packets',
             target=gather_packets,
-            args=(self.bpf_filter, self.packets, self._packet_stop_flag, self._packet_drain_flag),
+            args=(self.bpf_filter, self.packets, self._stop_flag),
             daemon=self.daemon
         )
 
     def is_alive(self):
-        return self.packet_process.is_alive()
+        return self._packet_process.is_alive()
 
     @property
     def bpf_filter(self):
         return f'({self._bpf_filter}) or (udp and dst host {self._ip_host} and dst port {self._port})'
 
     def start(self):
-        self.packet_process.start()
+        self._packet_process.start()
 
     def stop(self):
-        self._packet_stop_flag.set()
+        self._stop_flag.set()
         send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
-        self._packet_drain_flag.wait()
-        self.packets = drain(self.packets)
-        self._packet_drain_flag.clear()
-        self.packet_process.join()
+        self._packet_process.join()
 
     def force_quit(self):
-        if not self.is_alive():
-            raise SnifferRunningError('Sniffer is not running.')
-        self.packet_process.terminate()
-        self.packet_process.join()
+        self._packet_process.terminate()
+        self._packet_process.join()
 
     def reset(self):
-        self._packet_stop_flag.clear()
-        self.packets = Queue()
-        self.packet_process = Process(
+        self._stop_flag.clear()
+        self.packets = multiprocessing.Queue()
+        self._packet_process = multiprocessing.Process(
             name='Gather Packets',
             target=gather_packets,
-            args=(self.bpf_filter, self.packets, self._packet_stop_flag, self._packet_drain_flag),
+            args=(self.bpf_filter, self.packets, self._stop_flag),
             daemon=self.daemon
         )
 
@@ -186,56 +173,36 @@ class JsonSniffer(Sniffer):
 
     def __init__(self, bpf_filter, *, daemon=False):
         super().__init__(bpf_filter=bpf_filter, daemon=daemon)
-        self.jsons = Queue()
-        self._json_drain_flag = Event()
-        self.json_process = Process(
+        self.jsons = queue.Queue()
+        self._json_thread = threading.Thread(
             name='Gather JSONs',
             target=gather_jsons,
-            args=(self.packets, self.jsons, self._packet_drain_flag, self._json_drain_flag),
+            args=(self.packets, self.jsons, self._stop_flag),
             daemon=self.daemon
         )
 
     def start(self):
-        self.packet_process.start()
-        self.json_process.start()
+        self._packet_process.start()
+        self._json_thread.start()
 
     def stop(self, timeout=None):
-        self._packet_stop_flag.set()
+        self._stop_flag.set()
         send_dummy(local=False, payload=SENTINEL, port=self._port, verbose=False)
-        self._json_drain_flag.wait()
-        packets = self.packets
-        self.packets = drain(self.packets)
-        time.sleep(timeout)
-        jsons = self.jsons
-        self.jsons = drain(self.jsons)
-        self.packet_process.join(timeout)
-        self.json_process.join(timeout)
-        try:
-            while True:
-                packet = packets.get(block=False)
-                print('undrained packet:', packet.summary())
-        except queue.Empty:
-            pass
-        try:
-            while True:
-                json = jsons.get(block=False)
-                print('undrained json:', json)
-                self.jsons.put(json)
-        except queue.Empty:
-            pass
+        self._packet_process.join(timeout)
+        self._json_thread.join(timeout)
 
     def force_quit(self):
-        self.json_process.terminate()
-        self.json_process.join()
         super().force_quit()
+        self._stop_flag.set()
+        self._json_thread.join()
 
     def reset(self):
         super().reset()
-        self.jsons = Queue()
-        self.json_process = Process(
+        self.jsons = multiprocessing.Queue()
+        self._json_thread = multiprocessing.Process(
             name='Gather JSONs',
             target=gather_jsons,
-            args=(self.packets, self.jsons, self._json_drain_flag),
+            args=(self.packets, self.jsons, self._stop_flag),
             daemon=self.daemon
         )
 

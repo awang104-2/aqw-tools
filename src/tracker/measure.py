@@ -3,6 +3,7 @@ from bot.autoclicker import AutoClicker
 import pywinauto
 import time
 
+
 # 2256x1504
 START, ENTER, EXIT, STOP, CENTER = (380, 520), (1450, 800), (1650, 1200), (380, 520), (1128, 1000)
 
@@ -98,5 +99,22 @@ def modifier_stats(minutes):
         file.write(string)
 
 
+def measure_modifier_stats(minutes):
+    sniffer = GameSniffer('any')
+    print('starting')
+    sniffer.start()
+    print('started')
+    start_time = time.time()
+    time.sleep(minutes * 60)
+    end_time = time.time()
+    print(end_time - start_time)
+    print('stopping')
+    sniffer.stop()
+    print('stopped')
+    print('packet queue size:', sniffer.packets.qsize())
+    while not sniffer.jsons.empty():
+        print(sniffer.jsons.get())
+
+
 if __name__ == '__main__':
-    modifier_stats(20)
+    measure_modifier_stats(0.5)

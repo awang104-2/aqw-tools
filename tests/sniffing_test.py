@@ -58,6 +58,3 @@ def test_errors(sniffer):
         print(f'Error Detected: {e}')
     print('Test ended.')
 
-
-if __name__ == '__main__':
-    json_sniffing()

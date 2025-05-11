@@ -70,3 +70,5 @@ class AutoClicker:
     def wait(self, t):
         time.sleep(t)
 
+
+
