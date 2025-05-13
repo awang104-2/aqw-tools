@@ -12,3 +12,59 @@ Enemy Damage: 4209
 Enemy Healing: 0
 Enemy Total: 612
 
+Test:
+Player Crit Chance: 50.0%
+Player Miss Chance: 0.0%
+Player Dodge Chance: 53.33%
+Player Damage: 12201
+Player Healing: 0
+Player Total: 32
+Enemy Crit Chance: 0.0%
+Enemy Miss Chance: 6.67%
+Enemy Dodge Chance: 3.12%
+Enemy Damage: 55
+Enemy Healing: 0
+Enemy Total: 15
+
+Test:
+Player Crit Chance: 53.12%
+Player Miss Chance: 3.12%
+Player Dodge Chance: 20.0%
+Player Damage: 11632
+Player Healing: 0
+Player Total: 32
+Enemy Crit Chance: 26.67%
+Enemy Miss Chance: 6.67%
+Enemy Dodge Chance: 12.5%
+Enemy Damage: 137
+Enemy Healing: 0
+Enemy Total: 15
+
+Test:
+Player Crit Chance: 48.91%
+Player Miss Chance: 3.53%
+Player Dodge Chance: 39.92%
+Player Damage: 300031
+Player Healing: 0
+Player Total: 822
+Enemy Crit Chance: 14.01%
+Enemy Miss Chance: 9.77%
+Enemy Dodge Chance: 7.18%
+Enemy Damage: 2761
+Enemy Healing: 0
+Enemy Total: 471
+
+Test:
+Player Crit Chance: 100.0%
+Player Miss Chance: 0.0%
+Player Dodge Chance: 21.47%
+Player Damage: 2664158
+Player Healing: 334758
+Player Total: 1204
+Enemy Crit Chance: 15.54%
+Enemy Miss Chance: 12.99%
+Enemy Dodge Chance: 0.0%
+Enemy Damage: 676
+Enemy Healing: 0
+Enemy Total: 354
+

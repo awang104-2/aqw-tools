@@ -212,6 +212,9 @@ class JsonSniffer(Sniffer):
         except queue.Empty:
             return None
 
+    def is_alive(self):
+        return self._packet_process.is_alive() or self._json_thread.is_alive()
+
 
 __all__ = [name for name, obj in globals().items() if not name.startswith('_') and not isinstance(obj, types.ModuleType)]
 

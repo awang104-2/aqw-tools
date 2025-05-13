@@ -71,4 +71,9 @@ class AutoClicker:
         time.sleep(t)
 
 
-
+if __name__ == '__main__':
+    autoclicker = AutoClicker()
+    while True:
+        for i in range(5):
+            autoclicker.press(str(i + 1))
+            autoclicker.wait(0.1)

@@ -1,7 +1,15 @@
 from game.packets import GameSniffer
 from bot.autoclicker import AutoClicker
+import pynput
 import pywinauto
 import time
+
+
+keys_pressed = []
+abilities_used = []
+
+
+act_reference = {'aa': '1', 'a1': '2', 'a2': '3', 'a3': '4', 'a4': '5'}
 
 
 # 2256x1504
@@ -9,6 +17,16 @@ START, ENTER, EXIT, STOP, CENTER = (380, 520), (1450, 800), (1650, 1200), (380, 
 
 # 1920x1080
 # START, ENTER, EXIT, STOP, CENTER = (200, 350), (1200, 300), (1400, 900), (200, 350), (960, 750)
+
+def on_release(key, sniffer):
+    if key == pynput.keyboard.Key.esc:
+        sniffer.stop()
+        return False
+    key = repr(key)[1]
+    if key in ['1', '2', '3', '4', '5']:
+        keys_pressed.append(key)
+        if key == '4':
+            keys_pressed.append('1')
 
 
 def modifier_stats(minutes):
@@ -27,7 +45,7 @@ def modifier_stats(minutes):
     while time.time() - start_time < 60 * minutes:
         try:
             key = str(count % 5 + 1)
-            autoclicker.press('51')
+            autoclicker.press(key)
             count += 1
             time.sleep(0.05)
         except pywinauto.findwindows.ElementNotFoundError as e:
@@ -49,27 +67,29 @@ def modifier_stats(minutes):
         if json:
             json = json['b']['o']
             if json['cmd'] == 'ct':
-                string += f'json: {json}\n'
                 if json.get('sarsa'):
                     sarsas = json['sarsa']
                     for sarsa in sarsas:
-                        string += f'sarsa: {sarsa}\n'
                         datapoints = sarsa['a']
                         for datapoint in datapoints:
-                            string += f'datapoint: {datapoint}\n'
+                            string += f'sarsa: {datapoint}\n'
                             key = datapoint.get('type')
                             if key in attack_data.keys():
                                 attack_data[key] += 1
                             hp = datapoint['hp']
                             if hp >= 0:
                                 attack_data['damage'] += hp
+                                if hp not in [1830, 5293]:
+                                    print(f'special case {hp}: {json}')
                             elif hp < 0:
                                 attack_data['healing'] -= hp
+                                if hp not in [-2431, -1870]:
+                                    print(f'special case {hp}: {json}')
+
                 elif json.get('sara'):
                     datapoints = json['sara']
-                    string += f'sara: {datapoints}'
                     for datapoint in datapoints:
-                        string += f'datapoint: {datapoint}\n'
+                        string += f'sara: {datapoint}\n'
                         key = datapoint['actionResult'].get('type')
                         if key in enemy_data.keys():
                             enemy_data[key] += 1
@@ -79,6 +99,7 @@ def modifier_stats(minutes):
                         elif hp < 0:
                             attack_data['healing'] -= hp
     string +='\n'
+    print(string)
     with open("log.txt", 'a') as file:
         file.write(string)
     total = attack_data['hit'] + attack_data['miss'] + attack_data['dodge'] + attack_data['crit']
@@ -95,6 +116,7 @@ def modifier_stats(minutes):
     string += f'Enemy Damage: {enemy_data['damage']}\n'
     string += f'Enemy Healing: {enemy_data['healing']}\n'
     string += f'Enemy Total: {enemy_total}\n\n'
+    print(string)
     with open("data.txt", 'a') as file:
         file.write(string)
 
@@ -117,4 +139,126 @@ def measure_modifier_stats(minutes):
 
 
 if __name__ == '__main__':
-    measure_modifier_stats(0.5)
+    count = 0
+    total = 0
+    sniffer = GameSniffer('any')
+    autoclicker = AutoClicker()
+    listener = pynput.keyboard.Listener(on_release=lambda key: on_release(key, sniffer))
+    keyboard = pynput.keyboard.Controller()
+    listener.start()
+    sniffer.start()
+    time.sleep(3)
+    n = 0
+    while sniffer.is_alive():
+        autoclicker.press(str(n % 3 + 2))
+        n += 1
+        time.sleep(0.1)
+        json = sniffer.get_json(block=False)
+        if json:
+            json = json['b']['o']
+            if json.get('cmd') == 'ct':
+                sarsa = json.get('sarsa')
+                if sarsa:
+                    for s in sarsa:
+                        for a in s['a']:
+                            damage = a['hp']
+                            if damage >= 0:
+                                total += damage
+                            count += 1
+                            print(count, '-', a, '|', damage, '|', total)
+    print('ended')
+    print(f'total damage: {total}')
+    '''
+
+    results = [
+        {'hp': 1024, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': -1711, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1674, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -2431, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -2431, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -2431, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -2431, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1024, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1288, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -1711, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 1674, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': -2431, 'actRef': 'a2', 'tInf': 'p:35948', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a1', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 0, 'actRef': 'a3', 'tInf': 'p:35948', 'type': 'none'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 5293, 'actRef': 'a4', 'tInf': 'm:1', 'type': 'crit'},
+        {'hp': 1830, 'actRef': 'aa', 'tInf': 'm:1', 'type': 'crit'},
+    ]
+    total = 0
+    for r in results:
+        damage = r['hp']
+        if damage > 0:
+            total += damage
+            print(damage)
+    print(total)
+    20783
+    '''
